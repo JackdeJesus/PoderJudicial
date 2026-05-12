@@ -9,7 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\eye.png" />
+    <None Remove="Resources\eyeClose.png" />
     <None Remove="Resources\supremaCorte.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\eye.png" />
+    <Resource Include="Resources\eyeClose.png" />
   </ItemGroup>
 
   <ItemGroup>
