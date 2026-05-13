@@ -2,25 +2,32 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Login"
-        Height="450"
-        Width="800"
+        Height="466"
+        Width="835"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
-        WindowStyle="None"
-        Background="Transparent">
+        ResizeMode="CanMinimize">
 
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="131*"/>
+            <ColumnDefinition Width="581*"/>
+            <ColumnDefinition Width="88*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="187*"/>
+            <RowDefinition Height="38*"/>
+        </Grid.RowDefinitions>
 
-       
+        <!-- Fondo -->
         <Grid.Background>
             <ImageBrush ImageSource="pack://application:,,,/Resources/supremaCorte.jpg"
-            Stretch="UniformToFill"/>
+                        Stretch="UniformToFill"/>
         </Grid.Background>
 
-        <!-- Panel oscuro derecho -->
+        <!-- Panel derecho -->
         <Border HorizontalAlignment="Right"
                 Width="320"
-                Background="#99000000">
+                Background="#B3000000" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2">
 
             <Grid Margin="30">
 
@@ -35,37 +42,106 @@
                                Margin="0,0,0,40"/>
 
                     <!-- Usuario -->
-                    <Border x:Name="usuario" Background="#22000000"
-                            CornerRadius="10"
-                            Margin="0,0,0,20">
+                    <Grid Margin="0,0,0,20">
 
-                        <TextBox Height="43"
-                                 Background="Transparent"
-                                 Foreground="White"
-                                 BorderThickness="0"
-                                 Padding="15,0"
-                                 FontSize="14"
-                                 VerticalContentAlignment="Center"
-                                 Text="Usuario"/>
-                    </Border>
+                        <Border Background="#CC000000"
+            CornerRadius="10">
 
-                    <!-- pass -->
-                    <Border Background="#22000000"
-                            CornerRadius="10"
-                            Margin="0,0,0,30" Width="252">
+                            <Grid>
 
-                        <PasswordBox x:Name="pass" Height="43"
-                                     Background="Transparent"
-                                     Foreground="White"
-                                     BorderThickness="0"
-                                     Padding="15,0"
-                                     FontSize="14"
-                                     VerticalContentAlignment="Center" Width="254"/>
-                    </Border>
 
-                    <!-- BtnIngrear -->
+                                <TextBox x:Name="txtUsuario"
+                     Height="43"
+                     Background="Transparent"
+                     Foreground="White"
+                     BorderThickness="0"
+                     Padding="15,0"
+                     FontSize="14"
+                     VerticalContentAlignment="Center" TextChanged="txtUsuario_TextChanged"
+                     />
+
+
+                                <TextBlock x:Name="txtPlaceholderUsuario"
+                       Text="Usuario"
+                       Foreground="#CCFFFFFF"
+                       Margin="15,0,0,0"
+                       VerticalAlignment="Center"
+                       IsHitTestVisible="False"/>
+
+                            </Grid>
+
+                        </Border>
+
+                    </Grid>
+
+                    <!-- PASSWORD -->
+                    <Grid Margin="0,0,0,30"
+      Width="252">
+
+                        <Border Background="#CC000000"
+            CornerRadius="10">
+
+                            <Grid>
+
+                                <!-- Password oculta -->
+                                <PasswordBox x:Name="passOculta"
+                         Height="43"
+                         Background="Transparent"
+                         Foreground="White"
+                         BorderThickness="0"
+                         Padding="15,0,45,0"
+                         FontSize="14"
+                         VerticalContentAlignment="Center" PasswordChanged="passOculta_PasswordChanged"
+                                             
+                         />
+
+                                <!-- Password visible -->
+                                <TextBox x:Name="passVisible"
+                     Height="43"
+                     Background="Transparent"
+                     Foreground="White"
+                     BorderThickness="0"
+                     Padding="15,0,45,0"
+                     FontSize="14"
+                     VerticalContentAlignment="Center"
+                     Visibility="Collapsed" TextChanged="passVisible_TextChanged" 
+                                         />
+
+                                <!-- Placeholder -->
+                                <TextBlock x:Name="txtPlaceholderPassword"
+                       Text="Contraseña"
+                       Foreground="#CCFFFFFF"
+                       Margin="15,0,0,0"
+                       VerticalAlignment="Center"
+                       IsHitTestVisible="False"/>
+
+                                <!-- Botón ojo -->
+                                <Button x:Name="btnMostrar"
+                    Width="24"
+                    Height="24"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,10,0"
+                    VerticalAlignment="Center"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Click="btnMostrar_Click">
+
+                                    <Image x:Name="imgOjo"
+                       Source="pack://application:,,,/Resources/eyeClose.png"
+                       Stretch="Uniform"/>
+
+                                </Button>
+
+                            </Grid>
+
+                        </Border>
+
+                    </Grid>
+
+                    <!-- Botón ingresar -->
                     <Button x:Name="btnIngresar"
-                            Content="Ingresa"
+                            Content="Ingresar"
                             Height="40"
                             Background="#750E0E"
                             Foreground="White"
@@ -76,17 +152,27 @@
 
                         <Button.Style>
                             <Style TargetType="Button">
+
                                 <Setter Property="Template">
+
                                     <Setter.Value>
+
                                         <ControlTemplate TargetType="Button">
+
                                             <Border Background="{TemplateBinding Background}"
                                                     CornerRadius="15">
+
                                                 <ContentPresenter HorizontalAlignment="Center"
                                                                   VerticalAlignment="Center"/>
+
                                             </Border>
+
                                         </ControlTemplate>
+
                                     </Setter.Value>
+
                                 </Setter>
+
                             </Style>
                         </Button.Style>
 
@@ -97,7 +183,7 @@
             </Grid>
 
         </Border>
-       
-      
+
     </Grid>
+
 </Window>
