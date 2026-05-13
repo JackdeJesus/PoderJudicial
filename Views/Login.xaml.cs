@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using PoderJudicial.Views;
 using System.Windows.Media.Imaging;
+
 
 namespace PoderJudicial.Views
 {
@@ -18,7 +20,12 @@ namespace PoderJudicial.Views
 
         private void btnIngresar_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Bienvenido");
+
+            Window1 dashboard = new Window1();
+
+            dashboard.Show();
+
+            this.Close();
         }
 
         // mostrar y ocultar contraseña
