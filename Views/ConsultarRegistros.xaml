@@ -1,17 +1,348 @@
-﻿<Page x:Class="PoderJudicial.Views.ConsultarRegistros"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:PoderJudicial.Views"
-      mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="Page1">
+﻿<Window x:Class="PoderJudicial.Views.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PoderJudicial.Views"
+        mc:Ignorable="d"
+        Title="Sistema Judicial"
+        Height="720"
+        Width="1140"
+        WindowStartupLocation="CenterScreen"
+        Background="#F3F4F6">
 
-    <Grid>
-        <TextBlock Text="Hola desde Consultar Registros"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="20"/>
+    <!-- ═══════════════ RECURSOS ═══════════════ -->
+
+    <Window.Resources>
+
+        <SolidColorBrush x:Key="ContentBg" Color="#F3F4F6"/>
+
+    </Window.Resources>
+
+    <!-- ═══════════════ CONTENIDO ═══════════════ -->
+
+    <Grid Background="{StaticResource ContentBg}">
+
+        <Grid.RowDefinitions>
+
+            <!-- Header -->
+            <RowDefinition Height="Auto"/>
+
+            <!-- Contenido -->
+            <RowDefinition Height="*"/>
+
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════ HEADER ═══════════════ -->
+
+        <Border Grid.Row="0"
+                Background="White"
+                BorderThickness="0,0,0,1"
+                BorderBrush="#E5E7EB"
+                Padding="32,18">
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+
+                </Grid.ColumnDefinitions>
+
+                <!-- Título -->
+
+                <StackPanel Grid.Column="0">
+
+                    <TextBlock Text="Consultar Registros"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="#111827"/>
+
+                    <TextBlock Text="Bienvenido, Admin Sistema. Visualiza y gestiona los registros de audiencias."
+                               FontSize="12"
+                               Foreground="#6B7280"
+                               Margin="0,3,0,0"/>
+
+                </StackPanel>
+
+                <!-- Fecha -->
+
+                <StackPanel Grid.Column="1"
+                            HorizontalAlignment="Right">
+
+                    <TextBlock x:Name="TxtHora"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="#111827"
+                               HorizontalAlignment="Right"/>
+
+                    <TextBlock x:Name="TxtFecha"
+                               FontSize="12"
+                               Foreground="#6B7280"
+                               HorizontalAlignment="Right"
+                               Margin="0,2,0,0"/>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
+
+        <!-- ═══════════════ CONTENIDO TABLA ═══════════════ -->
+
+        <Grid Grid.Row="1"
+              Margin="32">
+
+            <Grid.RowDefinitions>
+
+                <!-- Buscador -->
+                <RowDefinition Height="Auto"/>
+
+                <!-- Tabla -->
+                <RowDefinition Height="*"/>
+
+            </Grid.RowDefinitions>
+
+            <!-- ═══════════════ BUSCADOR ═══════════════ -->
+
+            <Grid Grid.Row="0"
+                  Margin="0,0,0,24">
+
+                <Grid.ColumnDefinitions>
+
+                    <ColumnDefinition Width="420"/>
+                    <ColumnDefinition Width="*"/>
+
+                </Grid.ColumnDefinitions>
+
+                <!-- Search -->
+
+                <Border Grid.Column="0"
+                        Background="White"
+                        CornerRadius="10"
+                        BorderBrush="#D1D5DB"
+                        BorderThickness="1"
+                        Height="42">
+
+                    <Grid>
+
+                        <Grid.ColumnDefinitions>
+
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="🔍"
+                                   FontSize="15"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Foreground="#6B7280"/>
+
+                        <TextBox x:Name="txtBuscar"
+                                 Grid.Column="1"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 FontSize="13"
+                                 VerticalContentAlignment="Center"
+                                 Padding="0,0,10,0"/>
+
+                    </Grid>
+
+                </Border>
+
+                <!-- Total -->
+
+                <Border Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="#F3F4F6"
+                        CornerRadius="8"
+                        Padding="12,6">
+
+                    <TextBlock x:Name="txtTotalRegistros"
+                               Text="0 registro(s) encontrado(s)"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="#374151"/>
+
+                </Border>
+
+            </Grid>
+
+            <!-- ═══════════════ TABLA ═══════════════ -->
+
+            <Border Grid.Row="1"
+                    Background="White"
+                    CornerRadius="16"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1">
+
+                <DataGrid x:Name="dgAudiencias"
+                          AutoGenerateColumns="False"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          Background="White"
+                          RowBackground="White"
+                          AlternatingRowBackground="#FAFAFA"
+                          CanUserResizeRows="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          RowHeight="56"
+                          ColumnHeaderHeight="52"
+                          FontSize="13">
+
+                    <!-- HEADER -->
+
+                    <DataGrid.ColumnHeaderStyle>
+
+                        <Style TargetType="DataGridColumnHeader">
+
+                            <Setter Property="Background"
+                                    Value="#F9FAFB"/>
+
+                            <Setter Property="Foreground"
+                                    Value="#111827"/>
+
+                            <Setter Property="FontWeight"
+                                    Value="SemiBold"/>
+
+                            <Setter Property="Padding"
+                                    Value="10"/>
+
+                            <Setter Property="BorderBrush"
+                                    Value="#E5E7EB"/>
+
+                            <Setter Property="BorderThickness"
+                                    Value="0,0,0,1"/>
+
+                        </Style>
+
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <!-- FILAS -->
+
+                    <DataGrid.RowStyle>
+
+                        <Style TargetType="DataGridRow">
+
+                            <Setter Property="BorderBrush"
+                                    Value="#F3F4F6"/>
+
+                            <Setter Property="BorderThickness"
+                                    Value="0,0,0,1"/>
+
+                        </Style>
+
+                    </DataGrid.RowStyle>
+
+                    <!-- COLUMNAS -->
+
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="No. Causa"
+                                            Width="140"
+                                            Binding="{Binding NoCausa}"/>
+
+                        <DataGridTextColumn Header="NUC"
+                                            Width="150"
+                                            Binding="{Binding NUC}"/>
+
+                        <DataGridTextColumn Header="Fecha Audiencia"
+                                            Width="140"
+                                            Binding="{Binding FechaAudiencia}"/>
+
+                        <DataGridTextColumn Header="Tipo Audiencia"
+                                            Width="180"
+                                            Binding="{Binding TipoAudiencia}"/>
+
+                        <DataGridTextColumn Header="Juzgado"
+                                            Width="180"
+                                            Binding="{Binding Juzgado}"/>
+
+                        <DataGridTextColumn Header="Imputado"
+                                            Width="180"
+                                            Binding="{Binding Imputado}"/>
+
+                        <DataGridTextColumn Header="Sala"
+                                            Width="100"
+                                            Binding="{Binding Sala}"/>
+
+                        <!-- ACCIONES -->
+
+                        <DataGridTemplateColumn Header="Acciones"
+                                                Width="120">
+
+                            <DataGridTemplateColumn.CellTemplate>
+
+                                <DataTemplate>
+
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Center">
+
+                                        <!-- Ver -->
+
+                                        <Button Width="30"
+                                                Height="30"
+                                                Margin="2"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand">
+
+                                            <TextBlock Text="👁"
+                                                       FontSize="14"/>
+
+                                        </Button>
+
+                                        <!-- Editar -->
+
+                                        <Button Width="30"
+                                                Height="30"
+                                                Margin="2"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand">
+
+                                            <TextBlock Text="✏"
+                                                       FontSize="14"/>
+
+                                        </Button>
+
+                                        <!-- Eliminar -->
+
+                                        <Button Width="30"
+                                                Height="30"
+                                                Margin="2"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand">
+
+                                            <TextBlock Text="🗑"
+                                                       FontSize="14"
+                                                       Foreground="#DC2626"/>
+
+                                        </Button>
+
+                                    </StackPanel>
+
+                                </DataTemplate>
+
+                            </DataGridTemplateColumn.CellTemplate>
+
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+
+                </DataGrid>
+
+            </Border>
+
+        </Grid>
+
     </Grid>
-</Page>
+
+</Window>
