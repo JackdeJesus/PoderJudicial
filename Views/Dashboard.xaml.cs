@@ -22,12 +22,7 @@ namespace PoderJudicial.Views
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            NuevoRegistro nuevo = new NuevoRegistro();
-            nuevo.Show();
-            this.Close();
-        }
+        
     }
 }
 

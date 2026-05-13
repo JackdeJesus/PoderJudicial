@@ -101,7 +101,10 @@
                                FontWeight="Bold"
                                Margin="28,0,0,8"/>
 
-                    <Button Style="{StaticResource SidebarButtonActiveStyle}" Height="48">
+                    <Button  x:Name="BtnConsultar"
+        Style="{StaticResource SidebarButtonActiveStyle}"
+        Height="48"
+        Click="BtnConsultar_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="3" Height="24" CornerRadius="2" Background="{StaticResource AccentGreen}" Margin="0,0,12,0"/>
                             <TextBlock Text="▦" FontSize="16" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{StaticResource AccentGreen}"/>
@@ -109,7 +112,10 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SidebarButtonStyle}" Height="48" Click="Button_Click">
+                    <Button x:Name="BtnNuevo"
+        Style="{StaticResource SidebarButtonStyle}"
+        Height="48"
+        Click="BtnNuevo_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="3" Height="24" Margin="0,0,12,0"/>
                             <TextBlock Text="📅" FontSize="15" VerticalAlignment="Center" Margin="0,0,10,0"/>
@@ -117,7 +123,10 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SidebarButtonStyle}" Height="48">
+                    <Button x:Name="BtnReportes"
+        Style="{StaticResource SidebarButtonStyle}"
+        Height="48"
+        Click="BtnReportes_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="3" Height="24" Margin="0,0,12,0"/>
                             <TextBlock Text="📋" FontSize="15" VerticalAlignment="Center" Margin="0,0,10,0"/>
@@ -125,7 +134,10 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SidebarButtonStyle}" Height="48">
+                    <Button x:Name="BtnConfig"
+        Style="{StaticResource SidebarButtonStyle}"
+        Height="48"
+        Click="BtnConfig_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="3" Height="24" Margin="0,0,12,0"/>
                             <TextBlock Text="⚙" FontSize="15" VerticalAlignment="Center" Margin="0,0,10,0"/>
@@ -224,7 +236,10 @@
                 </Border>
 
                 <!-- Contenido vacío -->
-                <Border Grid.Row="1" Background="{StaticResource ContentBg}"/>
+                <Frame x:Name="MainFrame"
+       Grid.Row="1"
+       NavigationUIVisibility="Hidden"
+       Background="{StaticResource ContentBg}"/>
 
             </Grid>
         </Border>
