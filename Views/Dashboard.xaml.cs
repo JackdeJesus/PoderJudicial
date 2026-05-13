@@ -20,9 +20,31 @@ namespace PoderJudicial.Views
         public Dashboard()
         {
             InitializeComponent();
+            
+            MainFrame.Navigate(new PoderJudicial.Views.ConsultarRegistros());
+
         }
 
-        
+        private void BtnConsultar_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new PoderJudicial.Views.ConsultarRegistros());
+
+        }
+
+        private void BtnNuevo_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnReportes_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnConfig_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
 
