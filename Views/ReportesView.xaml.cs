@@ -19,7 +19,7 @@ namespace PoderJudicial.Views
     /// </summary>
     public partial class ReportesView : Window
     {
-        public ReportesView()
+         public ReportesView()
         {
             InitializeComponent();
         }

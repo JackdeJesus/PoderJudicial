@@ -1,4 +1,4 @@
-﻿<Window x:Class="PoderJudicial.Views.Window1"
+﻿<Window x:Class="PoderJudicial.Views.ReportesView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -60,13 +60,13 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Right">
 
-                    <TextBlock x:Name="TxtHora"
+                    <TextBlock x:Name="TxtHoraf"
                                FontSize="22"
                                FontWeight="Bold"
                                Foreground="#111827"
                                HorizontalAlignment="Right"/>
 
-                    <TextBlock x:Name="TxtFecha"
+                    <TextBlock x:Name="TxtFechaR"
                                FontSize="12"
                                Foreground="#6B7280"
                                HorizontalAlignment="Right"

@@ -13,11 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace PoderJudicial.Views
 {
-    /// <summary>
-    /// Lógica de interacción para Page1.xaml
-    /// </summary>
     public partial class ConsultarRegistros : Page
     {
         public ConsultarRegistros()
