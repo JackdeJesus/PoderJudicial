@@ -21,7 +21,7 @@ namespace PoderJudicial.Views
         private void btnIngresar_Click(object sender, RoutedEventArgs e)
         {
 
-            Window1 dashboard = new Window1();
+            Dashboard dashboard = new Dashboard();
 
             dashboard.Show();
 

@@ -12,22 +12,28 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-
 namespace PoderJudicial.Views
 {
-    public partial class Dashboard : Window
+    /// <summary>
+    /// Lógica de interacción para Window1.xaml
+    /// </summary>
+    public partial class NuevoRegistro : Window
     {
-        public Dashboard()
+        public NuevoRegistro()
         {
             InitializeComponent();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            NuevoRegistro nuevo = new NuevoRegistro();
-            nuevo.Show();
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            Dashboard dashboard = new Dashboard();
+            dashboard.Show();
             this.Close();
         }
     }
 }
-

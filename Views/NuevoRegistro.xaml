@@ -1,4 +1,4 @@
-﻿<Window x:Class="PoderJudicial.Views.Dashboard"
+﻿<Window x:Class="PoderJudicial.Views.NuevoRegistro"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -101,19 +101,19 @@
                                FontWeight="Bold"
                                Margin="28,0,0,8"/>
 
-                    <Button Style="{StaticResource SidebarButtonActiveStyle}" Height="48">
+                    <Button Style="{StaticResource SidebarButtonStyle}" Height="48" Click="Button_Click_1">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Border Width="3" Height="24" CornerRadius="2" Background="{StaticResource AccentGreen}" Margin="0,0,12,0"/>
-                            <TextBlock Text="▦" FontSize="16" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{StaticResource AccentGreen}"/>
-                            <TextBlock Text="Consultar Registros" FontSize="13" FontWeight="Medium" VerticalAlignment="Center" Foreground="White"/>
+                            <Border Width="3" Height="24"  Margin="0,0,12,0"/>
+                            <TextBlock Text="▦" FontSize="16" VerticalAlignment="Center" Margin="0,0,10,0" />
+                            <TextBlock Text="Consultar Registros" FontSize="13"  VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource SidebarButtonStyle}" Height="48" Click="Button_Click">
+                    <Button Style="{StaticResource SidebarButtonActiveStyle}" Height="48" Click="Button_Click">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Border Width="3" Height="24" Margin="0,0,12,0"/>
-                            <TextBlock Text="📅" FontSize="15" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                            <TextBlock Text="Nuevo Registro" FontSize="13" VerticalAlignment="Center"/>
+                            <Border Width="3" Height="24" CornerRadius="2" Background="{StaticResource AccentGreen}" Margin="0,0,12,0"/>
+                            <TextBlock Text="📅" FontSize="15" VerticalAlignment="Center" Margin="0,0,10,0"  Foreground="{StaticResource AccentGreen}"/>
+                            <TextBlock Text="Nuevo Registro" FontSize="13"  FontWeight="Medium" VerticalAlignment="Center" Foreground="White"/>
                         </StackPanel>
                     </Button>
 
