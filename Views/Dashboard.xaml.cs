@@ -33,7 +33,7 @@ namespace PoderJudicial.Views
 
         private void BtnNuevo_Click(object sender, RoutedEventArgs e)
         {
-
+            MainFrame.Navigate(new PoderJudicial.Views.NuevoRegistro());
         }
 
         private void BtnReportes_Click(object sender, RoutedEventArgs e)
