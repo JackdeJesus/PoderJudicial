@@ -189,51 +189,6 @@
                 </Grid.RowDefinitions>
 
                 <!-- ── Barra superior ── -->
-                <Border Grid.Row="0"
-                        Background="White"
-                        BorderThickness="0,0,0,1"
-                        BorderBrush="#E5E7EB"
-                        Padding="32,18">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Título y bienvenida -->
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="Consultar Registros"
-                                       FontSize="20"
-                                       FontWeight="Bold"
-                                       Foreground="#111827"/>
-                            <TextBlock Text="Bienvenido, Admin Sistema. Visualiza y gestiona los registros de audiencias."
-                                       FontSize="12"
-                                       Foreground="#6B7280"
-                                       Margin="0,3,0,0"/>
-                        </StackPanel>
-
-                        <!-- Hora y fecha -->
-                        <StackPanel Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Right">
-
-                            <!-- Hora -->
-                            <TextBlock x:Name="TxtHora"
-                                       FontSize="22"
-                                       FontWeight="Bold"
-                                       Foreground="#111827"
-                                       HorizontalAlignment="Right"/>
-
-                            <!-- Día -->
-                            <TextBlock x:Name="TxtFecha"
-                                       FontSize="12"
-                                       Foreground="#6B7280"
-                                       HorizontalAlignment="Right"
-                                       Margin="0,2,0,0"/>
-                        </StackPanel>
-
-                    </Grid>
-                </Border>
 
                 <!-- Contenido vacío -->
                 <Frame x:Name="MainFrame"
