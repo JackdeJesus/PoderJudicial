@@ -5,31 +5,64 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:local="clr-namespace:PoderJudicial.Views"
       mc:Ignorable="d"
-      Background="#F3F4F6">
-
-    <!-- ═══════════════ RECURSOS ═══════════════ -->
+      Background="#F3F4F6"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch">
 
     <Page.Resources>
 
         <SolidColorBrush x:Key="ContentBg" Color="#F3F4F6"/>
 
+        <!-- Estilo badge tipo audiencia -->
+        <Style x:Key="BadgeStyle" TargetType="Border">
+            <Setter Property="Background" Value="#F3F4F6"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Estilo botón acción -->
+        <Style x:Key="ActionBtnStyle" TargetType="Button">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                x:Name="btn">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btn" Property="Background" Value="#F3F4F6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Page.Resources>
 
-    <!-- ═══════════════ CONTENIDO ═══════════════ -->
-
-    <Grid Background="{StaticResource ContentBg}" Height="650">
+    <Grid Background="{StaticResource ContentBg}"
+          HorizontalAlignment="Stretch"
+          VerticalAlignment="Stretch">
 
         <Grid.RowDefinitions>
-
-            <!-- Header -->
             <RowDefinition Height="Auto"/>
-
-            <!-- Contenido -->
             <RowDefinition Height="*"/>
-
         </Grid.RowDefinitions>
 
-        <!-- ═══════════════ HEADER ═══════════════ -->
+        <!-- ══════════════════════════════════
+             HEADER
+        ══════════════════════════════════ -->
 
         <Border Grid.Row="0"
                 Background="White"
@@ -40,13 +73,9 @@
             <Grid>
 
                 <Grid.ColumnDefinitions>
-
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
-
                 </Grid.ColumnDefinitions>
-
-                <!-- Título -->
 
                 <StackPanel Grid.Column="0">
 
@@ -61,8 +90,6 @@
                                Margin="0,3,0,0"/>
 
                 </StackPanel>
-
-                <!-- Fecha -->
 
                 <StackPanel Grid.Column="1"
                             HorizontalAlignment="Right">
@@ -85,35 +112,29 @@
 
         </Border>
 
-        <!-- ═══════════════ CONTENIDO TABLA ═══════════════ -->
+        <!-- ══════════════════════════════════
+             CONTENIDO
+        ══════════════════════════════════ -->
 
         <Grid Grid.Row="1"
               Margin="32">
 
             <Grid.RowDefinitions>
-
-                <!-- Buscador -->
                 <RowDefinition Height="Auto"/>
-
-                <!-- Tabla -->
                 <RowDefinition Height="*"/>
-
             </Grid.RowDefinitions>
 
-            <!-- ═══════════════ BUSCADOR ═══════════════ -->
+            <!-- ═══ BUSCADOR ═══ -->
 
             <Grid Grid.Row="0"
-                  Margin="0,0,0,24">
+                  Margin="0,0,0,20">
 
                 <Grid.ColumnDefinitions>
-
                     <ColumnDefinition Width="420"/>
                     <ColumnDefinition Width="*"/>
-
                 </Grid.ColumnDefinitions>
 
-                <!-- Search -->
-
+                <!-- Campo buscar -->
                 <Border Grid.Column="0"
                         Background="White"
                         CornerRadius="10"
@@ -124,38 +145,68 @@
                     <Grid>
 
                         <Grid.ColumnDefinitions>
-
                             <ColumnDefinition Width="40"/>
                             <ColumnDefinition Width="*"/>
-
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="🔍"
-                                   FontSize="15"
+                        <TextBlock Text="⌕"
+                                   FontSize="14"
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
-                                   Foreground="#6B7280"/>
+                                   Foreground="#9CA3AF"/>
 
                         <TextBox x:Name="txtBuscar"
                                  Grid.Column="1"
                                  BorderThickness="0"
                                  Background="Transparent"
                                  FontSize="13"
+                                 Foreground="#374151"
                                  VerticalContentAlignment="Center"
-                                 Padding="0,0,10,0"/>
+                                 Padding="0,0,10,0">
+
+                            <!-- Placeholder -->
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Style.Resources>
+                                        <VisualBrush x:Key="PlaceholderBrush"
+                                                     AlignmentX="Left"
+                                                     AlignmentY="Center"
+                                                     Stretch="None">
+                                            <VisualBrush.Visual>
+                                                <TextBlock Text="Buscar por causa, NUC, imputado, agraviado..."
+                                                           Foreground="#9CA3AF"
+                                                           FontSize="13"
+                                                           Margin="0"/>
+                                            </VisualBrush.Visual>
+                                        </VisualBrush>
+                                    </Style.Resources>
+                                    <Style.Triggers>
+                                        <Trigger Property="Text" Value="">
+                                            <Setter Property="Background"
+                                                    Value="{StaticResource PlaceholderBrush}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsKeyboardFocused" Value="True">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+
+                        </TextBox>
 
                     </Grid>
 
                 </Border>
 
-                <!-- Total -->
-
+                <!-- Total registros -->
                 <Border Grid.Column="1"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Background="#F3F4F6"
+                        Background="White"
                         CornerRadius="8"
-                        Padding="12,6">
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1"
+                        Padding="14,7">
 
                     <TextBlock x:Name="txtTotalRegistros"
                                Text="0 registro(s) encontrado(s)"
@@ -167,13 +218,14 @@
 
             </Grid>
 
-            <!-- ═══════════════ TABLA ═══════════════ -->
+            <!-- ═══ TABLA ═══ -->
 
             <Border Grid.Row="1"
                     Background="White"
                     CornerRadius="16"
                     BorderBrush="#E5E7EB"
-                    BorderThickness="1">
+                    BorderThickness="1"
+                    ClipToBounds="True">
 
                 <DataGrid x:Name="dgAudiencias"
                           AutoGenerateColumns="False"
@@ -186,141 +238,222 @@
                           CanUserResizeRows="False"
                           CanUserAddRows="False"
                           CanUserDeleteRows="False"
+                          CanUserSortColumns="True"
                           SelectionMode="Single"
                           SelectionUnit="FullRow"
                           RowHeight="56"
                           ColumnHeaderHeight="52"
-                          FontSize="13">
+                          FontSize="13"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto"
+                          FrozenColumnCount="1">
 
-                    <!-- HEADER -->
-
+                    <!-- ── Estilo Header ── -->
                     <DataGrid.ColumnHeaderStyle>
-
                         <Style TargetType="DataGridColumnHeader">
-
-                            <Setter Property="Background"
-                                    Value="#F9FAFB"/>
-
-                            <Setter Property="Foreground"
-                                    Value="#111827"/>
-
-                            <Setter Property="FontWeight"
-                                    Value="SemiBold"/>
-
-                            <Setter Property="Padding"
-                                    Value="10"/>
-
-                            <Setter Property="BorderBrush"
-                                    Value="#E5E7EB"/>
-
-                            <Setter Property="BorderThickness"
-                                    Value="0,0,0,1"/>
-
+                            <Setter Property="Background" Value="#F9FAFB"/>
+                            <Setter Property="Foreground" Value="#111827"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="FontSize" Value="13"/>
+                            <Setter Property="Padding" Value="12,0"/>
+                            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="Height" Value="52"/>
                         </Style>
-
                     </DataGrid.ColumnHeaderStyle>
 
-                    <!-- FILAS -->
-
+                    <!-- ── Estilo Filas ── -->
                     <DataGrid.RowStyle>
-
                         <Style TargetType="DataGridRow">
-
-                            <Setter Property="BorderBrush"
-                                    Value="#F3F4F6"/>
-
-                            <Setter Property="BorderThickness"
-                                    Value="0,0,0,1"/>
-
+                            <Setter Property="BorderBrush" Value="#F3F4F6"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#F8FAFC"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#EFF6FF"/>
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
-
                     </DataGrid.RowStyle>
 
-                    <!-- COLUMNAS -->
+                    <!-- ── Estilo Celdas ── -->
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Padding" Value="12,0"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Padding="{TemplateBinding Padding}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="#111827"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.CellStyle>
+
+                    <!-- ══════════════════════════════
+                         COLUMNAS
+                    ══════════════════════════════ -->
 
                     <DataGrid.Columns>
 
+                        <!-- No. Causa -->
                         <DataGridTextColumn Header="No. Causa"
-                                            Width="140"
-                                            Binding="{Binding NoCausa}"/>
-
-                        <DataGridTextColumn Header="NUC"
                                             Width="150"
-                                            Binding="{Binding NUC}"/>
+                                            Binding="{Binding NoCausa}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="#111827"/>
+                                    <Setter Property="FontWeight" Value="Medium"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
+                        <!-- NUC -->
+                        <DataGridTextColumn Header="NUC"
+                                            Width="160"
+                                            Binding="{Binding NUC}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="#374151"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+
+                        <!-- Fecha Audiencia -->
                         <DataGridTextColumn Header="Fecha Audiencia"
                                             Width="140"
-                                            Binding="{Binding FechaAudiencia}"/>
+                                            Binding="{Binding FechaAudiencia}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="#374151"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="Tipo Audiencia"
-                                            Width="180"
-                                            Binding="{Binding TipoAudiencia}"/>
+                        <!-- Tipo Audiencia (badge) -->
+                        <DataGridTemplateColumn Header="Tipo Audiencia"
+                                                Width="200">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource BadgeStyle}">
+                                        <TextBlock Text="{Binding TipoAudiencia}"
+                                                   FontSize="12"
+                                                   Foreground="#374151"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
 
+                        <!-- Juzgado -->
                         <DataGridTextColumn Header="Juzgado"
-                                            Width="180"
-                                            Binding="{Binding Juzgado}"/>
+                                            Width="200"
+                                            Binding="{Binding Juzgado}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="#374151"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
+                        <!-- Imputado -->
                         <DataGridTextColumn Header="Imputado"
-                                            Width="180"
-                                            Binding="{Binding Imputado}"/>
+                                            Width="200"
+                                            Binding="{Binding Imputado}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="#374151"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
+                        <!-- Sala -->
                         <DataGridTextColumn Header="Sala"
-                                            Width="100"
-                                            Binding="{Binding Sala}"/>
+                                            Width="130"
+                                            Binding="{Binding Sala}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Foreground" Value="#374151"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
-                        <!-- ACCIONES -->
-
+                        <!-- ── ACCIONES (frozen derecha) ── -->
                         <DataGridTemplateColumn Header="Acciones"
-                                                Width="120">
+                                                Width="120"
+                                                CanUserSort="False"
+                                                CanUserResize="False">
+
+                            <DataGridTemplateColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="#F9FAFB"/>
+                                    <Setter Property="Foreground" Value="#111827"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    <Setter Property="Height" Value="52"/>
+                                </Style>
+                            </DataGridTemplateColumn.HeaderStyle>
 
                             <DataGridTemplateColumn.CellTemplate>
-
                                 <DataTemplate>
-
                                     <StackPanel Orientation="Horizontal"
-                                                HorizontalAlignment="Center">
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
 
-                                        <Button Width="30"
-                                                Height="30"
-                                                Margin="2"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Cursor="Hand">
-
+                                        <!-- Ver -->
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                                                ToolTip="Ver detalle">
                                             <TextBlock Text="👁"
-                                                       FontSize="14"/>
-
+                                                       FontSize="15"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"/>
                                         </Button>
 
-                                        <Button Width="30"
-                                                Height="30"
-                                                Margin="2"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Cursor="Hand">
-
+                                        <!-- Editar -->
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                                                ToolTip="Editar registro">
                                             <TextBlock Text="✏"
-                                                       FontSize="14"/>
-
+                                                       FontSize="15"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"/>
                                         </Button>
 
-                                        <Button Width="30"
-                                                Height="30"
-                                                Margin="2"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Cursor="Hand">
-
+                                        <!-- Eliminar -->
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                                                ToolTip="Eliminar registro">
                                             <TextBlock Text="🗑"
-                                                       FontSize="14"
-                                                       Foreground="#DC2626"/>
-
+                                                       FontSize="15"
+                                                       Foreground="#DC2626"
+                                                       VerticalAlignment="Center"
+                                                       HorizontalAlignment="Center"/>
                                         </Button>
 
                                     </StackPanel>
-
                                 </DataTemplate>
-
                             </DataGridTemplateColumn.CellTemplate>
 
                         </DataGridTemplateColumn>
