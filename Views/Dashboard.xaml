@@ -10,7 +10,7 @@
         Width="800"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="CanResize">
+        ResizeMode="CanResize" Cursor="">
 
     <!-- RECURSOS -->
     <Window.Resources>
@@ -310,6 +310,12 @@
                                        FontSize="11"/>
 
                         </StackPanel>
+                        <Button x:Name="BtnRegresar" Grid.Column="1" Width="30" Height="30"
+                                Background="Transparent" BorderThickness="0"
+                                Cursor="Hand" ToolTip="Cerrar sesión" VerticalAlignment="Center" Margin="136,0,18,0" Click="BtnRegresar_Click">
+                            <TextBlock Text="↪️" FontSize="16" Foreground="{StaticResource TextSecondary}"
+                                       HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        </Button>
 
                     </Grid>
 

@@ -17,7 +17,7 @@ namespace PoderJudicial.Views
     /// <summary>
     /// Lógica de interacción para ReportesView.xaml
     /// </summary>
-    public partial class ReportesView : Window
+    public partial class ReportesView : Page
     {
          public ReportesView()
         {

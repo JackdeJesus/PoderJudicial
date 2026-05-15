@@ -61,9 +61,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ══════════════════════════════════
-             HEADER
-        ══════════════════════════════════ -->
+        <!-- HEADER-->
 
         <Border Grid.Row="0"
                 Background="White"
@@ -305,9 +303,9 @@
                         </Style>
                     </DataGrid.CellStyle>
 
-                    <!-- ══════════════════════════════
-                         COLUMNAS
-                    ══════════════════════════════ -->
+                    <!-- columnas -->
+                       
+                 
 
                     <DataGrid.Columns>
 
@@ -426,8 +424,8 @@
                                                 VerticalAlignment="Center">
 
                                         <!-- Ver -->
-                                        <Button Style="{StaticResource ActionBtnStyle}"
-                                                ToolTip="Ver detalle">
+                                        <Button x:Name="BtnVer" Style="{StaticResource ActionBtnStyle}"
+                                                ToolTip="Ver detalle" Click="BtnVer_Click">
                                             <TextBlock Text="👁"
                                                        FontSize="15"
                                                        VerticalAlignment="Center"
@@ -435,23 +433,15 @@
                                         </Button>
 
                                         <!-- Editar -->
-                                        <Button Style="{StaticResource ActionBtnStyle}"
-                                                ToolTip="Editar registro">
+                                        <Button x:Name="BtnEditar" Style="{StaticResource ActionBtnStyle}"
+                                                ToolTip="Editar registro" Click="BtnEditar_Click">
                                             <TextBlock Text="✏"
                                                        FontSize="15"
                                                        VerticalAlignment="Center"
                                                        HorizontalAlignment="Center"/>
                                         </Button>
 
-                                        <!-- Eliminar -->
-                                        <Button Style="{StaticResource ActionBtnStyle}"
-                                                ToolTip="Eliminar registro">
-                                            <TextBlock Text="🗑"
-                                                       FontSize="15"
-                                                       Foreground="#DC2626"
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Center"/>
-                                        </Button>
+                                        
 
                                     </StackPanel>
                                 </DataTemplate>

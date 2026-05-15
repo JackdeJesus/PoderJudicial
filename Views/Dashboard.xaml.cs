@@ -21,7 +21,7 @@ namespace PoderJudicial.Views
         {
             InitializeComponent();
 
-            // BOTÓN INICIAL ACTIVO
+            // btn activado de boton
             ActivarBoton(BtnConsultar);
 
             // PÁGINA INICIAL
@@ -40,7 +40,7 @@ namespace PoderJudicial.Views
                 BtnConfig
             };
 
-            // DESACTIVAR TODOS
+            // Desactivar todos
             foreach (Button btn in botones)
             {
                 btn.Background =
@@ -52,7 +52,7 @@ namespace PoderJudicial.Views
                         System.Windows.Media.ColorConverter.ConvertFromString("#8B92A5"));
             }
 
-            // ACTIVAR SOLO UNO
+            // activar solo uno
             botonActivo.Background =
                 new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)
@@ -64,7 +64,7 @@ namespace PoderJudicial.Views
                     System.Windows.Media.ColorConverter.ConvertFromString("#2ECC8F"));
         }
 
-        // CONSULTAR
+        // Cosultar
         private void BtnConsultar_Click(object sender, RoutedEventArgs e)
         {
             ActivarBoton(BtnConsultar);
@@ -72,7 +72,7 @@ namespace PoderJudicial.Views
             MainFrame.Navigate(new ConsultarRegistros());
         }
 
-        // NUEVO
+        // Nuevo
         private void BtnNuevo_Click(object sender, RoutedEventArgs e)
         {
             ActivarBoton(BtnNuevo);
@@ -85,15 +85,24 @@ namespace PoderJudicial.Views
         {
             ActivarBoton(BtnReportes);
 
-            // MainFrame.Navigate(new Reportes());
+             MainFrame.Navigate(new ReportesView());
         }
 
-        // CONFIG
+        // Config
         private void BtnConfig_Click(object sender, RoutedEventArgs e)
         {
             ActivarBoton(BtnConfig);
 
-            // MainFrame.Navigate(new Configuracion());
+        }
+
+        private void BtnRegresar_Click(object sender, RoutedEventArgs e)
+        {
+            
+            Login login = new Login();
+            login.Show();
+
+            
+            this.Close();
         }
     }
 }
