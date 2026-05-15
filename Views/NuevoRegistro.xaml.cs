@@ -1,293 +1,217 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using System.Text.RegularExpressions;
-
 
 namespace PoderJudicial.Views
 {
     public partial class NuevoRegistro : Page
     {
-        // Contador de jueces extra agregados dinámicamente
-        private int _juecesExtra = 0;
-
+        // ──────────────────────────────────────────
+        //  CONSTRUCTOR
+        // ──────────────────────────────────────────
         public NuevoRegistro()
         {
             InitializeComponent();
-
-            // Placeholder visual para los TextBox con Tag
-            AddPlaceholderBehavior(TxtId);
-            AddPlaceholderBehavior(TxtHoraAudiencia, "HH:MM");
-            AddPlaceholderBehavior(TxtHoraRecibo, "HH:MM");
-            AddPlaceholderBehavior(TxtHoraConclusion, "HH:MM");
-            AddPlaceholderBehavior(TxtNoCausa, "Ej: 123/2024");
-            AddPlaceholderBehavior(TxtNUC, "Ej: 12-2024-00567");
-            AddPlaceholderBehavior(TxtNoCausaJuicio, "Ej: 89/2024");
-            AddPlaceholderBehavior(TxtTipoAudiencia, "Escriba el tipo de audiencia");
-            AddPlaceholderBehavior(TxtImputado, "Nombre del imputado");
-            AddPlaceholderBehavior(TxtDelito, "Tipo de delito");
-            AddPlaceholderBehavior(TxtAgraviado, "Nombre del agraviado");
-            AddPlaceholderBehavior(TxtDiferida, "Puede quedar vacío");
         }
 
-        // ─────────────────────────────────────────────────────────
-        //  PLACEHOLDER HELPER
-        // ─────────────────────────────────────────────────────────
-        private void AddPlaceholderBehavior(TextBox tb, string? placeholder = null)
+        // ══════════════════════════════════════════
+        //  HELPER: poblar cualquier ComboBox de horas
+        //  08:00 → 20:00, minuto a minuto (721 opciones)
+        // ══════════════════════════════════════════
+        private void HoraCombo_Loaded(object sender, RoutedEventArgs e)
         {
-            string ph = placeholder ?? (tb.Tag as string ?? "");
-            if (string.IsNullOrEmpty(ph)) return;
+            var combo = (ComboBox)sender;
+            if (combo.Items.Count > 0) return; // ya poblado
 
-            tb.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
-            tb.Text = ph;
+            combo.Items.Add(new ComboBoxItem { Content = "-- Hora --" });
 
-            tb.GotFocus += (s, e) =>
+            for (int h = 8; h <= 20; h++)
             {
-                if (tb.Text == ph)
+                int minLimit = (h == 20) ? 0 : 59; // 20:00 es el tope
+                for (int m = 0; m <= minLimit; m++)
                 {
-                    tb.Text = "";
-                    tb.Foreground = new SolidColorBrush(Color.FromRgb(0x37, 0x41, 0x51));
+                    combo.Items.Add(new ComboBoxItem
+                    {
+                        Content = $"{h:D2}:{m:D2}"
+                    });
                 }
-            };
+            }
 
-            tb.LostFocus += (s, e) =>
-            {
-                if (string.IsNullOrWhiteSpace(tb.Text))
-                {
-                    tb.Text = ph;
-                    tb.Foreground = new SolidColorBrush(Color.FromRgb(0x9C, 0xA3, 0xAF));
-                }
-            };
+            combo.SelectedIndex = 0;
         }
 
-        // Obtiene el texto real (sin placeholder)
-        private string GetText(TextBox tb)
+        // ══════════════════════════════════════════
+        //  TOTAL DISCOS  (★ nuevo comportamiento)
+        // ══════════════════════════════════════════
+        private void CmbTotDiscos_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string ph = tb.Tag as string ?? "";
-            string val = tb.Text.Trim();
-            return val == ph ? "" : val;
+            if (TxtTotDiscosOtro == null) return;
+
+            var item = CmbTotDiscos.SelectedItem as ComboBoxItem;
+            bool esOtro = item?.Content?.ToString() == "Otro...";
+            TxtTotDiscosOtro.Visibility = esOtro ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // ─────────────────────────────────────────────────────────
-        //  SOLO NÚMEROS EN TxtTotDiscos
-        // ─────────────────────────────────────────────────────────
-        private void OnlyNumbers_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !Regex.IsMatch(e.Text, @"^\d+$");
-        }
-
-        // ─────────────────────────────────────────────────────────
-        //  COMBOS CON "Otro..."
-        // ─────────────────────────────────────────────────────────
-        private void CmbJuzgado_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (TxtJuzgadoOtro == null) return;
-            if (CmbJuzgado.SelectedItem is ComboBoxItem item)
-                TxtJuzgadoOtro.Visibility = item.Content.ToString() == "Otra..."
-                    ? Visibility.Visible : Visibility.Collapsed;
-        }
-
+        // ══════════════════════════════════════════
+        //  TIPO DISCO
+        // ══════════════════════════════════════════
         private void CmbTipoDisco_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (TxtTipoDiscoOtro == null) return;
-            if (CmbTipoDisco.SelectedItem is ComboBoxItem item)
-                TxtTipoDiscoOtro.Visibility = item.Content.ToString() == "Otro..."
-                    ? Visibility.Visible : Visibility.Collapsed;
+
+            var item = CmbTipoDisco.SelectedItem as ComboBoxItem;
+            bool esOtro = item?.Content?.ToString() == "Otro...";
+            TxtTipoDiscoOtro.Visibility = esOtro ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        // ══════════════════════════════════════════
+        //  JUZGADO
+        // ══════════════════════════════════════════
+        private void CmbJuzgado_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TxtJuzgadoOtro == null) return;
+
+            var item = CmbJuzgado.SelectedItem as ComboBoxItem;
+            bool esOtra = item?.Content?.ToString() == "Otra...";
+            TxtJuzgadoOtro.Visibility = esOtra ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        // ══════════════════════════════════════════
+        //  TOTAL DISCO AUDIENCIA
+        // ══════════════════════════════════════════
         private void CmbTotDiscoAudiencia_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (TxtTotDiscoAudienciaOtro == null) return;
-            if (CmbTotDiscoAudiencia.SelectedItem is ComboBoxItem item)
-                TxtTotDiscoAudienciaOtro.Visibility = item.Content.ToString() == "Otro..."
-                    ? Visibility.Visible : Visibility.Collapsed;
+
+            var item = CmbTotDiscoAudiencia.SelectedItem as ComboBoxItem;
+            bool esOtro = item?.Content?.ToString() == "Otro...";
+            TxtTotDiscoAudienciaOtro.Visibility = esOtro ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // ─────────────────────────────────────────────────────────
-        //  AGREGAR JUEZ EXTRA
-        // ─────────────────────────────────────────────────────────
+        // ══════════════════════════════════════════
+        //  JUEZ PRINCIPAL — muestra TextBox si elige "Otro..."
+        // ══════════════════════════════════════════
+        private void CmbJuez1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TxtJuez1Otro == null) return;
+
+            var item = CmbJuez1.SelectedItem as ComboBoxItem;
+            bool esOtro = item?.Content?.ToString() == "Otro...";
+            TxtJuez1Otro.Visibility = esOtro ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        // ══════════════════════════════════════════
+        //  AGREGAR JUEZ EXTRA (+)
+        //  Cada fila tiene su propio ComboBox y,
+        //  si se elige "Otro...", su propio TextBox.
+        // ══════════════════════════════════════════
         private void BtnAgregarJuez_Click(object sender, RoutedEventArgs e)
         {
-            _juecesExtra++;
+            int numero = PanelJuecesExtra.Children.Count + 2; // juez 2, 3, …
 
-            var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 8) };
+            // ── Contenedor de la fila ──
+            var fila = new StackPanel { Margin = new Thickness(0, 6, 0, 0) };
 
-            // Etiqueta
-            var lbl = new TextBlock
+            // ── ComboBox del juez extra ──
+            var combo = new ComboBox { Style = (Style)FindResource("ComboStyle") };
+            foreach (string nombre in new[]
             {
-                Text = $"Juez {_juecesExtra + 1}",
-                FontSize = 13,
-                FontWeight = FontWeights.SemiBold,
-                Foreground = new SolidColorBrush(Color.FromRgb(0x1A, 0x1A, 0x2E)),
-                Margin = new Thickness(0, 0, 0, 6)
-            };
+                "Seleccione un juez",
+                "Lic. García Ramírez",
+                "Lic. Torres Mendoza",
+                "Lic. Herrera López",
+                "Lic. Vargas Soto",
+                "Lic. Morales Díaz",
+                "Otro..."
+            })
+                combo.Items.Add(new ComboBoxItem { Content = nombre });
 
-            // Combo juez
-            var combo = new ComboBox
-            {
-                Height = 42,
-                FontSize = 13,
-                Background = new SolidColorBrush(Color.FromRgb(0xFA, 0xFA, 0xFA)),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(0xE5, 0xE7, 0xEB)),
-                BorderThickness = new Thickness(1),
-                Padding = new Thickness(12, 0, 12, 0)
-            };
-
-            combo.Items.Add(new ComboBoxItem { Content = "Seleccione un juez" });
-            combo.Items.Add(new ComboBoxItem { Content = "Lic. García Ramírez" });
-            combo.Items.Add(new ComboBoxItem { Content = "Lic. Torres Mendoza" });
-            combo.Items.Add(new ComboBoxItem { Content = "Lic. Herrera López" });
-            combo.Items.Add(new ComboBoxItem { Content = "Lic. Vargas Soto" });
-            combo.Items.Add(new ComboBoxItem { Content = "Lic. Morales Díaz" });
-            combo.Items.Add(new ComboBoxItem { Content = "Otro..." });
             combo.SelectedIndex = 0;
 
-            // TextBox "Otro" oculto
-            var tbOtro = new TextBox
+            // ── TextBox "Otro" para este juez extra ──
+            var txtOtro = new TextBox
             {
-                Height = 42,
-                FontSize = 13,
-                Padding = new Thickness(12, 0, 12, 0),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(0xE5, 0xE7, 0xEB)),
-                BorderThickness = new Thickness(1),
-                Background = new SolidColorBrush(Color.FromRgb(0xFA, 0xFA, 0xFA)),
+                Style = (Style)FindResource("InputStyle"),
                 Margin = new Thickness(0, 6, 0, 0),
-                Visibility = Visibility.Collapsed
+                Visibility = Visibility.Collapsed,
+                Tag = $"Nombre del juez {numero}"
             };
 
-            combo.SelectionChanged += (s, ev) =>
+            // Mostrar/ocultar TextBox al cambiar selección
+            combo.SelectionChanged += (s, args) =>
             {
-                if (combo.SelectedItem is ComboBoxItem ci)
-                    tbOtro.Visibility = ci.Content.ToString() == "Otro..."
-                        ? Visibility.Visible : Visibility.Collapsed;
+                var sel = combo.SelectedItem as ComboBoxItem;
+                txtOtro.Visibility = sel?.Content?.ToString() == "Otro..."
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             };
 
-            // Botón quitar
-            var btnQuitar = new Button
-            {
-                Content = "× Quitar",
-                Height = 28,
-                FontSize = 11,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Margin = new Thickness(0, 4, 0, 0),
-                Background = Brushes.Transparent,
-                BorderThickness = new Thickness(0),
-                Foreground = new SolidColorBrush(Color.FromRgb(0xEF, 0x44, 0x44)),
-                Cursor = Cursors.Hand
-            };
-            btnQuitar.Click += (s, ev) =>
-            {
-                PanelJuecesExtra.Children.Remove(panel);
-                _juecesExtra--;
-            };
-
-            panel.Children.Add(lbl);
-            panel.Children.Add(combo);
-            panel.Children.Add(tbOtro);
-            panel.Children.Add(btnQuitar);
-
-            PanelJuecesExtra.Children.Add(panel);
+            fila.Children.Add(combo);
+            fila.Children.Add(txtOtro);
+            PanelJuecesExtra.Children.Add(fila);
         }
 
-        // ─────────────────────────────────────────────────────────
-        //  GUARDAR REGISTRO
-        // ─────────────────────────────────────────────────────────
+        // ══════════════════════════════════════════
+        //  GUARDAR
+        // ══════════════════════════════════════════
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            // Validaciones básicas
-            if (string.IsNullOrWhiteSpace(GetText(TxtId)))
+            // ── Validaciones básicas ──
+            if (string.IsNullOrWhiteSpace(TxtId.Text))
             {
-                MessageBox.Show("El campo ID es obligatorio.", "Validación",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                TxtId.Focus();
-                return;
-            }
-
-            if (DpFeAudiencia.SelectedDate == null)
-            {
-                MessageBox.Show("Seleccione la fecha de audiencia.", "Validación",
+                MessageBox.Show("El campo 'Id' es obligatorio.", "Validación",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (CmbJuzgado.SelectedIndex <= 0)
+            if (DpFeAudiencia.SelectedDate == null ||
+                (CmbHoraAudiencia.SelectedItem as ComboBoxItem)?.Content?.ToString() == "-- Hora --")
             {
-                MessageBox.Show("Seleccione un juzgado.", "Validación",
+                MessageBox.Show("Seleccione la fecha y hora de audiencia.", "Validación",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // ── Aquí se construye el modelo y se guarda en BD ──
-            // var registro = new Audiencia { ... };
-            // _repository.Save(registro);
+            var juzgadoItem = CmbJuzgado.SelectedItem as ComboBoxItem;
+            if (juzgadoItem == null || juzgadoItem.Content.ToString() == "Seleccione juzgado")
+            {
+                MessageBox.Show("El campo 'Juzgado' es obligatorio.", "Validación",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // ── Recopilar valores ──
+            string horaAudiencia = (CmbHoraAudiencia.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            string horaRecibo = (CmbHoraRecibo.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            string horaConclusion = (CmbHoraConclusion.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+            string totDiscos = ObtenerValorComboOtro(CmbTotDiscos, TxtTotDiscosOtro);
+            string tipoDisco = ObtenerValorComboOtro(CmbTipoDisco, TxtTipoDiscoOtro);
+            string juzgado = ObtenerValorComboOtro(CmbJuzgado, TxtJuzgadoOtro);
+            string totAud = ObtenerValorComboOtro(CmbTotDiscoAudiencia, TxtTotDiscoAudienciaOtro);
+            string juez1 = ObtenerValorComboOtro(CmbJuez1, TxtJuez1Otro);
+
+            // TODO: guardar en base de datos o llamar al servicio correspondiente
 
             MessageBox.Show("Registro guardado correctamente.", "Éxito",
                 MessageBoxButton.OK, MessageBoxImage.Information);
-
-            // Limpiar formulario
-            LimpiarFormulario();
         }
 
-        // ─────────────────────────────────────────────────────────
-        //  LIMPIAR FORMULARIO
-        // ─────────────────────────────────────────────────────────
-        private void LimpiarFormulario()
+        // ──────────────────────────────────────────
+        //  Utilidad: retorna el texto del TextBox
+        //  cuando se eligió "Otro...", de lo contrario
+        //  retorna el Content del ComboBoxItem.
+        // ──────────────────────────────────────────
+        private static string ObtenerValorComboOtro(ComboBox combo, TextBox txtOtro)
         {
-            TxtId.Text = "";
-            TxtTotDiscos.Text = "0";
-            TxtNoCausa.Text = "";
-            TxtNUC.Text = "";
-            TxtNoCausaJuicio.Text = "";
-            TxtTipoAudiencia.Text = "";
-            TxtHoraAudiencia.Text = "";
-            TxtHoraRecibo.Text = "";
-            TxtHoraConclusion.Text = "";
-            TxtImputado.Text = "";
-            TxtDelito.Text = "";
-            TxtAgraviado.Text = "";
-            TxtDiferida.Text = "";
-            TxtJuzgadoOtro.Visibility = Visibility.Collapsed;
-            TxtTipoDiscoOtro.Visibility = Visibility.Collapsed;
-            TxtTotDiscoAudienciaOtro.Visibility = Visibility.Collapsed;
-            TxtJuez1Otro.Visibility = Visibility.Collapsed;
-            PanelJuecesExtra.Children.Clear();
-            _juecesExtra = 0;
-            DpFeAudiencia.SelectedDate = null;
-            DpFeRecibo.SelectedDate = null;
-            CmbTipoCausa.SelectedIndex = 0;
-            CmbJuzgado.SelectedIndex = 0;
-            CmbSala.SelectedIndex = 0;
-            CmbTipoDisco.SelectedIndex = 0;
-            CmbTotDiscoAudiencia.SelectedIndex = 0;
-            CmbJuez1.SelectedIndex = 0;
-            CmbQuienRealiza.SelectedIndex = 0;
+            var item = combo.SelectedItem as ComboBoxItem;
+            if (item == null) return string.Empty;
 
-            // Re-aplicar placeholders
-            AddPlaceholderBehavior(TxtId);
-            AddPlaceholderBehavior(TxtHoraAudiencia, "HH:MM");
-            AddPlaceholderBehavior(TxtHoraRecibo, "HH:MM");
-            AddPlaceholderBehavior(TxtHoraConclusion, "HH:MM");
-            AddPlaceholderBehavior(TxtNoCausa, "Ej: 123/2024");
-            AddPlaceholderBehavior(TxtNUC, "Ej: 12-2024-00567");
-            AddPlaceholderBehavior(TxtNoCausaJuicio, "Ej: 89/2024");
-            AddPlaceholderBehavior(TxtTipoAudiencia, "Escriba el tipo de audiencia");
-            AddPlaceholderBehavior(TxtImputado, "Nombre del imputado");
-            AddPlaceholderBehavior(TxtDelito, "Tipo de delito");
-            AddPlaceholderBehavior(TxtAgraviado, "Nombre del agraviado");
-            AddPlaceholderBehavior(TxtDiferida, "Puede quedar vacío");
+            string content = item.Content?.ToString() ?? string.Empty;
+            if (content == "Otro..." || content == "Otra...")
+                return txtOtro.Text.Trim();
+
+            return content;
         }
     }
 }
-
