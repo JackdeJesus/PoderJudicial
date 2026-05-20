@@ -250,9 +250,9 @@
                                     <ColumnDefinition Width="130"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox x:Name="TxtFechaAudiencia"
-                                 Grid.Column="0"
-                                  Style="{StaticResource InputStyle}"
-                                         
+                                         Grid.Column="0"
+                                         Style="{StaticResource InputStyle}"
+                                         Tag="Ej: 25/12/2024"
                                          TextChanged="TxtFechaAudiencia_TextChanged"
                                        />
                                 <!-- ★ txt de hora-->
@@ -403,6 +403,7 @@
                                 <ListBox
                                       x:Name="lstSugerencias"
                                       PreviewKeyDown="lstAutocomplete_PreviewKeyDown"
+                                      MouseDoubleClick="lstAutocomplete_MouseClick"
                                       Visibility="Collapsed"
                                       Height="120"/>
                             </StackPanel>
@@ -509,7 +510,7 @@
                                     Tag="Escriba el tipo de audiencia"/>
 
                             <ListBox x:Name="lstAudiencia"
-         
+                                     MouseDoubleClick="lstAutocomplete_MouseClick"
                                      PreviewKeyDown="lstAutocomplete_PreviewKeyDown"
                                      Visibility="Collapsed"
                                      Height="120"/>
@@ -609,7 +610,7 @@
                                      PreviewKeyDown="TxtAutocomplete_PreviewKeyDown"/>
                             <ListBox
                                 x:Name="lstDelito"
-                                
+                                MouseDoubleClick="lstAutocomplete_MouseClick"
                                 PreviewKeyDown="lstAutocomplete_PreviewKeyDown"
                                 Visibility="Collapsed"
                                 Height="120"/>

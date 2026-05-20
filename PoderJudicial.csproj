@@ -10,9 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Database\p.accdb" />
     <None Remove="Resources\eye.png" />
     <None Remove="Resources\eyeClose.png" />
     <None Remove="Resources\supremaCorte.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Database\p.accdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
