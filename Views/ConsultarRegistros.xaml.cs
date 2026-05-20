@@ -12,22 +12,65 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using System.Globalization;
 
 
 namespace PoderJudicial.Views
 {
     public partial class ConsultarRegistros : Page
     {
+        private DispatcherTimer timer;
         public ConsultarRegistros()
         {
             InitializeComponent();
+            IniciarReloj();
 
-            // Hora y fecha
-            TxtHora.Text = DateTime.Now.ToString("hh:mm tt");
-            TxtFecha.Text = DateTime.Now.ToString("dddd, dd MMMM yyyy");
 
             // CARGA TEMPORAL
             CargarDatosTemporales();
+        }
+
+
+        // ─────────────────────────────────────────────────────────
+        //  Inicialización del reloj (fecha y hora actualizados cada segundo)
+        // ─────────────────────────────────────────────────────────
+
+        private void IniciarReloj()
+        {
+            timer = new DispatcherTimer();
+
+            // Actualizar cada segundo
+            timer.Interval = TimeSpan.FromSeconds(1);
+
+            // Evento
+            timer.Tick += Timer_Tick;
+
+            // Iniciar
+            timer.Start();
+
+            // Mostrar inmediatamente
+            ActualizarFechaHora();
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+        {
+            ActualizarFechaHora();
+        }
+
+        private void ActualizarFechaHora()
+        {
+            DateTime ahora = DateTime.Now;
+
+            CultureInfo cultura = new CultureInfo("es-MX");
+
+            // Hora
+            TxtHora.Text = ahora.ToString("hh:mm tt");
+
+            // Fecha
+            TxtFecha.Text = ahora.ToString(
+                "dddd, dd MMMM yyyy",
+                cultura);
         }
 
         /// <summary>

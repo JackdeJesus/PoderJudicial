@@ -4,8 +4,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       mc:Ignorable="d"
-      d:DesignHeight="900" d:DesignWidth="1200"
-      Background="#FFFFFF">
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+      Background="#F3F4F6">
 
     <Page.Resources>
 
@@ -19,34 +20,49 @@
 
         <!-- ── Estilo base TextBox ── -->
         <Style x:Key="InputStyle" TargetType="TextBox">
+
             <Setter Property="Height" Value="42"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Foreground" Value="#374151"/>
-            <Setter Property="Background" Value="#FAFAFA"/>
-            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="Background" Value="#f7f7f7"/>
+            <Setter Property="BorderBrush" Value="#2ECC8F"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="12,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+
             <Setter Property="Template">
                 <Setter.Value>
+
                     <ControlTemplate TargetType="TextBox">
+
                         <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="8">
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="8"
+                        Padding="{TemplateBinding Padding}">
+
                             <ScrollViewer x:Name="PART_ContentHost"
-                                          Margin="{TemplateBinding Padding}"
-                                          VerticalAlignment="Center"/>
+                                  VerticalAlignment="Center"/>
+
                         </Border>
+
                         <ControlTemplate.Triggers>
+
                             <Trigger Property="IsFocused" Value="True">
-                                <Setter Property="BorderBrush" Value="#2ECC8F"/>
-                                <Setter Property="Background" Value="White"/>
+                                <Setter Property="BorderBrush"
+                                Value="#2ECC8F"/>
+
+                                <Setter Property="Background"
+                                Value="White"/>
                             </Trigger>
+
                         </ControlTemplate.Triggers>
+
                     </ControlTemplate>
+
                 </Setter.Value>
             </Setter>
+
         </Style>
 
         <!-- ── Estilo base ComboBox ── -->
@@ -58,34 +74,137 @@
             <Setter Property="BorderBrush" Value="#E5E7EB"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="12,0"/>
+
         </Style>
 
         <!-- ── Estilo DatePicker ── -->
         <Style x:Key="DateStyle" TargetType="DatePicker">
+
             <Setter Property="Height" Value="42"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Foreground" Value="#374151"/>
             <Setter Property="Background" Value="#FAFAFA"/>
             <Setter Property="BorderBrush" Value="#E5E7EB"/>
-            <Setter Property="BorderThickness" Value="6"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,0"/>
+
+            <!-- ===== ESTILOS INTERNOS ===== -->
+            <Style.Resources>
+
+                <!-- ===== CALENDARIO ===== -->
+                <Style TargetType="Calendar">
+
+                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Foreground" Value="#111827"/>
+                    <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="FontSize" Value="16"/>
+
+                </Style>
+
+                <!-- ===== BOTONES DE DÍAS ===== -->
+                <Style TargetType="CalendarDayButton">
+
+                    <Setter Property="Width" Value="42"/>
+                    <Setter Property="Height" Value="42"/>
+                    <Setter Property="FontSize" Value="15"/>
+                    <Setter Property="Foreground" Value="#111827"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="Background" Value="Transparent"/>
+
+                    <Style.Triggers>
+
+                        <!-- Día seleccionado -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#2ECC8F"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+
+                        <!-- Hover -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#D1FAE5"/>
+                        </Trigger>
+
+                    </Style.Triggers>
+
+                </Style>
+
+                <!-- ===== BOTONES SUPERIORES ===== -->
+                <Style TargetType="CalendarButton">
+
+                    <Setter Property="FontSize" Value="16"/>
+                    <Setter Property="Foreground" Value="#111827"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+
+                </Style>
+
+            </Style.Resources>
+
         </Style>
 
     </Page.Resources>
 
-    <Grid Margin="40,30">
+    <Grid 
+          VerticalAlignment="Stretch"
+          HorizontalAlignment="Stretch"
+          >
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ══════════════ HEADER ══════════════ -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,28">
-            <TextBlock Text="Datos del Registro"
-                       FontSize="26" FontWeight="Bold"
+        <!-- ══════════════════════════════════
+     HEADER
+══════════════════════════════════ -->
+
+        <Border Grid.Row="0"
+        Background="White"
+        BorderThickness="0,0,0,1"
+        BorderBrush="#E5E7EB"
+        Padding="32,18"
+                Margin="0,0,0,30">
+
+            <Grid>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+
+                    <TextBlock Text="Nuevo Registros"
+                       FontSize="22"
+                       FontWeight="Bold"
                        Foreground="#111827"/>
-            <TextBlock Text="Complete los campos en el orden indicado"
-                       FontSize="13" Foreground="#6B7280" Margin="0,4,0,0"/>
-        </StackPanel>
+
+                    <TextBlock Text="Complete los campos en el orden indicado."
+                       FontSize="12"
+                       Foreground="#6B7280"
+                       Margin="0,3,0,0"/>
+
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                    HorizontalAlignment="Right">
+
+                    <TextBlock x:Name="TxtHora"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       Foreground="#111827"
+                       HorizontalAlignment="Right"/>
+
+                    <TextBlock x:Name="TxtFecha"
+                       FontSize="12"
+                       Foreground="#6B7280"
+                       HorizontalAlignment="Right"
+                       Margin="0,2,0,0"/>
+
+                </StackPanel>
+
+            </Grid>
+
+        </Border>
 
         <!-- ══════════════ SCROLL CONTENIDO ══════════════ -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -93,7 +212,8 @@
                     BorderBrush="#F3F4F6"
                     BorderThickness="1"
                     CornerRadius="16"
-                    Padding="36,32">
+                    Padding="36,32"
+                    Margin="35,0,35,35">
                 <StackPanel>
 
                     <!-- ─── FILA 1: Id | Fecha y Hora Audiencia | Fecha y Hora Recibo ─── -->
@@ -129,12 +249,19 @@
                                     <ColumnDefinition Width="8"/>
                                     <ColumnDefinition Width="130"/>
                                 </Grid.ColumnDefinitions>
-                                <DatePicker x:Name="DpFeAudiencia" Grid.Column="0" Style="{StaticResource DateStyle}"/>
-                                <!-- ★ ComboBox de horas 08:00–20:00 minuto a minuto -->
-                                <ComboBox x:Name="CmbHoraAudiencia"
+                                <TextBox x:Name="TxtFechaAudiencia"
+                                 Grid.Column="0"
+                                  Style="{StaticResource InputStyle}"
+                                         
+                                         TextChanged="TxtFechaAudiencia_TextChanged"
+                                       />
+                                <!-- ★ txt de hora-->
+                                <TextBox x:Name="TxtHoraAudiencia"
                                           Grid.Column="2"
-                                          Style="{StaticResource ComboStyle}"
-                                          Loaded="HoraCombo_Loaded"/>
+                                           Style="{StaticResource InputStyle}"
+                                         
+                                         TextChanged="TxtHoraAudiencia_TextChanged"
+                                          />
                             </Grid>
                         </StackPanel>
 
@@ -147,12 +274,15 @@
                                     <ColumnDefinition Width="8"/>
                                     <ColumnDefinition Width="130"/>
                                 </Grid.ColumnDefinitions>
-                                <DatePicker x:Name="DpFeRecibo" Grid.Column="0" Style="{StaticResource DateStyle}"/>
-                                <!-- ★ ComboBox de horas 08:00–20:00 minuto a minuto -->
-                                <ComboBox x:Name="CmbHoraRecibo"
+                                <TextBox x:Name="TxtFechaRecibo"
+                                    Grid.Column="0"
+                                    Style="{StaticResource InputStyle}"
+                                    />
+                                <!-- ★ txt de hora-->
+                                <TextBox x:Name="TxtHoraRecibo"
                                           Grid.Column="2"
-                                          Style="{StaticResource ComboStyle}"
-                                          Loaded="HoraCombo_Loaded"/>
+                                          Style="{StaticResource InputStyle}"
+                                         />
                             </Grid>
                         </StackPanel>
                     </Grid>
@@ -172,39 +302,43 @@
 
                         <!-- ★ Total Discos — ahora igual que Total Disco Audiencia -->
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Total Discos" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox x:Name="CmbTotDiscos"
-                                      Style="{StaticResource ComboStyle}"
-                                      SelectionChanged="CmbTotDiscos_SelectionChanged">
+                            <TextBlock Text="Total Disco Audiencia" Style="{StaticResource LabelStyle}"/>
+
+                            <ComboBox x:Name="CmbTotDiscoAudiencia"
+                                   Style="{StaticResource ComboStyle}"
+                                   SelectedIndex="1"
+                                   SelectionChanged="CmbTotDiscoAudiencia_SelectionChanged">
+
                                 <ComboBoxItem Content="Seleccione cantidad"/>
-                                <ComboBoxItem Content="1"/>
-                                <ComboBoxItem Content="2"/>
-                                <ComboBoxItem Content="3"/>
-                                <ComboBoxItem Content="4"/>
-                                <ComboBoxItem Content="5"/>
+                                <ComboBoxItem Content="1 disco"/>
+                                <ComboBoxItem Content="2 discos"/>
+                                <ComboBoxItem Content="3 discos"/>
+                                <ComboBoxItem Content="4 discos"/>
+                                <ComboBoxItem Content="5 discos"/>
                                 <ComboBoxItem Content="Otro..."/>
                             </ComboBox>
-                            <TextBox x:Name="TxtTotDiscosOtro"
-                                     Style="{StaticResource InputStyle}"
-                                     Margin="0,6,0,0"
-                                     Visibility="Collapsed"
-                                     Tag="Cantidad"/>
+
+                            <TextBox x:Name="TxtTotDiscoAudienciaOtro"
+                                   Style="{StaticResource InputStyle}"
+                                   Margin="0,6,0,0"
+                                   Visibility="Collapsed"
+                                   Tag="Cantidad"/>
                         </StackPanel>
 
                         <!-- Tipo Disco -->
+                        <!-- Tipo Disco -->
                         <StackPanel Grid.Column="2">
-                            <TextBlock Text="Tipo Disco" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox x:Name="CmbTipoDisco"
-                                      Style="{StaticResource ComboStyle}"
-                                      SelectionChanged="CmbTipoDisco_SelectionChanged">
-                                <ComboBoxItem Content="Archivo" />
-                                <ComboBoxItem Content="Otro..."/>
-                            </ComboBox>
-                            <TextBox x:Name="TxtTipoDiscoOtro"
-                                     Style="{StaticResource InputStyle}"
-                                     Margin="0,6,0,0"
-                                     Visibility="Collapsed"
-                                     Tag="Especifique el tipo"/>
+
+                            <TextBlock Text="Tipo Disco"
+                                 Style="{StaticResource LabelStyle}"/>
+
+                            <TextBox
+                                 Text="Archivo"
+                                 IsReadOnly="True"
+                                  Focusable="False"
+                                  Cursor="Arrow"
+                                  Background="#F3F4F6"
+                                  Style="{StaticResource InputStyle}"/>
                         </StackPanel>
 
                         <!-- Juzgado -->
@@ -215,7 +349,8 @@
                             </StackPanel>
                             <ComboBox x:Name="CmbJuzgado"
                                       Style="{StaticResource ComboStyle}"
-                                      SelectionChanged="CmbJuzgado_SelectionChanged">
+                                      SelectionChanged="CmbJuzgado_SelectionChanged"
+                                      SelectedIndex="1">
                                 <ComboBoxItem Content="Seleccione juzgado"/>
                                 <ComboBoxItem Content="Control"/>
                                 <ComboBoxItem Content="Centro"/>
@@ -239,25 +374,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Total Disco Audiencia" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox x:Name="CmbTotDiscoAudiencia"
-                                      Style="{StaticResource ComboStyle}"
-                                      SelectionChanged="CmbTotDiscoAudiencia_SelectionChanged">
-                                <ComboBoxItem Content="Seleccione cantidad"/>
-                                <ComboBoxItem Content="1 disco"/>
-                                <ComboBoxItem Content="2 discos"/>
-                                <ComboBoxItem Content="3 discos"/>
-                                <ComboBoxItem Content="4 discos"/>
-                                <ComboBoxItem Content="5 discos"/>
-                                <ComboBoxItem Content="Otro..."/>
-                            </ComboBox>
-                            <TextBox x:Name="TxtTotDiscoAudienciaOtro"
-                                     Style="{StaticResource InputStyle}"
-                                     Margin="0,6,0,0"
-                                     Visibility="Collapsed"
-                                     Tag="Cantidad"/>
-                        </StackPanel>
+
                     </Grid>
 
                     <!-- ─── SEPARADOR ─── -->
@@ -272,39 +389,51 @@
                                 <ColumnDefinition Width="8"/>
                                 <ColumnDefinition Width="42"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox x:Name="CmbJuez1"
-                                      Grid.Column="0"
-                                      Style="{StaticResource ComboStyle}"
-                                      SelectionChanged="CmbJuez1_SelectionChanged">
-                                <ComboBoxItem Content="Seleccione un juez"/>
-                                <ComboBoxItem Content="Lic. García Ramírez"/>
-                                <ComboBoxItem Content="Lic. Torres Mendoza"/>
-                                <ComboBoxItem Content="Lic. Herrera López"/>
-                                <ComboBoxItem Content="Lic. Vargas Soto"/>
-                                <ComboBoxItem Content="Lic. Morales Díaz"/>
-                                <ComboBoxItem Content="Otro..."/>
-                            </ComboBox>
+
+                            <!-- Contenedor -->
+                            <StackPanel Grid.Column="0">
+
+                                <TextBox
+                                      x:Name="txtJuez"
+                                      TextChanged="txtJuez_TextChanged"
+                                      PreviewKeyDown="TxtAutocomplete_PreviewKeyDown"
+                                      Tag="Escriba el nombre del juez"
+                                      Style="{StaticResource InputStyle}"/>
+
+                                <ListBox
+                                      x:Name="lstSugerencias"
+                                      PreviewKeyDown="lstAutocomplete_PreviewKeyDown"
+                                      Visibility="Collapsed"
+                                      Height="120"/>
+                            </StackPanel>
+
                             <!-- Botón + -->
                             <Button x:Name="BtnAgregarJuez"
-                                    Grid.Column="2"
-                                    Content="+"
-                                    Height="42" Width="42"
-                                    FontSize="20"
-                                    FontWeight="Light"
-                                    Cursor="Hand"
-                                    Background="#2ECC8F"
-                                    Foreground="White"
-                                    BorderBrush="#E5E7EB"
-                                    BorderThickness="1"
-                                    Click="BtnAgregarJuez_Click" VerticalAlignment="Top">
+                                           Grid.Column="2"
+                                           Content="+"
+                                           Height="42"
+                                           Width="42"
+                                           FontSize="20"
+                                           FontWeight="Light"
+                                           Cursor="Hand"
+                                           Background="#2ECC8F"
+                                           Foreground="White"
+                                           BorderBrush="#E5E7EB"
+                                           BorderThickness="1"
+                                           Click="BtnAgregarJuez_Click"
+                                           VerticalAlignment="Center" Margin="2,0,-2,0">
+
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="8">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="8">
+
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                 VerticalAlignment="Center"/>
                                         </Border>
+
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter Property="Background" Value="#F9FAFB"/>
@@ -314,14 +443,9 @@
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </Button.Template>
+
                             </Button>
                         </Grid>
-                        <!-- ★ TextBox "Otro" para el juez principal -->
-                        <TextBox x:Name="TxtJuez1Otro"
-                                 Style="{StaticResource InputStyle}"
-                                 Margin="0,6,0,0"
-                                 Visibility="Collapsed"
-                                 Tag="Nombre del juez"/>
                         <!-- Panel dinámico jueces extra -->
                         <StackPanel x:Name="PanelJuecesExtra" Margin="0,8,0,0"/>
                     </StackPanel>
@@ -355,7 +479,8 @@
 
                         <StackPanel Grid.Column="4">
                             <TextBlock Text="Tipo Causa" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox x:Name="CmbTipoCausa" Style="{StaticResource ComboStyle}">
+                            <ComboBox x:Name="CmbTipoCausa" Style="{StaticResource ComboStyle}"
+                                      SelectedIndex="1">
                                 <ComboBoxItem Content="Seleccione tipo"/>
                                 <ComboBoxItem Content="C"/>
                                 <ComboBoxItem Content="CP"/>
@@ -368,36 +493,73 @@
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="24"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="24"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="42"/>
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Tipo Audiencia" Style="{StaticResource LabelStyle}"/>
+
+                            <TextBlock Text="Tipo Audiencia"
+               Style="{StaticResource LabelStyle}"/>
+
                             <TextBox x:Name="TxtTipoAudiencia"
-                                     Style="{StaticResource InputStyle}"
-                                     Tag="Escriba el tipo de audiencia"/>
+                                    Style="{StaticResource InputStyle}"
+                                    TextChanged="TxtTipoAudiencia_TextChanged"
+                                    PreviewKeyDown="TxtAutocomplete_PreviewKeyDown"
+                                    Tag="Escriba el tipo de audiencia"/>
+
+                            <ListBox x:Name="lstAudiencia"
+         
+                                     PreviewKeyDown="lstAutocomplete_PreviewKeyDown"
+                                     Visibility="Collapsed"
+                                     Height="120"/>
+
                         </StackPanel>
 
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Hora Conclusión" Style="{StaticResource LabelStyle}"/>
-                            <!-- ★ ComboBox de horas 08:00–20:00 minuto a minuto -->
-                            <ComboBox x:Name="CmbHoraConclusion"
-                                      Style="{StaticResource ComboStyle}"
-                                      Loaded="HoraCombo_Loaded"/>
-                        </StackPanel>
+                        <!-- Botón + -->
+                        <Button x:Name="BtnAgregarAudiencia"
+                                     Grid.Column="2"
+                                     Content="+"
+                                     Height="42"
+                                     Width="42"
+                                     FontSize="20"
+                                     FontWeight="Light"
+                                     Cursor="Hand"
+                                     Background="#2ECC8F"
+                                     Foreground="White"
+                                     BorderBrush="#E5E7EB"
+                                     BorderThickness="1"
+                                     Click="BtnAgregarAudiencia_Click"
+                                     VerticalAlignment="Top" Margin="2,23,-2,0">
 
-                        <StackPanel Grid.Column="4">
-                            <TextBlock Text="Imputado" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="TxtImputado"
-                                     Style="{StaticResource InputStyle}"
-                                     Tag="Nombre del imputado"/>
-                        </StackPanel>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                     BorderBrush="{TemplateBinding BorderBrush}"
+                                     BorderThickness="{TemplateBinding BorderThickness}"
+                                     CornerRadius="8">
+
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                         VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F9FAFB"/>
+                                            <Setter Property="BorderBrush" Value="#2ECC8F"/>
+                                            <Setter Property="Foreground" Value="#2ECC8F"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+
+                        </Button>
+
                     </Grid>
-
-                    <!-- ─── FILA 7: Delito | Agraviado | Sala ─── -->
+                    <!-- Panel dinámico jueces extra -->
+                    <StackPanel x:Name="PanelAudienciaExtra" Margin="0,8,0,0"/>
+                    
+                    <!-- ─── FILA 6: Tipo Audiencia | Hora Conclusión | Imputado ─── -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -407,23 +569,116 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
+
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Hora Conclusión" Style="{StaticResource LabelStyle}"/>
+                            <!-- ★ TextBox de horas-->
+                            <TextBox x:Name="TxtHoraConclusion"
+                Grid.Column="2"
+                Style="{StaticResource InputStyle}"
+                
+                TextChanged="TxtHoraConclusion_TextChanged" 
+                 />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Imputado" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="TxtImputado"
+                  Style="{StaticResource InputStyle}"
+                  Tag="Nombre del imputado"/>
+                        </StackPanel>
+                    </Grid>
+
+
+
+                    <!-- ─── FILA 7: Delito ─── -->
+                    <Grid Margin="0,0,0,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="42"/>
+                        </Grid.ColumnDefinitions>
+
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Delito" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtDelito"
                                      Style="{StaticResource InputStyle}"
-                                     Tag="Tipo de delito"/>
+                                     Tag="Tipo de delito"
+                                     TextChanged="TxtDelito_TextChanged"
+                                     PreviewKeyDown="TxtAutocomplete_PreviewKeyDown"/>
+                            <ListBox
+                                x:Name="lstDelito"
+                                
+                                PreviewKeyDown="lstAutocomplete_PreviewKeyDown"
+                                Visibility="Collapsed"
+                                Height="120"/>
+                        </StackPanel>
+                        <!-- Botón + -->
+                        <Button x:Name="BtnAgregarDelito"
+                                     Grid.Column="2"
+                                     Content="+"
+                                     Width="42"
+                                     FontSize="20"
+                                     FontWeight="Light"
+                                     Cursor="Hand"
+                                     Background="#2ECC8F"
+                                     Foreground="White"
+                                     BorderBrush="#E5E7EB"
+                                     BorderThickness="1"
+                                     Click="BtnAgregarDelito_Click" Height="42" VerticalAlignment="Top" Margin="0,23,0,0">
+
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                       BorderBrush="{TemplateBinding BorderBrush}"
+                                       BorderThickness="{TemplateBinding BorderThickness}"
+                                       CornerRadius="8">
+
+                                        <ContentPresenter HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F9FAFB"/>
+                                            <Setter Property="BorderBrush" Value="#2ECC8F"/>
+                                            <Setter Property="Foreground" Value="#2ECC8F"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+
+                        </Button>
+
+
+                    </Grid>
+                    <!-- Panel dinámico jueces extra -->
+                    <StackPanel x:Name="PanelDelitoExtra" Margin="0,8,0,0"/>
+
+                    <!-- ─── SEPARADOR ─── -->
+                    <Separator Background="#F3F4F6" Margin="0,4,0,20"/>
+
+                    <!-- ─── FILA 8: No. Causa Juicio | Diferida | Quien Realiza ─── -->
+                    <Grid Margin="0,0,0,32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Agraviado" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="TxtAgraviado"
+             Style="{StaticResource InputStyle}"
+             Tag="Nombre del agraviado"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
-                            <TextBlock Text="Agraviado" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="TxtAgraviado"
-                                     Style="{StaticResource InputStyle}"
-                                     Tag="Nombre del agraviado"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="4">
                             <TextBlock Text="Sala" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox x:Name="CmbSala" Style="{StaticResource ComboStyle}">
+                            <ComboBox x:Name="CmbSala" Style="{StaticResource ComboStyle}"
+                                      SelectedIndex="0">
                                 <ComboBoxItem Content="Seleccione sala"/>
                                 <ComboBoxItem Content="I"/>
                                 <ComboBoxItem Content="II"/>
@@ -437,46 +692,16 @@
                                 <ComboBoxItem Content="CJMP"/>
                             </ComboBox>
                         </StackPanel>
-                    </Grid>
-
-                    <!-- ─── FILA 8: No. Causa Juicio | Diferida | Quien Realiza ─── -->
-                    <Grid Margin="0,0,0,32">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="24"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="24"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
+                        <StackPanel Grid.Column="4">
                             <TextBlock Text="No. Causa Juicio" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtNoCausaJuicio"
                                      Style="{StaticResource InputStyle}"
                                      Tag="Ej: 89/2024"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Diferida" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="TxtDiferida"
-                                     Style="{StaticResource InputStyle}"
-                                     Tag="Puede quedar vacío"/>
-                        </StackPanel>
 
-                        <StackPanel Grid.Column="4">
-                            <TextBlock Text="Quien Realiza" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox x:Name="CmbQuienRealiza" Style="{StaticResource ComboStyle}">
-                                <ComboBoxItem Content="Seleccione quien realiza"/>
-                                <ComboBoxItem Content="Rojo"/>
-                                <ComboBoxItem Content="Pineda"/>
-                                <ComboBoxItem Content="Daniel"/>
-                                <ComboBoxItem Content="Rey"/>
-                                <ComboBoxItem Content="Brandon"/>
-                                <ComboBoxItem Content="Jorge"/>
-                                <ComboBoxItem Content="Luis"/>
-                                <ComboBoxItem Content="Yadira"/>
-                            </ComboBox>
-                        </StackPanel>
+
+
                     </Grid>
 
                     <!-- ─── SEPARADOR ─── -->
