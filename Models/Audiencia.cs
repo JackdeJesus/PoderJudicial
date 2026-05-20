@@ -25,8 +25,8 @@ namespace PoderJudicial.Models
         public string QuienRealiza { get; set; }
         public string Diferida { get; set; }
         public string NoCausaJuicio { get; set; }
-        public int TotDiscos { get; set; }
+        public string TotDiscos { get; set; }
         public string TipoDisco { get; set; }
-        public int TotDiscoAudiencia { get; set; }
+        public string TotDiscoAudiencia { get; set; }
     }
 }

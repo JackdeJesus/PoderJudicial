@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PoderJudicial.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,7 +48,7 @@ namespace PoderJudicial.Views
             TxtDelito.Text = delito;
             TxtAgraviado.Text = agraviado;
             TxtNoCausaJuicio.Text = noCausaJuicio;
-            TxtDiferida.Text = diferida;
+           
             TxtQuienRealiza.Text = quienRealiza;
         }
 
@@ -66,4 +67,7 @@ namespace PoderJudicial.Views
 
         }
     }
+
+
+   
 }

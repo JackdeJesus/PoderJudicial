@@ -17,9 +17,9 @@ namespace PoderJudicial.ViewModels
         private List<Audiencia> _listaCompleta = new List<Audiencia>();
         private DispatcherTimer _reloj;
 
-        // ──────────────────────────────────────────
+     
         //  PROPIEDADES
-        // ──────────────────────────────────────────
+        
         private ObservableCollection<Audiencia> _audiencias;
         public ObservableCollection<Audiencia> Audiencias
         {
@@ -68,16 +68,16 @@ namespace PoderJudicial.ViewModels
             set { _fecha = value; OnPropertyChanged(); }
         }
 
-        // ──────────────────────────────────────────
+      
         //  COMANDOS
-        // ──────────────────────────────────────────
+      
         public ICommand VerCommand { get; }
         public ICommand EditarCommand { get; }
         public ICommand EliminarCommand { get; }
 
-        // ──────────────────────────────────────────
+       
         //  CONSTRUCTOR
-        // ──────────────────────────────────────────
+       
         public ConsultarRegistrosViewModel()
         {
             VerCommand = new RelayCommand(EjecutarVer);
@@ -88,9 +88,8 @@ namespace PoderJudicial.ViewModels
             CargarDatos();
         }
 
-        // ──────────────────────────────────────────
         //  RELOJ
-        // ──────────────────────────────────────────
+      
         private void IniciarReloj()
         {
             _reloj = new DispatcherTimer();
@@ -106,9 +105,9 @@ namespace PoderJudicial.ViewModels
             Fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
         }
 
-        // ──────────────────────────────────────────
+        
         //  DATOS
-        // ──────────────────────────────────────────
+       
         private void CargarDatos()
         {
             try
@@ -136,9 +135,9 @@ namespace PoderJudicial.ViewModels
                 .ToList();
         }
 
-        // ──────────────────────────────────────────
+        
         //  FILTRADO Y SUGERENCIAS
-        // ──────────────────────────────────────────
+       
         private void Filtrar()
         {
             string texto = _textoBusqueda.Trim().ToLower();
@@ -179,15 +178,54 @@ namespace PoderJudicial.ViewModels
                 .ToList();
         }
 
-        // ──────────────────────────────────────────
         //  ACCIONES
-        // ──────────────────────────────────────────
+
         private void EjecutarVer(object param)
         {
             if (param is Audiencia audiencia)
             {
-                VerDetalleRegistro ventana = new VerDetalleRegistro();
-                ventana.ShowDialog();
+                try
+                {
+                    AudienciaData data = new AudienciaData();
+                    Audiencia detalle = data.ObtenerAudienciaPorNoCausa(audiencia.NoCausa);
+
+                    if (detalle != null)
+                    {
+                        VerDetalleRegistro ventana = new VerDetalleRegistro();
+                        ventana.CargarDatos(
+                            id: "",
+                            noCausa: detalle.NoCausa,
+                            nuc: detalle.NUC,
+                            fechaAudiencia: detalle.FechaAudiencia,
+                            fechaRecibo: detalle.FechaRecibo,
+                            horaConclusion: detalle.HoraConclusion,
+                            tipoAudiencia: detalle.TipoAudiencia,
+                            tipoCausa: detalle.TipoCausa,
+                            juzgado: detalle.Juzgado,
+                            juez: detalle.Juez,
+                            sala: detalle.Sala,
+                            totalDiscos: detalle.TotDiscos,
+                            tipoDisco: detalle.TipoDisco,
+                            totalDiscoAudiencia: detalle.TotDiscoAudiencia,
+                            imputado: detalle.Imputado,
+                            delito: detalle.Delito,
+                            agraviado: detalle.Agraviado,
+                            noCausaJuicio: detalle.NoCausaJuicio,
+                            diferida: detalle.Diferida,
+                            quienRealiza: detalle.QuienRealiza
+                        );
+                        ventana.ShowDialog();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontró el registro.", "Aviso",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar detalle: " + ex.Message);
+                }
             }
         }
 

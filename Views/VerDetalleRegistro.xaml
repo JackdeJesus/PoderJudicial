@@ -259,10 +259,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="DIFERIDA" Style="{StaticResource LabelStyle}"/>
-                            <TextBlock x:Name="TxtDiferida" Text="-" Style="{StaticResource ValorStyle}"/>
-                        </StackPanel>
+                        
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="QUIEN REALIZA" Style="{StaticResource LabelStyle}"/>
                             <TextBlock x:Name="TxtQuienRealiza" Text="-" Style="{StaticResource ValorStyle}" TextWrapping="Wrap"/>
