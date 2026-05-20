@@ -4,6 +4,8 @@ using System.IO;
 
 namespace PoderJudicial.Data
 {
+
+    //cambios en esta parte
     public static class Conexion
     {
         public static OleDbConnection ObtenerConexion()
