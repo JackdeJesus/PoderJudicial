@@ -1,38 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.OleDb;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace PoderJudicial.Data
 {
-    class Conexion
+
+    //cambios en esta parte
+    public static class Conexion
     {
-        
-
-        private string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\jackd\OneDrive\Documents\p.accdb;";
-
-        public OleDbConnection GetConnection()
+        public static OleDbConnection ObtenerConexion()
         {
+            string rutaBD =
+                Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Database",
+                    "p.accdb");
+
+            string connectionString =
+                $@"Provider=Microsoft.ACE.OLEDB.12.0;
+                   Data Source={rutaBD};";
+
             return new OleDbConnection(connectionString);
         }
-
-        public bool ProbarConexion()
-        {
-            using (OleDbConnection conn = GetConnection())
-            {
-                try
-                {
-                    conn.Open();
-                    return true;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-        }
-    
-}
+    }
 }
