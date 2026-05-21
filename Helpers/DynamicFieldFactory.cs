@@ -49,7 +49,7 @@ namespace PoderJudicial.Helpers
             TextBox txt = new TextBox
             {
                 Height = 42,
-                FontSize = 16,
+                FontSize = 13,
                 Tag = placeholder,
                 Style = inputStyle
             };

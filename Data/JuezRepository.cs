@@ -1,21 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Data.OleDb;
 
 namespace PoderJudicial.Data
 {
-    public class JuezRepository
+    public class JuezRepository : BaseRepository
     {
         public List<string> ObtenerJueces()
         {
-            return new List<string>()
+            List<string> lista = new List<string>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
-                "Lic. García Ramírez",
-                "Lic. Torres Mendoza",
-                "Lic. Herrera López"
-            };
+                conn.Open();
+
+                string query =
+                    "SELECT Juez FROM [Audiencias 2026-2028]";
+
+                using (OleDbCommand cmd =
+                    new OleDbCommand(query, conn))
+                {
+                    using (OleDbDataReader reader =
+                        cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string valor =
+                                reader["Juez"]?.ToString();
+
+                            lista.Add(valor);
+                        }
+                    }
+                }
+            }
+
+            return LimpiarLista(lista);
         }
     }
 }

@@ -1,20 +1,39 @@
 ﻿using System.Collections.Generic;
+using System.Data.OleDb;
 
 namespace PoderJudicial.Data
 {
-    public class AudienciaRepository
+    public class AudienciaRepository : BaseRepository
     {
         public List<string> ObtenerTiposAudiencia()
         {
-            // temporal
-            return new List<string>()
+            List<string> lista = new List<string>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
-                "Audiencia intermedia",
-                "Audiencia Inicial de Formulación de Imputación",
-                "Ratificacion de Medida de Proteccion-Concentradas",
-                "Audiencia de Solicitud de Orden de Cateo",
-                "Control Judicial"
-            };
+                conn.Open();
+
+                string query =
+                    "SELECT TipoAudiencia FROM [Audiencias 2026-2028]";
+
+                using (OleDbCommand cmd =
+                    new OleDbCommand(query, conn))
+                {
+                    using (OleDbDataReader reader =
+                        cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string valor =
+                                reader["TipoAudiencia"]?.ToString();
+
+                            lista.Add(valor);
+                        }
+                    }
+                }
+            }
+
+            return LimpiarLista(lista);
         }
     }
 }
