@@ -23,14 +23,14 @@ namespace PoderJudicial.Views
         }
 
         public void CargarDatos(
-            string id, string noCausa, string nuc, string fechaAudiencia,
+            string Id, string noCausa, string nuc, string fechaAudiencia,
             string fechaRecibo, string horaConclusion, string tipoAudiencia,
             string tipoCausa, string juzgado, string juez, string sala,
             string totalDiscos, string tipoDisco, string totalDiscoAudiencia,
             string imputado, string delito, string agraviado,
             string noCausaJuicio, string diferida, string quienRealiza)
         {
-            TxtID.Text = id;
+            TxtID.Text = Id.ToString();
             TxtNoCausa.Text = noCausa;
             TxtNUC.Text = nuc;
             TxtFechaAudiencia.Text = fechaAudiencia;

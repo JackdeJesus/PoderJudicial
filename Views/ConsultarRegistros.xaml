@@ -200,6 +200,7 @@
                         <Style TargetType="{x:Type DataGridRow}">
                             <Setter Property="Focusable" Value="False"/>
                         </Style>
+                        
                     </DataGrid.Resources>
 
                     <DataGrid.ColumnHeaderStyle>
@@ -227,10 +228,13 @@
                                     <Setter Property="Background" Value="#F8FAFC"/>
                                 </Trigger>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#EFF6FF"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="#F3F4F6"/>
                                 </Trigger>
                             </Style.Triggers>
+
                         </Style>
+
                     </DataGrid.RowStyle>
 
                     <DataGrid.CellStyle>
@@ -245,86 +249,147 @@
                             <Setter Property="FlowDirection"     Value="LeftToRight"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="#EFF6FF"/>
+                                    <Setter Property="Background" Value="Transparent"/>
                                     <Setter Property="Foreground" Value="#111827"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
-                    </DataGrid.CellStyle>
+                           
+                              
+                            
+                        </DataGrid.CellStyle>
 
                     <!-- ═══ COLUMNAS ═══ -->
                     <DataGrid.Columns>
 
-                        <!-- ACCIONES — va PRIMERO porque FrozenColumnCount=1 congela desde la derecha -->
+                        <!-- ACCIONES -->
                         <DataGridTemplateColumn Header="Acciones"
-                                Width="120"
-                                CanUserSort="False">
+                            Width="120"
+                            CanUserSort="False">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+
                                     <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center">
+                            HorizontalAlignment="Center">
 
                                         <Button Style="{StaticResource ActionBtnStyle}"
-                                ToolTip="Ver detalle"
-                                Command="{Binding DataContext.VerCommand,
-                                          RelativeSource={RelativeSource AncestorType=Page}}"
-                                CommandParameter="{Binding}">
+                            ToolTip="Ver detalle"
+                            Command="{Binding DataContext.VerCommand,
+                            RelativeSource={RelativeSource AncestorType=Page}}"
+                            CommandParameter="{Binding}">
+
                                             <TextBlock Text="👁" FontSize="15"/>
                                         </Button>
 
                                         <Button Style="{StaticResource ActionBtnStyle}"
-                                ToolTip="Editar"
-                                Command="{Binding DataContext.EditarCommand,
-                                          RelativeSource={RelativeSource AncestorType=Page}}"
-                                CommandParameter="{Binding}">
+                            ToolTip="Editar"
+                            Command="{Binding DataContext.EditarCommand,
+                            RelativeSource={RelativeSource AncestorType=Page}}"
+                            CommandParameter="{Binding}">
+
                                             <TextBlock Text="✏" FontSize="15"/>
                                         </Button>
 
                                         <Button Style="{StaticResource ActionBtnStyle}"
-                                ToolTip="Eliminar registro"
-                                Command="{Binding DataContext.EliminarCommand,
-                                          RelativeSource={RelativeSource AncestorType=Page}}"
-                                CommandParameter="{Binding}">
-                                            <TextBlock Text="🗑" FontSize="15" Foreground="#DC2626"/>
+                            ToolTip="Eliminar registro"
+                            Command="{Binding DataContext.EliminarCommand,
+                            RelativeSource={RelativeSource AncestorType=Page}}"
+                            CommandParameter="{Binding}">
+
+                                            <TextBlock Text="🗑"
+                                   FontSize="15"
+                                   Foreground="#DC2626"/>
                                         </Button>
 
                                     </StackPanel>
+
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <!-- RESTO DE COLUMNAS (orden original) -->
-                        <DataGridTextColumn Header="No. Causa"    Width="150" Binding="{Binding NoCausa}"/>
-                        <DataGridTextColumn Header="NUC"          Width="160" Binding="{Binding NUC}"/>
-                        <DataGridTextColumn Header="Fecha Audiencia"  Width="140" Binding="{Binding FechaAudiencia}"/>
-                        <DataGridTextColumn Header="Fecha Recibido"   Width="140" Binding="{Binding FechaRecibo}"/>
-                        <DataGridTextColumn Header="Tipo Causa"       Width="150" Binding="{Binding TipoCausa}"/>
+                        <!-- COLUMNAS INVERTIDAS -->
 
-                        <!-- TIPO AUDIENCIA (badge) -->
-                        <DataGridTemplateColumn Header="Tipo Audiencia" Width="200">
+                        <DataGridTextColumn Header="Quien Realiza" Width="180" Binding="{Binding QuienRealiza}"/>
+
+                        <DataGridTextColumn Header="Total Disco Audiencia"
+                        Width="180"
+                        Binding="{Binding TotDiscoAudiencia}"/>
+
+                        <DataGridTextColumn Header="Tipo Disco"
+                        Width="150"
+                        Binding="{Binding TipoDisco}"/>
+
+                        <DataGridTextColumn Header="Total Discos"
+                        Width="140"
+                        Binding="{Binding TotDiscos}"/>
+
+                        <DataGridTextColumn Header="No. Causa Juicio"
+                        Width="180"
+                        Binding="{Binding NoCausaJuicio}"/>
+
+                        <DataGridTextColumn Header="Hora Conclusión"
+                        Width="150"
+                        Binding="{Binding HoraConclusion}"/>
+
+                        <DataGridTextColumn Header="Sala"
+                        Width="130"
+                        Binding="{Binding Sala}"/>
+
+                        <DataGridTextColumn Header="Agraviado"
+                        Width="220"
+                        Binding="{Binding Agraviado}"/>
+
+                        <DataGridTextColumn Header="Delito"
+                        Width="220"
+                        Binding="{Binding Delito}"/>
+
+                        <DataGridTextColumn Header="Imputado"
+                        Width="220"
+                        Binding="{Binding Imputado}"/>
+
+                        <DataGridTextColumn Header="Juez"
+                        Width="180"
+                        Binding="{Binding Juez}"/>
+
+                        <DataGridTextColumn Header="Juzgado"
+                        Width="200"
+                        Binding="{Binding Juzgado}"/>
+
+                        <DataGridTemplateColumn Header="Tipo Audiencia"
+                            Width="200">
+
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
+
                                     <Border Style="{StaticResource BadgeStyle}">
                                         <TextBlock Text="{Binding TipoAudiencia}"
-                                   FontSize="12"
-                                   Foreground="#374151"/>
+                               FontSize="12"
+                               Foreground="#374151"/>
                                     </Border>
+
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="Juzgado"              Width="200" Binding="{Binding Juzgado}"/>
-                        <DataGridTextColumn Header="Juez"                 Width="180" Binding="{Binding Juez}"/>
-                        <DataGridTextColumn Header="Imputado"             Width="220" Binding="{Binding Imputado}"/>
-                        <DataGridTextColumn Header="Delito"               Width="220" Binding="{Binding Delito}"/>
-                        <DataGridTextColumn Header="Agraviado"            Width="220" Binding="{Binding Agraviado}"/>
-                        <DataGridTextColumn Header="Sala"                 Width="130" Binding="{Binding Sala}"/>
-                        <DataGridTextColumn Header="Hora Conclusión"      Width="150" Binding="{Binding HoraConclusion}"/>
-                        <DataGridTextColumn Header="No. Causa Juicio"     Width="180" Binding="{Binding NoCausaJuicio}"/>
-                        <DataGridTextColumn Header="Total Discos"         Width="140" Binding="{Binding TotDiscos}"/>
-                        <DataGridTextColumn Header="Tipo Disco"           Width="150" Binding="{Binding TipoDisco}"/>
-                        <DataGridTextColumn Header="Total Disco Audiencia" Width="180" Binding="{Binding TotDiscoAudiencia}"/>
-                        <DataGridTextColumn Header="Quien Realiza"        Width="180" Binding="{Binding QuienRealiza}"/>
+                        <DataGridTextColumn Header="Tipo Causa"
+                        Width="150"
+                        Binding="{Binding TipoCausa}"/>
+
+                        <DataGridTextColumn Header="Fecha Recibido"
+                        Width="140"
+                        Binding="{Binding FechaRecibo}"/>
+
+                        <DataGridTextColumn Header="Fecha Audiencia"
+                        Width="140"
+                        Binding="{Binding FechaAudiencia}"/>
+
+                        <DataGridTextColumn Header="NUC"
+                        Width="160"
+                        Binding="{Binding NUC}"/>
+
+                        <DataGridTextColumn Header="No. Causa"
+                        Width="150"
+                        Binding="{Binding NoCausa}"/>
 
                     </DataGrid.Columns>
                 </DataGrid>

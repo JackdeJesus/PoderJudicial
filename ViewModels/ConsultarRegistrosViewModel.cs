@@ -193,7 +193,7 @@ namespace PoderJudicial.ViewModels
                     {
                         VerDetalleRegistro ventana = new VerDetalleRegistro();
                         ventana.CargarDatos(
-                            id: "",
+                           Id: detalle.Id.ToString(),
                             noCausa: detalle.NoCausa,
                             nuc: detalle.NUC,
                             fechaAudiencia: detalle.FechaAudiencia,

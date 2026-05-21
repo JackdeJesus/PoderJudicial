@@ -31,13 +31,26 @@ namespace PoderJudicial.Data
 
                     lista.Add(new Audiencia
                     {
+                      
                         NoCausa = reader["NoCausa"].ToString(),
                         NUC = reader["NUC"].ToString(),
                         FechaAudiencia = reader["FeAudiencia"].ToString(),
+                        FechaRecibo = reader["FeRecibo"].ToString(),
                         TipoAudiencia = reader["TipoAudiencia"].ToString(),
+                        TipoCausa = reader["TipoCausa"].ToString(),
                         Juzgado = reader["Juzgado"].ToString(),
+                        Juez = reader["Juez"].ToString(),
                         Imputado = reader["Imputado"].ToString(),
-                        Sala = reader["Sala"].ToString()
+                        Delito = reader["Delito"].ToString(),
+                        Agraviado = reader["Agraviado"].ToString(),
+                        Sala = reader["Sala"].ToString(),
+                        HoraConclusion = reader["Hora conclusion"].ToString(),
+                        QuienRealiza = reader["Quien Realiza"].ToString(),
+
+                        NoCausaJuicio = reader["NoCausaJuicio"].ToString(),
+                        TotDiscos = reader["TotDiscos"].ToString(),
+                        TotDiscoAudiencia = reader["TotDiscoAudiencia"].ToString(),
+                        TipoDisco = reader["TipoDisco"].ToString(),
                     });
                 }
             }
@@ -63,6 +76,7 @@ namespace PoderJudicial.Data
                 {
                     return new Audiencia
                     {
+                        Id = int.Parse(reader["Id"].ToString()),
                         NoCausa = reader["NoCausa"].ToString(),
                         NUC = reader["NUC"].ToString(),
                         FechaAudiencia = reader["FeAudiencia"].ToString(),
