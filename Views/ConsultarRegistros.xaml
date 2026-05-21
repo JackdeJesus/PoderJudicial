@@ -171,29 +171,31 @@
             <Border Grid.Row="1"
                     Background="White" BorderBrush="#E5E7EB"
                     BorderThickness="1" CornerRadius="16" ClipToBounds="True">
-
                 <DataGrid x:Name="dgAudiencias"
-                          ItemsSource="{Binding Audiencias}"
-                          AutoGenerateColumns="False"
-                          HeadersVisibility="Column"
-                          GridLinesVisibility="None"
-                          BorderThickness="0"
-                          Background="White"
-                          RowBackground="White"
-                          AlternatingRowBackground="#FAFAFA"
-                          CanUserResizeRows="False"
-                          CanUserAddRows="False"
-                          CanUserDeleteRows="False"
-                          CanUserSortColumns="True"
-                          SelectionMode="Single"
-                          SelectionUnit="FullRow"
-                          IsReadOnly="True"
-                          RowHeight="56"
-                          ColumnHeaderHeight="52"
-                          FontSize="13"
-                          HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Auto">
+          ItemsSource="{Binding Audiencias}"
+          AutoGenerateColumns="False"
+          FlowDirection="RightToLeft"
+          FrozenColumnCount="1"
+          HeadersVisibility="Column"
+          GridLinesVisibility="None"
+          BorderThickness="0"
+          Background="White"
+          RowBackground="White"
+          AlternatingRowBackground="#FAFAFA"
+          CanUserResizeRows="False"
+          CanUserAddRows="False"
+          CanUserDeleteRows="False"
+          CanUserSortColumns="True"
+          SelectionMode="Single"
+          SelectionUnit="FullRow"
+          IsReadOnly="True"
+          RowHeight="56"
+          ColumnHeaderHeight="52"
+          FontSize="13"
+          HorizontalScrollBarVisibility="Auto"
+          VerticalScrollBarVisibility="Auto">
 
+                    <!-- ═══ ESTILOS INTERNOS ═══ -->
                     <DataGrid.Resources>
                         <Style TargetType="{x:Type DataGridRow}">
                             <Setter Property="Focusable" Value="False"/>
@@ -202,13 +204,15 @@
 
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background"       Value="#F9FAFB"/>
-                            <Setter Property="Foreground"       Value="#111827"/>
-                            <Setter Property="FontWeight"       Value="SemiBold"/>
-                            <Setter Property="FontSize"         Value="13"/>
-                            <Setter Property="Padding"          Value="12,0"/>
-                            <Setter Property="BorderBrush"      Value="#E5E7EB"/>
-                            <Setter Property="BorderThickness"  Value="0,0,0,1"/>
+                            <Setter Property="Background"      Value="#F9FAFB"/>
+                            <Setter Property="Foreground"      Value="#111827"/>
+                            <Setter Property="FontWeight"      Value="SemiBold"/>
+                            <Setter Property="FontSize"        Value="13"/>
+                            <Setter Property="Padding"         Value="12,0"/>
+                            <Setter Property="BorderBrush"     Value="#E5E7EB"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <!-- Corrige orientación de todos los headers -->
+                            <Setter Property="FlowDirection"   Value="LeftToRight"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
@@ -231,12 +235,14 @@
 
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
-                            <Setter Property="BorderThickness"  Value="0"/>
-                            <Setter Property="Padding"          Value="12,0"/>
-                            <Setter Property="Foreground"       Value="#111827"/>
-                            <Setter Property="Background"       Value="Transparent"/>
-                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="BorderThickness"   Value="0"/>
+                            <Setter Property="Padding"           Value="12,0"/>
+                            <Setter Property="Foreground"        Value="#111827"/>
+                            <Setter Property="Background"        Value="Transparent"/>
+                            <Setter Property="FocusVisualStyle"  Value="{x:Null}"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
+                            <!-- Corrige orientación de todas las celdas -->
+                            <Setter Property="FlowDirection"     Value="LeftToRight"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="#EFF6FF"/>
@@ -245,134 +251,80 @@
                             </Style.Triggers>
                         </Style>
                     </DataGrid.CellStyle>
+
+                    <!-- ═══ COLUMNAS ═══ -->
                     <DataGrid.Columns>
 
-                        <DataGridTextColumn Header="No. Causa" Width="150" Binding="{Binding NoCausa}"/>
-                        <DataGridTextColumn Header="NUC" Width="160" Binding="{Binding NUC}"/>
+                        <!-- ACCIONES — va PRIMERO porque FrozenColumnCount=1 congela desde la derecha -->
+                        <DataGridTemplateColumn Header="Acciones"
+                                Width="120"
+                                CanUserSort="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
 
-                        <DataGridTextColumn Header="Fecha Audiencia"
-                        Width="140"
-                        Binding="{Binding FechaAudiencia}"/>
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                                ToolTip="Ver detalle"
+                                Command="{Binding DataContext.VerCommand,
+                                          RelativeSource={RelativeSource AncestorType=Page}}"
+                                CommandParameter="{Binding}">
+                                            <TextBlock Text="👁" FontSize="15"/>
+                                        </Button>
 
-                        <DataGridTextColumn Header="Fecha Recibido"
-                        Width="140"
-                        Binding="{Binding FechaRecibo}"/>
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                                ToolTip="Editar"
+                                Command="{Binding DataContext.EditarCommand,
+                                          RelativeSource={RelativeSource AncestorType=Page}}"
+                                CommandParameter="{Binding}">
+                                            <TextBlock Text="✏" FontSize="15"/>
+                                        </Button>
 
-                        <DataGridTextColumn Header="Tipo Causa"
-                        Width="150"
-                        Binding="{Binding TipoCausa}"/>
+                                        <Button Style="{StaticResource ActionBtnStyle}"
+                                ToolTip="Eliminar registro"
+                                Command="{Binding DataContext.EliminarCommand,
+                                          RelativeSource={RelativeSource AncestorType=Page}}"
+                                CommandParameter="{Binding}">
+                                            <TextBlock Text="🗑" FontSize="15" Foreground="#DC2626"/>
+                                        </Button>
 
-                        <!-- TIPO AUDIENCIA -->
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- RESTO DE COLUMNAS (orden original) -->
+                        <DataGridTextColumn Header="No. Causa"    Width="150" Binding="{Binding NoCausa}"/>
+                        <DataGridTextColumn Header="NUC"          Width="160" Binding="{Binding NUC}"/>
+                        <DataGridTextColumn Header="Fecha Audiencia"  Width="140" Binding="{Binding FechaAudiencia}"/>
+                        <DataGridTextColumn Header="Fecha Recibido"   Width="140" Binding="{Binding FechaRecibo}"/>
+                        <DataGridTextColumn Header="Tipo Causa"       Width="150" Binding="{Binding TipoCausa}"/>
+
+                        <!-- TIPO AUDIENCIA (badge) -->
                         <DataGridTemplateColumn Header="Tipo Audiencia" Width="200">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border Style="{StaticResource BadgeStyle}">
                                         <TextBlock Text="{Binding TipoAudiencia}"
-                               FontSize="12"
-                               Foreground="#374151"/>
+                                   FontSize="12"
+                                   Foreground="#374151"/>
                                     </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="Juzgado"
-                        Width="200"
-                        Binding="{Binding Juzgado}"/>
-
-                        <DataGridTextColumn Header="Juez"
-                        Width="180"
-                        Binding="{Binding Juez}"/>
-
-                        <DataGridTextColumn Header="Imputado"
-                        Width="220"
-                        Binding="{Binding Imputado}"/>
-
-                        <DataGridTextColumn Header="Delito"
-                        Width="220"
-                        Binding="{Binding Delito}"/>
-
-                        <DataGridTextColumn Header="Agraviado"
-                        Width="220"
-                        Binding="{Binding Agraviado}"/>
-
-                        <DataGridTextColumn Header="Sala"
-                        Width="130"
-                        Binding="{Binding Sala}"/>
-
-                        <DataGridTextColumn Header="Hora Conclusión"
-                        Width="150"
-                        Binding="{Binding HoraConclusion}"/>
-
-                        
-                        
-
-                        <DataGridTextColumn Header="No. Causa Juicio"
-                        Width="180"
-                        Binding="{Binding NoCausaJuicio}"/>
-
-                        <DataGridTextColumn Header="Total Discos"
-                        Width="140"
-                        Binding="{Binding TotDiscos}"/>
-
-                        <DataGridTextColumn Header="Tipo Disco"
-                        Width="150"
-                        Binding="{Binding TipoDisco}"/>
-
-                        <DataGridTextColumn Header="Total Disco Audiencia"
-                        Width="180"
-                        Binding="{Binding TotDiscoAudiencia}"/>
-
-                        <DataGridTextColumn Header="Quien Realiza"
-                                            Width="180"
-                                            Binding="{Binding QuienRealiza}"/>
-            
-
-                        <!-- ACCIONES -->
-                        <DataGridTemplateColumn Header="Acciones"
-                            Width="120"
-                            CanUserSort="False">
-
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-
-                                    <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Center">
-
-                                        <Button Style="{StaticResource ActionBtnStyle}"
-                            ToolTip="Ver detalle"
-                            Command="{Binding DataContext.VerCommand,
-                                              RelativeSource={RelativeSource AncestorType=Page}}"
-                            CommandParameter="{Binding}">
-
-                                            <TextBlock Text="👁" FontSize="15"/>
-                                        </Button>
-
-                                        <Button Style="{StaticResource ActionBtnStyle}"
-                            ToolTip="Editar"
-                            Command="{Binding DataContext.EditarCommand,
-                                              RelativeSource={RelativeSource AncestorType=Page}}"
-                            CommandParameter="{Binding}">
-
-                                            <TextBlock Text="✏" FontSize="15"/>
-                                        </Button>
-
-                                        <Button Style="{StaticResource ActionBtnStyle}"
-                            ToolTip="Eliminar registro"
-                            Command="{Binding DataContext.EliminarCommand,
-                                              RelativeSource={RelativeSource AncestorType=Page}}"
-                            CommandParameter="{Binding}">
-
-                                            <TextBlock Text="🗑"
-                                   FontSize="15"
-                                   Foreground="#DC2626"/>
-                                        </Button>
-
-                                    </StackPanel>
-
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-
-                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Juzgado"              Width="200" Binding="{Binding Juzgado}"/>
+                        <DataGridTextColumn Header="Juez"                 Width="180" Binding="{Binding Juez}"/>
+                        <DataGridTextColumn Header="Imputado"             Width="220" Binding="{Binding Imputado}"/>
+                        <DataGridTextColumn Header="Delito"               Width="220" Binding="{Binding Delito}"/>
+                        <DataGridTextColumn Header="Agraviado"            Width="220" Binding="{Binding Agraviado}"/>
+                        <DataGridTextColumn Header="Sala"                 Width="130" Binding="{Binding Sala}"/>
+                        <DataGridTextColumn Header="Hora Conclusión"      Width="150" Binding="{Binding HoraConclusion}"/>
+                        <DataGridTextColumn Header="No. Causa Juicio"     Width="180" Binding="{Binding NoCausaJuicio}"/>
+                        <DataGridTextColumn Header="Total Discos"         Width="140" Binding="{Binding TotDiscos}"/>
+                        <DataGridTextColumn Header="Tipo Disco"           Width="150" Binding="{Binding TipoDisco}"/>
+                        <DataGridTextColumn Header="Total Disco Audiencia" Width="180" Binding="{Binding TotDiscoAudiencia}"/>
+                        <DataGridTextColumn Header="Quien Realiza"        Width="180" Binding="{Binding QuienRealiza}"/>
 
                     </DataGrid.Columns>
                 </DataGrid>
