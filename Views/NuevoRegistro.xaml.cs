@@ -1,12 +1,13 @@
-﻿using System;
+﻿using PoderJudicial.Data;
+using PoderJudicial.Helpers;
+using PoderJudicial.Models;
+using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Globalization;
-using PoderJudicial.Helpers;
-using PoderJudicial.Data;
 
 
 
@@ -24,6 +25,8 @@ namespace PoderJudicial.Views
         public NuevoRegistro()
         {
             InitializeComponent();
+
+            CargarIdVisual();
 
             // Cargar datos para listas autocompletar
             AudienciaRepository audienciaRepo = new AudienciaRepository();
@@ -48,12 +51,32 @@ namespace PoderJudicial.Views
             PlaceholderHelper.AddPlaceholder(TxtHoraConclusion, "hh:mm");
             PlaceholderHelper.AddPlaceholder(TxtFechaAudiencia, "dd/MM/yyyy");
             PlaceholderHelper.AddPlaceholder(TxtHoraAudiencia, "hh:mm");
-            PlaceholderHelper.AddPlaceholder(txtJuez, "Nombre del juez");
+            
 
 
 
 
         }
+
+
+
+        private void CargarIdVisual()
+        {
+            try
+            {
+                int id =
+                    new AudienciaData()
+                    .ObtenerSiguienteIdVisual();
+
+                TxtId.Text = id.ToString();
+            }
+            catch
+            {
+                TxtId.Text = "---";
+            }
+        }
+
+
 
         // ─────────────────────────────────────────────────────────
         //  Inicialización del reloj (fecha y hora actualizados cada segundo)
@@ -408,37 +431,125 @@ namespace PoderJudicial.Views
         // -───────────────────────────────────────
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            // ── Validaciones básicas ──
-            if (string.IsNullOrWhiteSpace(TxtId.Text))
+            // ── Validaciones ──────────────────────────────────────────────────────
+            if (PlaceholderHelper.IsPlaceholder(TxtId) ||
+                string.IsNullOrWhiteSpace(TxtId.Text))
             {
                 MessageBox.Show("El campo 'Id' es obligatorio.", "Validación",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-
-
             var juzgadoItem = CmbJuzgado.SelectedItem as ComboBoxItem;
-            if (juzgadoItem == null || juzgadoItem.Content.ToString() == "Seleccione juzgado")
+            if (juzgadoItem == null ||
+                juzgadoItem.Content.ToString() == "Seleccione juzgado")
             {
                 MessageBox.Show("El campo 'Juzgado' es obligatorio.", "Validación",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // ── Recopilar valores ──
-
-
-
-
-
+            // ── Recopilar valores ─────────────────────────────────────────────────
             string juzgado = ObtenerValorComboOtro(CmbJuzgado, TxtJuzgadoOtro);
             string totAud = ObtenerValorComboOtro(CmbTotDiscoAudiencia, TxtTotDiscoAudienciaOtro);
+            string Causa = ObtenerValorCombo(CmbTipoCausa);
+            string tipoDiscoTexto = ObtenerValorCombo(CmbTipoDisco);
+            // Campos con paneles dinámicos — combina el TextBox principal
+            // con los campos extra que el usuario haya agregado con "+"
+            string juezFinal = ObtenerTextosPanelDinamico(PanelJuecesExtra, txtJuez);
+            string delitoFinal = ObtenerTextosPanelDinamico(PanelDelitoExtra, TxtDelito);
+            string audienciaFinal = ObtenerTextosPanelDinamico(PanelAudienciaExtra, TxtTipoAudiencia);
+            string cantidadDiscos = tipoDiscoTexto.Split(' ')[0];
 
-            // TODO: guardar en base de datos o llamar al servicio correspondiente
+            //PARSEAR FECHA Y HORA DE AUDIENCIA EN UN SOLO CAMPO PARA GUARDAR EN LA BD (si es posible)
 
-            MessageBox.Show("Registro guardado correctamente.", "Éxito",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            DateTime? fechaAudiencia = null;
+
+            string fechaAudienciaTexto =
+                $"{ObtenerTexto(TxtFechaAudiencia)} {ObtenerTexto(TxtHoraAudiencia)}";
+
+            if (DateTime.TryParse(
+                fechaAudienciaTexto,
+                out DateTime fechaAud))
+            {
+                fechaAudiencia = fechaAud;
+            }
+
+
+            //--------
+            DateTime? fechaRecibo = null;
+
+            string fechaReciboTexto =
+                $"{TxtFechaRecibo.Text} {TxtHoraRecibo.Text}";
+
+            if (DateTime.TryParse(
+                fechaReciboTexto,
+                out DateTime fechaRec))
+            {
+                fechaRecibo = fechaRec;
+            }
+
+            //----------------
+            DateTime? horaConclusion = null;
+
+            if (DateTime.TryParse(
+                ObtenerTexto(TxtHoraConclusion),
+                out DateTime hora))
+            {
+                horaConclusion = hora;
+            }
+
+            //------------- 
+            int? totalDiscos = null;
+
+            if (int.TryParse(cantidadDiscos, out int discos))
+            {
+                totalDiscos = discos;
+            }
+
+
+
+            // ── Construir modelo ──────────────────────────────────────────────────
+            var registro = new Audiencia
+            {
+                Id = int.Parse(TxtId.Text),
+                NoCausa = ObtenerTexto(TxtNoCausa),
+                NUC = ObtenerTexto(TxtNUC),
+                FechaAudiencia = fechaAudiencia,
+                FechaRecibo = fechaRecibo,
+                TipoAudiencia = audienciaFinal,
+                TipoCausa = Causa,         
+                Juzgado = juzgado,
+                Juez = juezFinal,
+                Imputado = ObtenerTexto(TxtImputado),
+                Delito = delitoFinal,
+                Agraviado = ObtenerTexto(TxtAgraviado),
+                Sala = ObtenerValorCombo(CmbSala),
+                HoraConclusion = horaConclusion,
+                NoCausaJuicio = ObtenerTexto(TxtNoCausaJuicio),
+                Diferida = string.Empty,          // sin campo en el form aún
+                QuienRealiza = string.Empty,          // sin campo en el form aún
+                TotDiscos = totalDiscos,
+                TipoDisco = "Archivo",          
+                TotDiscoAudiencia = totAud
+            };
+
+            // ── Insertar ──────────────────────────────────────────────────────────
+            try
+            {
+                new AudienciaData().Insertar(registro);
+
+                MessageBox.Show("Registro guardado correctamente.", "Éxito",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+
+                LimpiarFormulario();
+                CargarIdVisual();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al guardar:\n{ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         // ──────────────────────────────────────────
@@ -457,6 +568,127 @@ namespace PoderJudicial.Views
 
             return content;
         }
+
+        /// <summary>
+           /// Devuelve el Content del item seleccionado en un ComboBox simple
+            /// (sin opción "Otro..." con TextBox).
+        /// </summary>
+          private string ObtenerValorCombo(ComboBox combo)
+          {
+               var item = combo.SelectedItem as ComboBoxItem;
+               if (item == null) return string.Empty;
+
+              string content = item.Content?.ToString() ?? string.Empty;
+
+              // Si el item es un placeholder de selección, devolver vacío
+              if (content.StartsWith("Seleccione")) return string.Empty;
+
+              return content;
+          }
+
+
+        // ──────────────────────────────────────────
+        //  HELPERS PRIVADOS
+        // ──────────────────────────────────────────
+
+        /// <summary>
+        /// Devuelve string.Empty si el TextBox tiene placeholder o está vacío,
+        /// de lo contrario devuelve el texto limpio.
+        /// </summary>
+        private string ObtenerTexto(TextBox txt)
+        {
+            if (PlaceholderHelper.IsPlaceholder(txt)) return string.Empty;
+            return txt.Text.Trim();
+        }
+
+        /// <summary>
+        /// Combina el TextBox principal con los campos dinámicos del panel,
+        /// separados por " / ". Ignora placeholders y vacíos.
+        /// </summary>
+        private string ObtenerTextosPanelDinamico(StackPanel panel, TextBox txtPrincipal)
+        {
+            var valores = new List<string>();
+
+            // Campo principal
+            string valorPrincipal = ObtenerTexto(txtPrincipal);
+            if (!string.IsNullOrWhiteSpace(valorPrincipal))
+                valores.Add(valorPrincipal);
+
+            // Campos agregados dinámicamente con el botón "+"
+            foreach (var child in panel.Children)
+            {
+                if (!(child is Grid grid)) continue;
+
+                foreach (var gridChild in grid.Children)
+                {
+                    if (!(gridChild is StackPanel sp)) continue;
+
+                    TextBox txt = sp.Children.OfType<TextBox>().FirstOrDefault();
+                    if (txt == null) continue;
+
+                    string valor = ObtenerTexto(txt);
+                    if (!string.IsNullOrWhiteSpace(valor))
+                        valores.Add(valor);
+                }
+            }
+
+            return string.Join(" / ", valores);
+        }
+
+        /// <summary>
+        /// Limpia el formulario y restaura todos los placeholders
+        /// después de guardar exitosamente.
+        /// </summary>
+        private void LimpiarFormulario()
+        {
+            // Limpiar TextBox
+            TxtId.Text = string.Empty;
+            TxtNoCausa.Text = string.Empty;
+            TxtNUC.Text = string.Empty;
+            TxtFechaAudiencia.Text = string.Empty;
+            TxtTipoAudiencia.Text = string.Empty;
+            TxtImputado.Text = string.Empty;
+            TxtDelito.Text = string.Empty;
+            TxtAgraviado.Text = string.Empty;
+            TxtHoraConclusion.Text = string.Empty;
+            TxtNoCausaJuicio.Text = string.Empty;
+            txtJuez.Text = string.Empty;
+            TxtHoraAudiencia.Text = string.Empty;
+            TxtHoraRecibo.Text = string.Empty;
+            TxtFechaRecibo.Text = string.Empty;
+
+            // Limpiar ComboBox
+            CmbJuzgado.SelectedIndex = 1;
+            CmbTotDiscoAudiencia.SelectedIndex = 1;
+            CmbSala.SelectedIndex = 1;  // ← agregar aquí
+            CmbTipoCausa.SelectedIndex = 1;
+            CmbTipoDisco.SelectedIndex = 0;
+
+
+            // Limpiar paneles dinámicos
+            PanelJuecesExtra.Children.Clear();
+            PanelDelitoExtra.Children.Clear();
+            PanelAudienciaExtra.Children.Clear();
+
+            // Restaurar placeholders (mismo orden que el constructor)
+            PlaceholderHelper.AddPlaceholder(TxtId);
+            PlaceholderHelper.AddPlaceholder(TxtNoCausa, "Ej: 123/2024");
+            PlaceholderHelper.AddPlaceholder(TxtNUC, "Ej: 12-2024-00567");
+            PlaceholderHelper.AddPlaceholder(TxtNoCausaJuicio, "Ej: 89/2024");
+            PlaceholderHelper.AddPlaceholder(TxtTipoAudiencia, "Escriba el tipo de audiencia");
+            PlaceholderHelper.AddPlaceholder(TxtImputado, "Nombre del imputado");
+            PlaceholderHelper.AddPlaceholder(TxtDelito, "Tipo de delito");
+            PlaceholderHelper.AddPlaceholder(TxtAgraviado, "Nombre del agraviado");
+            PlaceholderHelper.AddPlaceholder(TxtHoraConclusion, "hh:mm");
+            PlaceholderHelper.AddPlaceholder(TxtFechaAudiencia, "dd/MM/yyyy");
+            PlaceholderHelper.AddPlaceholder(TxtHoraAudiencia, "hh:mm");
+            
+            
+        }
+
+        
+
+
         private void lstAutocomplete_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             ListBox lst = (ListBox)sender;

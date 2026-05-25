@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -86,5 +87,52 @@ namespace PoderJudicial.Data
                 .TextInfo
                 .ToTitleCase(texto.ToLower());
         }
+
+        /// <summary>
+        /// Consulta una columna en múltiples tablas y devuelve valores únicos.
+        /// Omite tablas vacías automáticamente para no romper el autocompletado.
+        /// </summary>
+        protected List<string> ConsultarColumnaHistorica(string columna)
+        {
+            List<string> acumulado = new List<string>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                foreach (string tabla in TableDetector.TodasLasTablas)
+                {
+                    try
+                    {
+                        // Verificar si la tabla tiene registros antes de consultarla
+                        string sqlCount = $"SELECT COUNT(*) FROM [{tabla}]";
+                        using (OleDbCommand cmdCount = new OleDbCommand(sqlCount, conn))
+                        {
+                            int total = (int)cmdCount.ExecuteScalar();
+                            if (total == 0) continue; // Tabla vacía — se omite sin error
+                        }
+
+                        string sql =
+                            $"SELECT [{columna}] FROM [{tabla}] " +
+                            $"WHERE [{columna}] IS NOT NULL AND [{columna}] <> ''";
+
+                        using (OleDbCommand cmd = new OleDbCommand(sql, conn))
+                        using (OleDbDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                                acumulado.Add(reader[0]?.ToString());
+                        }
+                    }
+                    catch (OleDbException)
+                    {
+                        // Si la tabla no tiene esa columna (esquema distinto),
+                        // se omite silenciosamente
+                    }
+                }
+            }
+
+            return LimpiarLista(acumulado);
+        }
+
     }
 }

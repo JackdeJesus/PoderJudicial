@@ -128,16 +128,13 @@ namespace PoderJudicial.ViewModels
 
         private void CargarSugerencias()
         {
-            Sugerencias = _listaCompleta
-                .SelectMany(x => new[] { x.NoCausa, x.NUC, x.Imputado, x.FechaAudiencia })
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct()
-                .ToList();
+            Sugerencias = _listaCompleta.SelectMany(x => new[] {x.NoCausa, x.NUC, x.Imputado,x.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm")
+                }).Where(x => !string.IsNullOrWhiteSpace(x)) .Distinct().ToList();
         }
 
-        
+
         //  FILTRADO Y SUGERENCIAS
-       
+
         private void Filtrar()
         {
             string texto = _textoBusqueda.Trim().ToLower();
@@ -153,10 +150,17 @@ namespace PoderJudicial.ViewModels
                    (a.NoCausa != null && a.NoCausa.ToLower().Contains(texto))
                 || (a.NUC != null && a.NUC.ToLower().Contains(texto))
                 || (a.Imputado != null && a.Imputado.ToLower().Contains(texto))
-                || (a.FechaAudiencia != null && a.FechaAudiencia.ToLower().Contains(texto))
+                || (
+                    a.FechaAudiencia.HasValue &&
+                    a.FechaAudiencia.Value
+                        .ToString("dd/MM/yyyy HH:mm")
+                        .ToLower()
+                        .Contains(texto)
+                   )
             ).ToList();
 
             Audiencias = new ObservableCollection<Audiencia>(filtrados);
+
             TotalRegistros = $"{filtrados.Count} registro(s) encontrado(s)";
         }
 
@@ -171,8 +175,16 @@ namespace PoderJudicial.ViewModels
             }
 
             Sugerencias = _listaCompleta
-                .SelectMany(x => new[] { x.NoCausa, x.NUC, x.Imputado, x.FechaAudiencia })
-                .Where(x => !string.IsNullOrWhiteSpace(x) && x.ToLower().Contains(texto))
+                .SelectMany(x => new[]
+                {
+            x.NoCausa,
+            x.NUC,
+            x.Imputado,
+            x.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm")
+                })
+                .Where(x =>
+                    !string.IsNullOrWhiteSpace(x) &&
+                    x.ToLower().Contains(texto))
                 .Distinct()
                 .Take(10)
                 .ToList();
@@ -193,27 +205,45 @@ namespace PoderJudicial.ViewModels
                     {
                         VerDetalleRegistro ventana = new VerDetalleRegistro();
                         ventana.CargarDatos(
-                           Id: detalle.Id.ToString(),
-                            noCausa: detalle.NoCausa,
-                            nuc: detalle.NUC,
-                            fechaAudiencia: detalle.FechaAudiencia,
-                            fechaRecibo: detalle.FechaRecibo,
-                            horaConclusion: detalle.HoraConclusion,
-                            tipoAudiencia: detalle.TipoAudiencia,
-                            tipoCausa: detalle.TipoCausa,
-                            juzgado: detalle.Juzgado,
-                            juez: detalle.Juez,
-                            sala: detalle.Sala,
-                            totalDiscos: detalle.TotDiscos,
-                            tipoDisco: detalle.TipoDisco,
-                            totalDiscoAudiencia: detalle.TotDiscoAudiencia,
-                            imputado: detalle.Imputado,
-                            delito: detalle.Delito,
-                            agraviado: detalle.Agraviado,
-                            noCausaJuicio: detalle.NoCausaJuicio,
-                            diferida: detalle.Diferida,
-                            quienRealiza: detalle.QuienRealiza
-                        );
+    Id: detalle.Id.ToString(),
+
+    noCausa: detalle.NoCausa,
+    nuc: detalle.NUC,
+
+    fechaAudiencia:
+        detalle.FechaAudiencia?
+        .ToString("dd/MM/yyyy HH:mm") ?? "",
+
+    fechaRecibo:
+        detalle.FechaRecibo?
+        .ToString("dd/MM/yyyy HH:mm") ?? "",
+
+    horaConclusion:
+        detalle.HoraConclusion?
+        .ToString("HH:mm") ?? "",
+
+    tipoAudiencia: detalle.TipoAudiencia,
+    tipoCausa: detalle.TipoCausa,
+    juzgado: detalle.Juzgado,
+    juez: detalle.Juez,
+    sala: detalle.Sala,
+
+    totalDiscos:
+        detalle.TotDiscos?
+        .ToString() ?? "",
+
+    tipoDisco: detalle.TipoDisco,
+
+    totalDiscoAudiencia:
+        detalle.TotDiscoAudiencia,
+
+    imputado: detalle.Imputado,
+    delito: detalle.Delito,
+    agraviado: detalle.Agraviado,
+    noCausaJuicio: detalle.NoCausaJuicio,
+    diferida: detalle.Diferida,
+    quienRealiza: detalle.QuienRealiza
+);
                         ventana.ShowDialog();
                     }
                     else

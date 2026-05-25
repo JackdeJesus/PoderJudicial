@@ -233,8 +233,11 @@
                                 <TextBlock Text=" *" Foreground="#EF4444" FontWeight="Bold" Margin="0,0,0,6"/>
                             </StackPanel>
                             <TextBox x:Name="TxtId"
-                                     Style="{StaticResource InputStyle}"
-                                     Tag="Ingrese el ID"/>
+                                  Style="{StaticResource InputStyle}"
+                                  IsReadOnly="True"
+                                  Focusable="False"
+                                  Cursor="Arrow"
+                                  Background="#F3F4F6"/>
                         </StackPanel>
 
                         <!-- Fecha y Hora Audiencia -->
@@ -275,14 +278,20 @@
                                     <ColumnDefinition Width="130"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox x:Name="TxtFechaRecibo"
-                                    Grid.Column="0"
-                                    Style="{StaticResource InputStyle}"
-                                    />
+                                      Grid.Column="0"
+                                      Style="{StaticResource InputStyle}"
+                                      IsReadOnly="True"
+                                      Focusable="False"
+                                      Cursor="Arrow"
+                                      Background="#F3F4F6"/>
                                 <!-- ★ txt de hora-->
                                 <TextBox x:Name="TxtHoraRecibo"
-                                          Grid.Column="2"
-                                          Style="{StaticResource InputStyle}"
-                                         />
+                                     Grid.Column="2"
+                                     Style="{StaticResource InputStyle}"
+                                     IsReadOnly="True"
+                                     Focusable="False"
+                                     Cursor="Arrow"
+                                     Background="#F3F4F6"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
@@ -300,14 +309,41 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- ★ Total Discos — ahora igual que Total Disco Audiencia -->
+                        <!-- Tipo Disco -->
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Total Disco Audiencia" Style="{StaticResource LabelStyle}"/>
+
+                            <TextBlock Text="Total Archivo"
+         Style="{StaticResource LabelStyle}"/>
+
+                            <ComboBox x:Name="CmbTipoDisco"
+              Style="{StaticResource ComboStyle}"
+              SelectedIndex="0">
+
+                                <ComboBoxItem Content="1 Archivo"/>
+                                <ComboBoxItem Content="2 Archivos"/>
+                                <ComboBoxItem Content="3 Archivos"/>
+                                <ComboBoxItem Content="4 Archivos"/>
+                                <ComboBoxItem Content="5 Archivos"/>
+                                <ComboBoxItem Content="6 Archivos"/>
+                                <ComboBoxItem Content="7 Archivos"/>
+                                <ComboBoxItem Content="8 Archivos"/>
+                                <ComboBoxItem Content="9 Archivos"/>
+                                <ComboBoxItem Content="10 Archivos"/>
+
+                            </ComboBox>
+
+                        </StackPanel>
+
+                        <!-- Total Disco Audiencia -->
+                        <StackPanel Grid.Column="2">
+
+                            <TextBlock Text="Total Disco Audiencia"
+               Style="{StaticResource LabelStyle}"/>
 
                             <ComboBox x:Name="CmbTotDiscoAudiencia"
-                                   Style="{StaticResource ComboStyle}"
-                                   SelectedIndex="1"
-                                   SelectionChanged="CmbTotDiscoAudiencia_SelectionChanged">
+              Style="{StaticResource ComboStyle}"
+              SelectedIndex="1"
+              SelectionChanged="CmbTotDiscoAudiencia_SelectionChanged">
 
                                 <ComboBoxItem Content="Seleccione cantidad"/>
                                 <ComboBoxItem Content="1 disco"/>
@@ -316,29 +352,15 @@
                                 <ComboBoxItem Content="4 discos"/>
                                 <ComboBoxItem Content="5 discos"/>
                                 <ComboBoxItem Content="Otro..."/>
+
                             </ComboBox>
 
                             <TextBox x:Name="TxtTotDiscoAudienciaOtro"
-                                   Style="{StaticResource InputStyle}"
-                                   Margin="0,6,0,0"
-                                   Visibility="Collapsed"
-                                   Tag="Cantidad"/>
-                        </StackPanel>
+                                     Style="{StaticResource InputStyle}"
+                                     Margin="0,6,0,0"
+                                     Visibility="Collapsed"
+                                     Tag="Cantidad"/>
 
-                        <!-- Tipo Disco -->
-                        <!-- Tipo Disco -->
-                        <StackPanel Grid.Column="2">
-
-                            <TextBlock Text="Tipo Disco"
-                                 Style="{StaticResource LabelStyle}"/>
-
-                            <TextBox
-                                 Text="Archivo"
-                                 IsReadOnly="True"
-                                  Focusable="False"
-                                  Cursor="Arrow"
-                                  Background="#F3F4F6"
-                                  Style="{StaticResource InputStyle}"/>
                         </StackPanel>
 
                         <!-- Juzgado -->
@@ -586,8 +608,8 @@
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Imputado" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtImputado"
-                  Style="{StaticResource InputStyle}"
-                  Tag="Nombre del imputado"/>
+                              Style="{StaticResource InputStyle}"
+                              Tag="Nombre del imputado"/>
                         </StackPanel>
                     </Grid>
 
