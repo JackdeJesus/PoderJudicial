@@ -1,27 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PoderJudicial.Views
 {
-    /// <summary>
-    /// Lógica de interacción para ReportesView.xaml
-    /// </summary>
     public partial class ReportesView : Page
     {
-         public ReportesView()
+        public ReportesView()
         {
             InitializeComponent();
+        }
+
+        // Filtros — sin lógica por ahora
+        private void Filtro_Changed(object sender, SelectionChangedEventArgs e) { }
+
+        // Exportar Excel — sin lógica por ahora
+        private void BtnExportarExcel_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Exportación a Excel próximamente.",
+                "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        // Exportar PDF — sin lógica por ahora
+        private void BtnExportarPdf_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Exportación a PDF próximamente.",
+                "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

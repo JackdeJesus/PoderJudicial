@@ -229,15 +229,22 @@ namespace PoderJudicial.ViewModels
             }
         }
 
+
         private void EjecutarEditar(object param)
         {
             if (param is Audiencia audiencia)
             {
-                EditarRegistro ventana = new EditarRegistro();
-                ventana.ShowDialog();
+                Dashboard dashboard = Application.Current.Windows
+                    .OfType<Dashboard>()
+                    .FirstOrDefault();
+
+                if (dashboard != null)
+                {
+                    dashboard.FramePrincipal.Navigate(
+                        new EditarRegistro(audiencia));
+                }
             }
         }
-
         private void EjecutarEliminar(object param)
         {
             if (param is Audiencia audiencia)

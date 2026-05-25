@@ -3,96 +3,404 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:local="clr-namespace:PoderJudicial.Views"
       mc:Ignorable="d"
-      Title="ReportesView">
+      Background="#F3F4F6">
 
     <Page.Resources>
-
         <SolidColorBrush x:Key="ContentBg" Color="#F3F4F6"/>
+
+        <!-- Estilo ComboBox filtro -->
+        <Style x:Key="FiltroCombo" TargetType="ComboBox">
+            <Setter Property="Height"          Value="38"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="Foreground"      Value="#374151"/>
+            <Setter Property="Background"      Value="White"/>
+            <Setter Property="BorderBrush"     Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding"         Value="10,0"/>
+        </Style>
+
+        <!-- Estilo Label filtro -->
+        <Style x:Key="FiltroLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#374151"/>
+            <Setter Property="Margin"     Value="0,0,0,6"/>
+        </Style>
+
+        <!-- Botón exportar Excel -->
+        <Style x:Key="BtnExcel" TargetType="Button">
+            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Padding"         Value="18,0"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="Background"      Value="#2ECC8F"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="9"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#27B57D"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#1F9E6C"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Botón exportar PDF -->
+        <Style x:Key="BtnPdf" TargetType="Button">
+            <Setter Property="Height"          Value="40"/>
+            <Setter Property="Padding"         Value="18,0"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Foreground"      Value="#374151"/>
+            <Setter Property="Background"      Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="#D1D5DB"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="9"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#F9FAFB"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </Page.Resources>
 
     <Grid Background="{StaticResource ContentBg}">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ENCABEZADO -->
-
+        <!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
         <Border Grid.Row="0"
                 Background="White"
                 BorderThickness="0,0,0,1"
                 BorderBrush="#E5E7EB"
                 Padding="32,18">
-
             <Grid>
-
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- TÍTULO -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="Reportes"
+                               FontSize="22" FontWeight="Bold" Foreground="#111827"/>
+                    <TextBlock Text="Filtra y exporta registros de audiencias."
+                               FontSize="12" Foreground="#6B7280" Margin="0,3,0,0"/>
+                </StackPanel>
 
-                <StackPanel Grid.Column="0"
+                <!-- Botones exportar -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
                             VerticalAlignment="Center">
 
-                    <TextBlock Text="Reportes"
-                               FontSize="20"
-                               FontWeight="Bold"
-                               Foreground="#111827"/>
+                    <Button x:Name="BtnExportarExcel"
+                            Style="{StaticResource BtnExcel}"
+                            Margin="0,0,10,0"
+                            Click="BtnExportarExcel_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⬇ " FontSize="13"/>
+                            <TextBlock Text="Exportar Excel" FontSize="13" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Button>
 
-                    <TextBlock Text="Bienvenido, Admin Sistema. Visualiza y administra los reportes del sistema."
-                               FontSize="12"
-                               Foreground="#6B7280"
-                               Margin="0,3,0,0"/>
-
-                </StackPanel>
-
-                <!-- HORA -->
-
-                <StackPanel Grid.Column="1"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Right">
-
-                    <TextBlock x:Name="TxtHoraf"
-                               FontSize="22"
-                               FontWeight="Bold"
-                               Foreground="#111827"
-                               HorizontalAlignment="Right"/>
-
-                    <TextBlock x:Name="TxtFechaR"
-                               FontSize="12"
-                               Foreground="#6B7280"
-                               HorizontalAlignment="Right"
-                               Margin="0,2,0,0"/>
+                    <Button x:Name="BtnExportarPdf"
+                            Style="{StaticResource BtnPdf}"
+                            Click="BtnExportarPdf_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📄 " FontSize="13"/>
+                            <TextBlock Text="Exportar PDF" FontSize="13"/>
+                        </StackPanel>
+                    </Button>
 
                 </StackPanel>
-
             </Grid>
-
         </Border>
 
-        <!-- CONTENIDO -->
+        <!-- ═══════════════════════════ CONTENIDO ═══════════════════════════ -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="32,24,32,32">
 
-        <Border Grid.Row="1"
-                Background="{StaticResource ContentBg}">
+                <!-- ── FILTROS ── -->
+                <Border Background="White"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="28,22"
+                        Margin="0,0,0,20">
+                    <StackPanel>
 
-            <Grid>
+                        <!-- Título filtros -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="⧗ " FontSize="15" Foreground="#2ECC8F"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Text="Filtros"
+                                       FontSize="15" FontWeight="Bold"
+                                       Foreground="#111827"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
 
-                <TextBlock Text="Contenido de reportes"
-                           FontSize="24"
-                           Foreground="#9CA3AF"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                        <!-- FILA DE FILTROS: Mes / Año / Juzgado / Sala -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-            </Grid>
+                            <!-- MES -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Mes" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbMes"
+                                          Style="{StaticResource FiltroCombo}"
+                                          SelectionChanged="Filtro_Changed">
+                                    <ComboBoxItem Content="Todos" IsSelected="True"/>
+                                    <ComboBoxItem Content="Enero"/>
+                                    <ComboBoxItem Content="Febrero"/>
+                                    <ComboBoxItem Content="Marzo"/>
+                                    <ComboBoxItem Content="Abril"/>
+                                    <ComboBoxItem Content="Mayo"/>
+                                    <ComboBoxItem Content="Junio"/>
+                                    <ComboBoxItem Content="Julio"/>
+                                    <ComboBoxItem Content="Agosto"/>
+                                    <ComboBoxItem Content="Septiembre"/>
+                                    <ComboBoxItem Content="Octubre"/>
+                                    <ComboBoxItem Content="Noviembre"/>
+                                    <ComboBoxItem Content="Diciembre"/>
+                                </ComboBox>
+                            </StackPanel>
 
-        </Border>
+                            <!-- AÑO -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Año" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbAnio"
+                                          Style="{StaticResource FiltroCombo}"
+                                          SelectionChanged="Filtro_Changed"/>
+                            </StackPanel>
+
+                            <!-- JUZGADO -->
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Juzgado" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbJuzgado"
+                                          Style="{StaticResource FiltroCombo}"
+                                          SelectionChanged="Filtro_Changed">
+                                    <ComboBoxItem Content="Todos" IsSelected="True"/>
+                                    <ComboBoxItem Content="Control"/>
+                                    <ComboBoxItem Content="Centro"/>
+                                    <ComboBoxItem Content="Otra..."/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- SALA -->
+                            <StackPanel Grid.Column="6">
+                                <TextBlock Text="Sala" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbSala"
+                                          Style="{StaticResource FiltroCombo}"
+                                          SelectionChanged="Filtro_Changed">
+                                    <ComboBoxItem Content="Todas" IsSelected="True"/>
+                                    <ComboBoxItem Content="I"/>
+                                    <ComboBoxItem Content="II"/>
+                                    <ComboBoxItem Content="III"/>
+                                    <ComboBoxItem Content="IV"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- ── RESUMEN ── -->
+                <Border Background="White"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="28,18"
+                        Margin="0,0,0,20">
+                    <StackPanel Orientation="Horizontal">
+
+                        <!-- Registros encontrados -->
+                        <StackPanel Margin="0,0,40,0">
+                            <TextBlock Text="Registros encontrados"
+                                       FontSize="12" Foreground="#6B7280"/>
+                            <TextBlock x:Name="TxtTotalRegistros"
+                                       Text="0"
+                                       FontSize="28" FontWeight="Bold"
+                                       Foreground="#111827"/>
+                        </StackPanel>
+
+                        <!-- Separador vertical -->
+                        <Border Width="1" Background="#E5E7EB" Margin="0,4,40,4"/>
+
+                        <!-- Total discos -->
+                        <StackPanel>
+                            <TextBlock Text="Total de Discos"
+                                       FontSize="12" Foreground="#6B7280"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="12" Height="12"
+                                         Fill="#2ECC8F"
+                                         VerticalAlignment="Center"
+                                         Margin="0,0,8,0"/>
+                                <TextBlock x:Name="TxtTotalDiscos"
+                                           Text="0"
+                                           FontSize="28" FontWeight="Bold"
+                                           Foreground="#111827"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- ── TABLA RESULTADOS ── -->
+                <Border Background="White"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        ClipToBounds="True"
+                        Padding="0,0,0,0">
+                    <StackPanel>
+
+                        <TextBlock Text="Resultados"
+                                   FontSize="15" FontWeight="Bold"
+                                   Foreground="#111827"
+                                   Margin="24,20,24,16"/>
+
+                        <DataGrid x:Name="DgResultados"
+                                  AutoGenerateColumns="False"
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="None"
+                                  BorderThickness="0"
+                                  Background="White"
+                                  RowBackground="White"
+                                  AlternatingRowBackground="#FAFAFA"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  CanUserResizeRows="False"
+                                  CanUserSortColumns="True"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  SelectionUnit="FullRow"
+                                  RowHeight="52"
+                                  ColumnHeaderHeight="46"
+                                  FontSize="12"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto"
+                                  MaxHeight="420">
+
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background"      Value="#F9FAFB"/>
+                                    <Setter Property="Foreground"      Value="#111827"/>
+                                    <Setter Property="FontWeight"      Value="SemiBold"/>
+                                    <Setter Property="FontSize"        Value="12"/>
+                                    <Setter Property="Padding"         Value="12,0"/>
+                                    <Setter Property="BorderBrush"     Value="#E5E7EB"/>
+                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    <Setter Property="FlowDirection"   Value="LeftToRight"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="BorderBrush"     Value="#F3F4F6"/>
+                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F8FAFC"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+
+                            <DataGrid.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="BorderThickness"  Value="0"/>
+                                    <Setter Property="Padding"          Value="12,0"/>
+                                    <Setter Property="Foreground"       Value="#111827"/>
+                                    <Setter Property="Background"       Value="Transparent"/>
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FlowDirection"    Value="LeftToRight"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="#111827"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.CellStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID"                   Width="60"  Binding="{Binding Id}"/>
+                                <DataGridTextColumn Header="Fecha Audiencia"      Width="150" Binding="{Binding FechaAudiencia}"/>
+                                <DataGridTextColumn Header="Juzgado"              Width="120" Binding="{Binding Juzgado}"/>
+                                <DataGridTextColumn Header="Juez"                 Width="180" Binding="{Binding Juez}"/>
+                                <DataGridTextColumn Header="No. Causa"            Width="130" Binding="{Binding NoCausa}"/>
+                                <DataGridTextColumn Header="NUC"                  Width="160" Binding="{Binding NUC}"/>
+                                <DataGridTextColumn Header="Tipo Audiencia"       Width="160" Binding="{Binding TipoAudiencia}"/>
+                                <DataGridTextColumn Header="Tipo Causa"           Width="120" Binding="{Binding TipoCausa}"/>
+                                <DataGridTextColumn Header="Sala"                 Width="80"  Binding="{Binding Sala}"/>
+                                <DataGridTextColumn Header="Imputado"             Width="200" Binding="{Binding Imputado}"/>
+                                <DataGridTextColumn Header="Agraviado"            Width="200" Binding="{Binding Agraviado}"/>
+                                <DataGridTextColumn Header="Delito"               Width="200" Binding="{Binding Delito}"/>
+                                <DataGridTextColumn Header="Fecha Recibo"         Width="130" Binding="{Binding FechaRecibo}"/>
+                                <DataGridTextColumn Header="Hora Conclusión"      Width="130" Binding="{Binding HoraConclusion}"/>
+                                <DataGridTextColumn Header="Tot. Discos"          Width="110" Binding="{Binding TotDiscos}"/>
+                                <DataGridTextColumn Header="Tipo Disco"           Width="120" Binding="{Binding TipoDisco}"/>
+                                <DataGridTextColumn Header="Tot. Disco Audiencia" Width="160" Binding="{Binding TotDiscoAudiencia}"/>
+                                <DataGridTextColumn Header="No. Causa Juicio"     Width="150" Binding="{Binding NoCausaJuicio}"/>
+                                <DataGridTextColumn Header="Diferida"             Width="100" Binding="{Binding Diferida}"/>
+                                <DataGridTextColumn Header="Quien Realiza"        Width="160" Binding="{Binding QuienRealiza}"/>
+                            </DataGrid.Columns>
+
+                        </DataGrid>
+
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
 
     </Grid>
-
 </Page>

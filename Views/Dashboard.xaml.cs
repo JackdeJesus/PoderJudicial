@@ -27,6 +27,7 @@ namespace PoderJudicial.Views
             // PÁGINA INICIAL
             MainFrame.Navigate(new ConsultarRegistros());
         }
+        public Frame FramePrincipal => MainFrame;
 
         // ACTIVAR BOTÓN
         private void ActivarBoton(Button botonActivo)
