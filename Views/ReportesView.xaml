@@ -372,7 +372,7 @@
                             </DataGrid.CellStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="ID"                   Width="60"  Binding="{Binding Id}"/>
+                               
                                 <DataGridTextColumn Header="Fecha Audiencia"      Width="150" Binding="{Binding FechaAudiencia}"/>
                                 <DataGridTextColumn Header="Juzgado"              Width="120" Binding="{Binding Juzgado}"/>
                                 <DataGridTextColumn Header="Juez"                 Width="180" Binding="{Binding Juez}"/>
@@ -384,14 +384,8 @@
                                 <DataGridTextColumn Header="Imputado"             Width="200" Binding="{Binding Imputado}"/>
                                 <DataGridTextColumn Header="Agraviado"            Width="200" Binding="{Binding Agraviado}"/>
                                 <DataGridTextColumn Header="Delito"               Width="200" Binding="{Binding Delito}"/>
-                                <DataGridTextColumn Header="Fecha Recibo"         Width="130" Binding="{Binding FechaRecibo}"/>
-                                <DataGridTextColumn Header="Hora Conclusión"      Width="130" Binding="{Binding HoraConclusion}"/>
-                                <DataGridTextColumn Header="Tot. Discos"          Width="110" Binding="{Binding TotDiscos}"/>
-                                <DataGridTextColumn Header="Tipo Disco"           Width="120" Binding="{Binding TipoDisco}"/>
-                                <DataGridTextColumn Header="Tot. Disco Audiencia" Width="160" Binding="{Binding TotDiscoAudiencia}"/>
                                 <DataGridTextColumn Header="No. Causa Juicio"     Width="150" Binding="{Binding NoCausaJuicio}"/>
-                                <DataGridTextColumn Header="Diferida"             Width="100" Binding="{Binding Diferida}"/>
-                                <DataGridTextColumn Header="Quien Realiza"        Width="160" Binding="{Binding QuienRealiza}"/>
+                                
                             </DataGrid.Columns>
 
                         </DataGrid>
