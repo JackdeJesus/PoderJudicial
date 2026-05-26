@@ -175,7 +175,7 @@
                 <DataGrid x:Name="dgAudiencias"
           ItemsSource="{Binding Audiencias}"
           AutoGenerateColumns="False"
-          FlowDirection="RightToLeft"
+          
           FrozenColumnCount="1"
           HeadersVisibility="Column"
           GridLinesVisibility="None"
@@ -263,10 +263,10 @@
                     <!-- ═══ COLUMNAS ═══ -->
                     <DataGrid.Columns>
 
-                        <!-- ACCIONES -->
                         <DataGridTemplateColumn Header="Acciones"
                             Width="120"
                             CanUserSort="False">
+
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
 
@@ -308,56 +308,64 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <!-- COLUMNAS INVERTIDAS -->
+                        <!-- ID -->
+                        <DataGridTextColumn Header="ID"
+                        Width="90"
+                        Binding="{Binding Id}"/>
 
-                        <DataGridTextColumn Header="Quien Realiza" Width="180" Binding="{Binding QuienRealiza}"/>
-
-                        <DataGridTextColumn Header="Total Disco Audiencia"
+                        <!-- FECHA AUDIENCIA -->
+                        <DataGridTextColumn Header="Fecha Audiencia"
                         Width="180"
-                        Binding="{Binding TotDiscoAudiencia}"/>
+                        Binding="{Binding FechaAudiencia}"/>
 
-                        <DataGridTextColumn Header="Tipo Disco"
-                        Width="150"
-                        Binding="{Binding TipoDisco}"/>
+                        <!-- FECHA RECIBO -->
+                        <DataGridTextColumn Header="Fecha Recibo"
+                        Width="180"
+                        Binding="{Binding FechaRecibo}"/>
 
+                        <!-- TOTAL DISCOS -->
                         <DataGridTextColumn Header="Total Discos"
-                        Width="140"
+                        Width="130"
                         Binding="{Binding TotDiscos}"/>
 
-                        <DataGridTextColumn Header="No. Causa Juicio"
-                        Width="180"
-                        Binding="{Binding NoCausaJuicio}"/>
-
-                        <DataGridTextColumn Header="Hora Conclusión"
-                        Width="150"
-                        Binding="{Binding HoraConclusion}"/>
-
-                        <DataGridTextColumn Header="Sala"
+                        <!-- TIPO DISCO -->
+                        <DataGridTextColumn Header="Tipo Disco"
                         Width="130"
-                        Binding="{Binding Sala}"/>
+                        Binding="{Binding TipoDisco}"/>
 
-                        <DataGridTextColumn Header="Agraviado"
-                        Width="220"
-                        Binding="{Binding Agraviado}"/>
-
-                        <DataGridTextColumn Header="Delito"
-                        Width="220"
-                        Binding="{Binding Delito}"/>
-
-                        <DataGridTextColumn Header="Imputado"
-                        Width="220"
-                        Binding="{Binding Imputado}"/>
-
-                        <DataGridTextColumn Header="Juez"
-                        Width="180"
-                        Binding="{Binding Juez}"/>
-
+                        <!-- JUZGADO -->
                         <DataGridTextColumn Header="Juzgado"
                         Width="200"
                         Binding="{Binding Juzgado}"/>
 
+                        <!-- TOTAL DISCO AUDIENCIA -->
+                        <DataGridTextColumn Header="Total Disco Audiencia"
+                        Width="180"
+                        Binding="{Binding TotDiscoAudiencia}"/>
+
+                        <!-- JUEZ -->
+                        <DataGridTextColumn Header="Juez"
+                        Width="220"
+                        Binding="{Binding Juez}"/>
+
+                        <!-- NO CAUSA -->
+                        <DataGridTextColumn Header="No. Causa"
+                        Width="150"
+                        Binding="{Binding NoCausa}"/>
+
+                        <!-- NUC -->
+                        <DataGridTextColumn Header="NUC"
+                        Width="170"
+                        Binding="{Binding NUC}"/>
+
+                        <!-- TIPO CAUSA -->
+                        <DataGridTextColumn Header="Tipo Causa"
+                        Width="160"
+                        Binding="{Binding TipoCausa}"/>
+
+                        <!-- TIPO AUDIENCIA -->
                         <DataGridTemplateColumn Header="Tipo Audiencia"
-                            Width="200">
+                            Width="220">
 
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -372,25 +380,45 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="Tipo Causa"
+                        <!-- HORA CONCLUSION -->
+                        <DataGridTextColumn Header="Hora Conclusión"
                         Width="150"
-                        Binding="{Binding TipoCausa}"/>
+                        Binding="{Binding HoraConclusion}"/>
 
-                        <DataGridTextColumn Header="Fecha Recibido"
-                        Width="140"
-                        Binding="{Binding FechaRecibo}"/>
+                        <!-- IMPUTADO -->
+                        <DataGridTextColumn Header="Imputado"
+                        Width="220"
+                        Binding="{Binding Imputado}"/>
 
-                        <DataGridTextColumn Header="Fecha Audiencia"
-                        Width="140"
-                        Binding="{Binding FechaAudiencia}"/>
+                        <!-- DELITO -->
+                        <DataGridTextColumn Header="Delito"
+                        Width="220"
+                        Binding="{Binding Delito}"/>
 
-                        <DataGridTextColumn Header="NUC"
-                        Width="160"
-                        Binding="{Binding NUC}"/>
+                        <!-- AGRAVIADO -->
+                        <DataGridTextColumn Header="Agraviado"
+                        Width="220"
+                        Binding="{Binding Agraviado}"/>
 
-                        <DataGridTextColumn Header="No. Causa"
-                        Width="150"
-                        Binding="{Binding NoCausa}"/>
+                        <!-- SALA -->
+                        <DataGridTextColumn Header="Sala"
+                        Width="120"
+                        Binding="{Binding Sala}"/>
+
+                        <!-- NO CAUSA JUICIO -->
+                        <DataGridTextColumn Header="No. Causa Juicio"
+                        Width="180"
+                        Binding="{Binding NoCausaJuicio}"/>
+
+                        <!-- DIFERIDA -->
+                        <DataGridTextColumn Header="Diferida"
+                        Width="120"
+                        Binding="{Binding Diferida}"/>
+
+                        <!-- QUIEN REALIZA -->
+                        <DataGridTextColumn Header="Quien Realiza"
+                        Width="180"
+                        Binding="{Binding QuienRealiza}"/>
 
                     </DataGrid.Columns>
                 </DataGrid>
