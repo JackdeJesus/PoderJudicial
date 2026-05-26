@@ -11,10 +11,9 @@ namespace PoderJudicial.Data
         // ──────────────────────────────────────────
         //  Mapeo centralizado — un solo lugar para
         //  leer columnas del reader al modelo
-        // ──────────────────────────────────────────
         private static Audiencia MapearDesdeReader(OleDbDataReader reader)
         {
-            return new Audiencia
+            Audiencia a = new Audiencia
             {
                 Id = reader["Id"] != DBNull.Value
                     ? Convert.ToInt32(reader["Id"])
@@ -66,6 +65,30 @@ namespace PoderJudicial.Data
 
                 QuienRealiza = reader["Quien Realiza"]?.ToString()
             };
+
+            // ÍNDICE DE BÚSQUEDA OPTIMIZADO
+            a.TextoBusqueda = string.Join(" ", new[]
+            {
+        a.Id.ToString(),
+        a.NoCausa,
+        a.NUC,
+        a.Imputado,
+        a.Delito,
+        a.Juez,
+        a.Juzgado,
+        a.TipoAudiencia,
+        a.TipoCausa,
+        a.Agraviado,
+        a.Sala,
+        a.NoCausaJuicio,
+        a.QuienRealiza,
+        a.FechaAudiencia?.ToString("dd/MM/yyyy"),
+        a.FechaRecibo?.ToString("dd/MM/yyyy")
+    }
+            .Where(x => !string.IsNullOrWhiteSpace(x)))
+            .ToLower();
+
+            return a;
         }
 
         // ──────────────────────────────────────────

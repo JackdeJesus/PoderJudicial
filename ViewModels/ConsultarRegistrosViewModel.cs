@@ -142,21 +142,72 @@ namespace PoderJudicial.ViewModels
             if (string.IsNullOrWhiteSpace(texto))
             {
                 Audiencias = new ObservableCollection<Audiencia>(_listaCompleta.Take(5));
+
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
                 return;
             }
 
+            // Intentar convertir a fecha
+            DateTime fechaBuscada;
+            bool esFecha = DateTime.TryParse(texto, out fechaBuscada);
+
             var filtrados = _listaCompleta.Where(a =>
-                   (a.NoCausa != null && a.NoCausa.ToLower().Contains(texto))
-                || (a.NUC != null && a.NUC.ToLower().Contains(texto))
-                || (a.Imputado != null && a.Imputado.ToLower().Contains(texto))
-                || (
-                    a.FechaAudiencia.HasValue &&
-                    a.FechaAudiencia.Value
-                        .ToString("dd/MM/yyyy HH:mm")
-                        .ToLower()
-                        .Contains(texto)
-                   )
+
+                // =========================
+                // No. Causa EXACTO
+                // =========================
+                (!string.IsNullOrWhiteSpace(a.NoCausa) &&
+                 a.NoCausa.Trim().ToLower() == texto)
+
+                ||
+
+                // =========================
+                // NUC EXACTO
+                // =========================
+                (!string.IsNullOrWhiteSpace(a.NUC) &&
+                 a.NUC.Trim().ToLower() == texto)
+
+                ||
+
+                // =========================
+                // FECHA EXACTA
+                // =========================
+                (esFecha &&
+                 a.FechaAudiencia.HasValue &&
+                 a.FechaAudiencia.Value.Date == fechaBuscada.Date)
+
+                ||
+
+               // =========================
+               // TIPO CAUSA
+               // =========================
+               (!string.IsNullOrWhiteSpace(a.TipoCausa) &&
+                 a.TipoCausa.Trim().ToLower() == texto)
+
+                ||
+
+                // =========================
+                // TIPO AUDIENCIA / JUICIO
+                // =========================
+                (!string.IsNullOrWhiteSpace(a.TipoAudiencia) &&
+                 a.TipoAudiencia.ToLower().Contains(texto))
+
+                ||
+
+                // =========================
+                // IMPUTADO
+                // =========================
+                (!string.IsNullOrWhiteSpace(a.Imputado) &&
+                 a.Imputado.ToLower().Contains(texto))
+
+                ||
+
+                // =========================
+                // AGRAVIADO / VICTIMA
+                // =========================
+                (!string.IsNullOrWhiteSpace(a.Agraviado) &&
+                 a.Agraviado.ToLower().Contains(texto))
+
             ).ToList();
 
             Audiencias = new ObservableCollection<Audiencia>(filtrados);
@@ -166,7 +217,7 @@ namespace PoderJudicial.ViewModels
 
         private void ActualizarSugerencias()
         {
-            string texto = _textoBusqueda.Trim().ToLower();
+            string texto = _textoBusqueda.Trim();
 
             if (string.IsNullOrWhiteSpace(texto))
             {
@@ -174,19 +225,35 @@ namespace PoderJudicial.ViewModels
                 return;
             }
 
-            Sugerencias = _listaCompleta
-                .SelectMany(x => new[]
-                {
-            x.NoCausa,
-            x.NUC,
-            x.Imputado,
-            x.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm")
-                })
+            var sugerencias = new List<string>();
+
+            sugerencias.AddRange(
+                _listaCompleta
                 .Where(x =>
-                    !string.IsNullOrWhiteSpace(x) &&
-                    x.ToLower().Contains(texto))
+                    !string.IsNullOrWhiteSpace(x.NoCausa) &&
+                    x.NoCausa.Contains(texto, StringComparison.OrdinalIgnoreCase))
+                .Select(x => x.NoCausa)
+            );
+
+            sugerencias.AddRange(
+                _listaCompleta
+                .Where(x =>
+                    !string.IsNullOrWhiteSpace(x.NUC) &&
+                    x.NUC.Contains(texto, StringComparison.OrdinalIgnoreCase))
+                .Select(x => x.NUC)
+            );
+
+            sugerencias.AddRange(
+                _listaCompleta
+                .Where(x =>
+                    !string.IsNullOrWhiteSpace(x.Imputado) &&
+                    x.Imputado.Contains(texto, StringComparison.OrdinalIgnoreCase))
+                .Select(x => x.Imputado)
+            );
+
+            Sugerencias = sugerencias
                 .Distinct()
-                .Take(10)
+                .Take(8)
                 .ToList();
         }
 

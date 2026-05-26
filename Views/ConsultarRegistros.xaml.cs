@@ -13,6 +13,7 @@ namespace PoderJudicial.Views
 {
     public partial class ConsultarRegistros : Page
     {
+        private DispatcherTimer _timerBusqueda;
         private ConsultarRegistrosViewModel _vm;
         private const string Placeholder = "Buscar por causa, NUC, imputado o fecha...";
 
@@ -24,6 +25,26 @@ namespace PoderJudicial.Views
 
             txtBuscar.Text = Placeholder;
             txtBuscar.Foreground = Brushes.Gray;
+
+            _timerBusqueda = new DispatcherTimer();
+            _timerBusqueda.Interval = TimeSpan.FromMilliseconds(300);
+
+            _timerBusqueda.Tick += (s, e) =>
+            {
+                _timerBusqueda.Stop();
+
+                _vm.TextoBusqueda = txtBuscar.Text;
+
+                if (_vm.Sugerencias?.Count > 0)
+                {
+                    lstSugerencias.ItemsSource = _vm.Sugerencias;
+                    popupSugerencias.IsOpen = true;
+                }
+                else
+                {
+                    popupSugerencias.IsOpen = false;
+                }
+            };
         }
 
         // Placeholder
@@ -49,19 +70,11 @@ namespace PoderJudicial.Views
         // Buscador
         private void txtBuscar_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (txtBuscar.Text == Placeholder) return;
+            if (txtBuscar.Text == Placeholder)
+                return;
 
-            _vm.TextoBusqueda = txtBuscar.Text;
-
-            if (_vm.Sugerencias?.Count > 0)
-            {
-                lstSugerencias.ItemsSource = _vm.Sugerencias;
-                popupSugerencias.IsOpen = true;
-            }
-            else
-            {
-                popupSugerencias.IsOpen = false;
-            }
+            _timerBusqueda.Stop();
+            _timerBusqueda.Start();
         }
 
         private void txtBuscar_KeyUp(object sender, KeyEventArgs e)

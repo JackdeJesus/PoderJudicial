@@ -41,5 +41,7 @@
         public string Diferida { get; set; }
 
         public string QuienRealiza { get; set; }
+
+        public string TextoBusqueda { get; set; }
     }
 }

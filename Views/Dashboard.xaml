@@ -178,7 +178,7 @@
                                        Margin="0,0,10,0"
                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
-                            <TextBlock Text="Consultar Registros"
+                            <TextBlock Text="Consultar Audiencias"
                                        FontSize="13"
                                        FontWeight="Medium"
                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
@@ -206,7 +206,7 @@
                                        Margin="0,0,10,0"
                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
-                            <TextBlock Text="Nuevo Registro"
+                            <TextBlock Text="Nueva Audiencia"
                                        FontSize="13"
                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
