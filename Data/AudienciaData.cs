@@ -217,6 +217,70 @@ namespace PoderJudicial.Data
             }
         }
 
+      
+        //  ACTUALIZAR
+        public void Actualizar(Audiencia a)
+        {
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+                string tabla = TableDetector.TablaActual;
+
+                string sql = $@"
+            UPDATE [{tabla}] SET
+                FeAudiencia        = ?,
+                FeRecibo           = ?,
+                TotDiscos          = ?,
+                TipoDisco          = ?,
+                Juzgado            = ?,
+                TotDiscoAudiencia  = ?,
+                Juez               = ?,
+                NoCausa            = ?,
+                NUC                = ?,
+                TipoCausa          = ?,
+                TipoAudiencia      = ?,
+                [Hora conclusion]  = ?,
+                Imputado           = ?,
+                Delito             = ?,
+                Agraviado          = ?,
+                Sala               = ?,
+                NoCausaJuicio      = ?,
+                Diferida           = ?,
+                [Quien Realiza]    = ?
+            WHERE Id = ?";
+
+                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
+                {
+                    // Mismo orden que los ? del SET (sin Id al inicio)
+                    cmd.Parameters.AddWithValue("@FeAudiencia", a.FechaAudiencia.HasValue ? (object)a.FechaAudiencia.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@FeRecibo", a.FechaRecibo.HasValue ? (object)a.FechaRecibo.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@TotDiscos", a.TotDiscos.HasValue ? (object)a.TotDiscos.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@TipoDisco", a.TipoDisco ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@Juzgado", a.Juzgado ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@TotDiscoAudiencia", a.TotDiscoAudiencia ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@Juez", a.Juez ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@NoCausa", a.NoCausa ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@NUC", a.NUC ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@TipoCausa", a.TipoCausa ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@TipoAudiencia", a.TipoAudiencia ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@HoraConclusion", a.HoraConclusion.HasValue ? (object)a.HoraConclusion.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Imputado", a.Imputado ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@Delito", a.Delito ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@Agraviado", a.Agraviado ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@Sala", a.Sala ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@NoCausaJuicio", a.NoCausaJuicio ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@Diferida", a.Diferida ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@QuienRealiza", a.QuienRealiza ?? string.Empty);
+                    // WHERE Id = ? — va AL FINAL en OleDb
+                    cmd.Parameters.AddWithValue("@Id", a.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            TableDetector.InvalidarCache();
+        }
+
 
     }
 
