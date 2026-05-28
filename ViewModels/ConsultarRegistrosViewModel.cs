@@ -113,9 +113,13 @@ namespace PoderJudicial.ViewModels
             try
             {
                 AudienciaData data = new AudienciaData();
-                _listaCompleta = data.ObtenerAudiencias();
+                _listaCompleta = data.ObtenerAudiencias()
+    .OrderByDescending(a => a.Id)
+    .ToList();
 
-                Audiencias = new ObservableCollection<Audiencia>(_listaCompleta.Take(5));
+                Audiencias = new ObservableCollection<Audiencia>(
+                    _listaCompleta.Take(10)
+                );
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
 
                 CargarSugerencias();
@@ -141,7 +145,9 @@ namespace PoderJudicial.ViewModels
 
             if (string.IsNullOrWhiteSpace(texto))
             {
-                Audiencias = new ObservableCollection<Audiencia>(_listaCompleta.Take(5));
+                Audiencias = new ObservableCollection<Audiencia>(
+     _listaCompleta.Take(10)
+ );
 
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
                 return;
