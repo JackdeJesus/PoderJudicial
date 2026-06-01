@@ -12,7 +12,7 @@ namespace PoderJudicial.Views
 {
     public partial class ReportesView : Page
     {
-        // ── Capa de datos ──────────────────────────────────────────────
+        // ── Capa de datos 
         private readonly AudienciaData _data = new AudienciaData();
         private List<Audiencia> _todas = new();
         private bool _cargando = true;
@@ -23,9 +23,9 @@ namespace PoderJudicial.Views
             Loaded += ReportesView_Loaded;
         }
 
-        // ═══════════════════════════════════════════════════════════════
+       
         //  CARGA INICIAL
-        // ═══════════════════════════════════════════════════════════════
+
         private void ReportesView_Loaded(object sender, RoutedEventArgs e) => CargarDatos();
 
         private void CargarDatos()
@@ -47,9 +47,9 @@ namespace PoderJudicial.Views
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════
+        
         //  LLENADO DINÁMICO DE COMBOS
-        // ═══════════════════════════════════════════════════════════════
+       
         private void LlenarComboAnios()
         {
             var anios = _todas
@@ -98,9 +98,9 @@ namespace PoderJudicial.Views
             CmbSala.SelectedIndex = 0;
         }
 
-        // ═══════════════════════════════════════════════════════════════
+        
         //  FILTRADO
-        // ═══════════════════════════════════════════════════════════════
+      
         private void Filtro_Changed(object sender, SelectionChangedEventArgs e)
         {
             if (_cargando) return;
@@ -161,10 +161,9 @@ namespace PoderJudicial.Views
             _ => null
         };
 
-        // ═══════════════════════════════════════════════════════════════
         //  EXPORTAR EXCEL  —  .xlsx real con ClosedXML
         //  NuGet: Install-Package ClosedXML
-        // ═══════════════════════════════════════════════════════════════
+        
         private void BtnExportarExcel_Click(object sender, RoutedEventArgs e)
         {
             var datos = DgResultados.ItemsSource as List<Audiencia>;
@@ -208,7 +207,8 @@ namespace PoderJudicial.Views
                 headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 headerRange.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
 
-                // ── Datos ────────────────────────────────────────────
+                // ── Datos
+              
                 for (int row = 0; row < datos.Count; row++)
                 {
                     var a = datos[row];
@@ -237,7 +237,7 @@ namespace PoderJudicial.Views
                           .Style.Fill.BackgroundColor = XLColor.FromHtml("#F9FAFB");
                 }
 
-                // ── Bordes ───────────────────────────────────────────
+                // ── Bordes
                 var tableRange = ws.Range(1, 1, datos.Count + 1, headers.Length);
                 tableRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                 tableRange.Style.Border.OutsideBorderColor = XLColor.FromHtml("#D1D5DB");
@@ -247,7 +247,7 @@ namespace PoderJudicial.Views
                 ws.Style.Font.FontName = "Arial";
                 ws.Style.Font.FontSize = 10;
 
-                // ── Fila de totales ──────────────────────────────────
+                // ── Fila de totales 
                 int totalRow = datos.Count + 2;
                 ws.Cell(totalRow, 1).Value = $"Registros: {datos.Count}";
                 ws.Cell(totalRow, 1).Style.Font.Bold = true;
@@ -260,7 +260,7 @@ namespace PoderJudicial.Views
                 ws.Cell(totalRow, 15).Style.Font.Bold = true;
                 ws.Cell(totalRow, 15).Style.Font.FontColor = XLColor.FromHtml("#1F7A5C");
 
-                // ── Anchos automáticos ───────────────────────────────
+                // ── Anchos automáticos
                 ws.Columns().AdjustToContents();
                 foreach (int col in new[] { 4, 10, 11, 12, 20 })
                     if (ws.Column(col).Width > 40) ws.Column(col).Width = 40;

@@ -177,15 +177,15 @@ namespace PoderJudicial.Helpers
                     a.FechaRecibo?.ToString("dd/MM/yyyy"),
                     a.HoraConclusion?.ToString("HH:mm"),
                     (a.TotDiscos ?? 0).ToString(),
-                    a.TipoDisco, a.TotDiscoAudiencia,
-                    a.NoCausaJuicio, a.Diferida, a.QuienRealiza
+                    a.TipoDisco,
+                    a.NoCausaJuicio
                 })
                     sb.Append($"<td>{Encode(cel ?? "")}</td>");
                 sb.Append("</tr>");
             }
 
             // Fila de totales
-            sb.Append($@"
+            sb.Append($@"       
 <tr class='total-row'>
   <td colspan='14' style='text-align:right;padding-right:8px;'>TOTAL DISCOS:</td>
   <td>{totalDiscos}</td>
