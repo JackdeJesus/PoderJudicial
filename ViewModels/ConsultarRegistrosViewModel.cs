@@ -48,6 +48,18 @@ namespace PoderJudicial.ViewModels
         }
 
         private string _totalRegistros;
+
+        private string _totalDiscosBusqueda;
+        public string TotalDiscosBusqueda
+        {
+            get => _totalDiscosBusqueda;
+            set
+            {
+                _totalDiscosBusqueda = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string TotalRegistros
         {
             get => _totalRegistros;
@@ -121,6 +133,7 @@ namespace PoderJudicial.ViewModels
                     _listaCompleta.Take(10)
                 );
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
+                TotalDiscosBusqueda = "";
 
                 CargarSugerencias();
             }
@@ -150,6 +163,7 @@ namespace PoderJudicial.ViewModels
  );
 
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
+                TotalDiscosBusqueda = "";
                 return;
             }
 
@@ -219,6 +233,28 @@ namespace PoderJudicial.ViewModels
             Audiencias = new ObservableCollection<Audiencia>(filtrados);
 
             TotalRegistros = $"{filtrados.Count} registro(s) encontrado(s)";
+
+            int totalDiscosAudiencia = filtrados.Sum(a =>
+            {
+                if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
+                    return 0;
+
+                string numeros = new string(
+                    a.TotDiscoAudiencia
+                    .Where(char.IsDigit)
+                    .ToArray()
+                );
+
+                if (int.TryParse(numeros, out int valor))
+                    return valor;
+
+                return 0;
+            });
+
+            TotalDiscosBusqueda =
+                $"Total discos audiencia: {totalDiscosAudiencia}";
+
+
         }
 
         private void ActualizarSugerencias()

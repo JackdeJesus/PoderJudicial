@@ -158,14 +158,38 @@
                     </Grid>
                 </Border>
 
-                <!-- Total desde ViewModel -->
-                <Border Grid.Column="1"
-                        HorizontalAlignment="Right" VerticalAlignment="Center"
-                        Background="White" CornerRadius="8"
-                        BorderBrush="#E5E7EB" BorderThickness="1" Padding="14,7">
-                    <TextBlock Text="{Binding TotalRegistros}"
-                               FontSize="12" FontWeight="SemiBold" Foreground="#374151"/>
-                </Border>
+                <StackPanel Grid.Column="1"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right">
+
+                    <!-- TOTAL REGISTROS -->
+                    <Border Background="White"
+            CornerRadius="8"
+            BorderBrush="#E5E7EB"
+            BorderThickness="1"
+            Padding="14,7"
+            Margin="0,0,10,0">
+
+                        <TextBlock Text="{Binding TotalRegistros}"
+                   FontSize="12"
+                   FontWeight="SemiBold"
+                   Foreground="#374151"/>
+                    </Border>
+
+                    <!-- TOTAL DISCOS -->
+                    <Border Background="#EFF6FF"
+            CornerRadius="8"
+            BorderBrush="#BFDBFE"
+            BorderThickness="1"
+            Padding="14,7">
+
+                        <TextBlock Text="{Binding TotalDiscosBusqueda}"
+                   FontSize="12"
+                   FontWeight="SemiBold"
+                   Foreground="#1D4ED8"/>
+                    </Border>
+
+                </StackPanel>
             </Grid>
 
             <!-- TABLA -->
