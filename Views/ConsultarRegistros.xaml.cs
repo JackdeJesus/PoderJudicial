@@ -24,7 +24,8 @@ namespace PoderJudicial.Views
             DataContext = _vm;
 
             txtBuscar.Text = Placeholder;
-            txtBuscar.Foreground = Brushes.Gray;
+            txtBuscar.Foreground =
+                (Brush)Application.Current.Resources["SubTextBrush"];
 
             _timerBusqueda = new DispatcherTimer();
             _timerBusqueda.Interval = TimeSpan.FromMilliseconds(300);
@@ -53,7 +54,8 @@ namespace PoderJudicial.Views
             if (txtBuscar.Text == Placeholder)
             {
                 txtBuscar.Text = "";
-                txtBuscar.Foreground = Brushes.Black;
+                txtBuscar.Foreground =
+      (Brush)Application.Current.Resources["TextBrush"];
             }
         }
 
@@ -62,7 +64,10 @@ namespace PoderJudicial.Views
             if (string.IsNullOrWhiteSpace(txtBuscar.Text))
             {
                 txtBuscar.Text = Placeholder;
-                txtBuscar.Foreground = Brushes.Gray;
+
+                txtBuscar.Foreground =
+                    (Brush)Application.Current.Resources["SubTextBrush"];
+
                 _vm.TextoBusqueda = "";
             }
         }
@@ -115,7 +120,8 @@ namespace PoderJudicial.Views
         private void AplicarSugerencia(string valor)
         {
             txtBuscar.Text = valor;
-            txtBuscar.Foreground = Brushes.Black;
+            txtBuscar.Foreground =
+    (Brush)Application.Current.Resources["TextBrush"];
             _vm.TextoBusqueda = valor;
             popupSugerencias.IsOpen = false;
             txtBuscar.CaretIndex = txtBuscar.Text.Length;

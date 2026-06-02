@@ -4,52 +4,81 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
-      Background="#F3F4F6">
+      Background="{DynamicResource BackgroundBrush}">
     
 
     <Page.Resources>
 
-        <SolidColorBrush x:Key="ContentBg" Color="#F3F4F6"/>
+        
 
         <!-- Badge -->
         <Style x:Key="BadgeStyle" TargetType="Border">
-            <Setter Property="Background"          Value="#F3F4F6"/>
-            <Setter Property="CornerRadius"         Value="6"/>
-            <Setter Property="Padding"              Value="10,4"/>
-            <Setter Property="HorizontalAlignment"  Value="Left"/>
-            <Setter Property="VerticalAlignment"    Value="Center"/>
+            <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
         <!-- Botones acción -->
+        <!-- Botones acción -->
         <Style x:Key="ActionBtnStyle" TargetType="Button">
-            <Setter Property="Width"           Value="30"/>
-            <Setter Property="Height"          Value="30"/>
-            <Setter Property="Margin"          Value="2,0"/>
-            <Setter Property="Background"      Value="Transparent"/>
+
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Background"
+            Value="{DynamicResource ActionButtonBackgroundBrush}"/>
+            <Setter Property="Foreground"
+            Value="{DynamicResource PrimaryTextBrush}"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
             <Setter Property="Template">
                 <Setter.Value>
+
                     <ControlTemplate TargetType="Button">
+
                         <Border x:Name="btn"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="6">
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="6">
+
                             <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
+                                      VerticalAlignment="Center"/>
                         </Border>
+
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="btn" Property="Background" Value="#F3F4F6"/>
+
+                            <Trigger Property="IsMouseOver"
+                             Value="True">
+
+                                <Setter TargetName="btn"
+                                Property="Background"
+                                Value="{DynamicResource ActionButtonHoverBrush}"/>
                             </Trigger>
+
+                            <Trigger Property="IsPressed"
+                             Value="True">
+
+                                <Setter TargetName="btn"
+                                Property="Opacity"
+                                Value="0.8"/>
+                            </Trigger>
+
                         </ControlTemplate.Triggers>
+
                     </ControlTemplate>
+
                 </Setter.Value>
             </Setter>
+
         </Style>
 
     </Page.Resources>
 
-    <Grid Background="{StaticResource ContentBg}">
+    <Grid Background="{DynamicResource BackgroundBrush}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -58,10 +87,11 @@
 
         <!-- HEADER -->
         <Border Grid.Row="0"
-                Background="White"
-                BorderBrush="#E5E7EB"
+                Background="{DynamicResource CardBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
                 BorderThickness="0,0,0,1"
                 Padding="32,18">
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -70,19 +100,30 @@
 
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Consultar Registros"
-                               FontSize="22" FontWeight="Bold" Foreground="#111827"/>
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"/>
                     <TextBlock Text="Bienvenido, Admin Sistema. Visualiza y gestiona los registros."
-                               FontSize="12" Foreground="#6B7280" Margin="0,3,0,0"/>
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               Margin="0,3,0,0"/>
+
                 </StackPanel>
 
                 <!-- Hora desde ViewModel -->
                 <StackPanel Grid.Column="1" HorizontalAlignment="Right">
                     <TextBlock Text="{Binding Hora}"
-                               FontSize="22" FontWeight="Bold"
-                               Foreground="#111827" HorizontalAlignment="Right"/>
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               HorizontalAlignment="Right"/>
+
                     <TextBlock Text="{Binding Fecha}"
-                               FontSize="12" Foreground="#6B7280"
-                               HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                               FontSize="12"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               HorizontalAlignment="Right"
+                               Margin="0,2,0,0"/>
+
                 </StackPanel>
             </Grid>
         </Border>
@@ -97,29 +138,37 @@
 
             <!-- BUSCADOR -->
             <Grid Grid.Row="0" Margin="0,0,0,20">
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="420"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <Border Grid.Column="0"
-                        Background="White" BorderBrush="#D1D5DB"
-                        BorderThickness="1" CornerRadius="10" Height="42">
+                        Background="{DynamicResource CardBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Height="42">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="40"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="⌕" FontSize="14" Foreground="#9CA3AF"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="⌕"
+                                   FontSize="14"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
 
                         <Grid Grid.Column="1">
                             <TextBox x:Name="txtBuscar"
                                      Background="Transparent"
                                      BorderThickness="0"
                                      FontSize="13"
-                                     Foreground="Gray"
+                                     Foreground="{DynamicResource PrimaryTextBrush}"
+                                     CaretBrush="{DynamicResource PrimaryTextBrush}"
                                      VerticalContentAlignment="Center"
                                      Padding="0,0,10,0"
                                      TextChanged="txtBuscar_TextChanged"
@@ -132,23 +181,32 @@
                                    Placement="Bottom"
                                    StaysOpen="False"
                                    AllowsTransparency="True">
-                                <Border Background="White" BorderBrush="#D1D5DB"
-                                        BorderThickness="1" CornerRadius="8"
-                                        Width="360" MaxHeight="220">
+                                <Border Background="{DynamicResource CardBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Width="360"
+                                        MaxHeight="220">
                                     <ListBox x:Name="lstSugerencias"
+                                             Background="{DynamicResource CardBrush}"
+                                             Foreground="{DynamicResource PrimaryTextBrush}"
                                              BorderThickness="0"
                                              FontSize="13"
                                              MouseUp="lstSugerencias_MouseUp"
                                              KeyDown="lstSugerencias_KeyDown">
                                         <ListBox.ItemContainerStyle>
                                             <Style TargetType="ListBoxItem">
+
                                                 <Setter Property="Padding" Value="10"/>
-                                                <Setter Property="Cursor"  Value="Hand"/>
+                                                <Setter Property="Cursor" Value="Hand"/>
+
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#F3F4F6"/>
+                                                        <Setter Property="Background"
+                                                                Value="{DynamicResource HoverBrush}"/>
                                                     </Trigger>
                                                 </Style.Triggers>
+
                                             </Style>
                                         </ListBox.ItemContainerStyle>
                                     </ListBox>
@@ -158,35 +216,36 @@
                     </Grid>
                 </Border>
 
+                <!-- TOTALES -->
                 <StackPanel Grid.Column="1"
-            Orientation="Horizontal"
-            HorizontalAlignment="Right">
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
 
                     <!-- TOTAL REGISTROS -->
-                    <Border Background="White"
-            CornerRadius="8"
-            BorderBrush="#E5E7EB"
-            BorderThickness="1"
-            Padding="14,7"
-            Margin="0,0,10,0">
+                    <Border Background="{DynamicResource CardBrush}"
+                            CornerRadius="8"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            Padding="14,7"
+                            Margin="0,0,10,0">
 
                         <TextBlock Text="{Binding TotalRegistros}"
-                   FontSize="12"
-                   FontWeight="SemiBold"
-                   Foreground="#374151"/>
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"/>
                     </Border>
 
                     <!-- TOTAL DISCOS -->
                     <Border Background="#EFF6FF"
-            CornerRadius="8"
-            BorderBrush="#BFDBFE"
-            BorderThickness="1"
-            Padding="14,7">
+                            CornerRadius="8"
+                            BorderBrush="#BFDBFE"
+                            BorderThickness="1"
+                            Padding="14,7">
 
                         <TextBlock Text="{Binding TotalDiscosBusqueda}"
-                   FontSize="12"
-                   FontWeight="SemiBold"
-                   Foreground="#1D4ED8"/>
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Foreground="#1D4ED8"/>
                     </Border>
 
                 </StackPanel>
@@ -194,31 +253,35 @@
 
             <!-- TABLA -->
             <Border Grid.Row="1"
-                    Background="White" BorderBrush="#E5E7EB"
-                    BorderThickness="1" CornerRadius="16" ClipToBounds="True">
+                    Background="{DynamicResource CardBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    ClipToBounds="True">
+
                 <DataGrid x:Name="dgAudiencias"
-          ItemsSource="{Binding Audiencias}"
-          AutoGenerateColumns="False"
-          
-          FrozenColumnCount="1"
-          HeadersVisibility="Column"
-          GridLinesVisibility="None"
-          BorderThickness="0"
-          Background="White"
-          RowBackground="White"
-          AlternatingRowBackground="#FAFAFA"
-          CanUserResizeRows="False"
-          CanUserAddRows="False"
-          CanUserDeleteRows="False"
-          CanUserSortColumns="True"
-          SelectionMode="Single"
-          SelectionUnit="FullRow"
-          IsReadOnly="True"
-          RowHeight="56"
-          ColumnHeaderHeight="52"
-          FontSize="13"
-          HorizontalScrollBarVisibility="Auto"
-          VerticalScrollBarVisibility="Auto">
+                          ItemsSource="{Binding Audiencias}"
+                          AutoGenerateColumns="False"
+                          FrozenColumnCount="1"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="None"
+                          BorderThickness="0"
+                          Background="{DynamicResource CardBrush}"
+                          RowBackground="{DynamicResource CardBrush}"
+                          AlternatingRowBackground="{DynamicResource AltRowBrush}"
+                          Foreground="{DynamicResource PrimaryTextBrush}"
+                          CanUserResizeRows="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserSortColumns="True"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          IsReadOnly="True"
+                          RowHeight="56"
+                          ColumnHeaderHeight="52"
+                          FontSize="13"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
 
                     <!-- ═══ ESTILOS INTERNOS ═══ -->
                     <DataGrid.Resources>
@@ -228,9 +291,8 @@
                         <Style x:Key="ColumnaAccionesStyle"
        TargetType="DataGridCell">
 
-                            <!-- Color distinto -->
                             <Setter Property="Background"
-            Value="#F8FAFC"/>
+        Value="{DynamicResource ActionColumnBrush}"/>
 
                             <!-- Línea divisora -->
                             <Setter Property="BorderBrush"
@@ -247,54 +309,67 @@
                         
                     </DataGrid.Resources>
 
+                    <!-- HEADER STYLE -->
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background"      Value="#F9FAFB"/>
-                            <Setter Property="Foreground"      Value="#111827"/>
-                            <Setter Property="FontWeight"      Value="SemiBold"/>
-                            <Setter Property="FontSize"        Value="13"/>
-                            <Setter Property="Padding"         Value="12,0"/>
-                            <Setter Property="BorderBrush"     Value="#E5E7EB"/>
-                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            <!-- Corrige orientación de todos los headers -->
-                            <Setter Property="FlowDirection"   Value="LeftToRight"/>
+
+                            <Setter Property="Background"
+                                    Value="{DynamicResource HeaderBrush}"/>
+
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource PrimaryTextBrush}"/>
+
+                            <Setter Property="BorderBrush"
+                                    Value="{DynamicResource BorderBrush}"/>
+
+                            <Setter Property="BorderThickness"
+                                    Value="0,0,0,1"/>
+
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
+                    <!-- ROW STYLE -->
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="BorderBrush"      Value="#F3F4F6"/>
-                            <Setter Property="BorderThickness"  Value="0,0,0,1"/>
-                            <Setter Property="Cursor"           Value="Hand"/>
-                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+
+                            <Setter Property="BorderBrush"
+                                    Value="{DynamicResource BorderBrush}"/>
+
+                            <Setter Property="BorderThickness"
+                                    Value="0,0,0,1"/>
+
                             <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#F8FAFC"/>
+
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+
+                                    <Setter Property="Background"
+                                            Value="{DynamicResource HoverBrush}"/>
+
                                 </Trigger>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="BorderBrush" Value="#F3F4F6"/>
-                                </Trigger>
+
                             </Style.Triggers>
 
                         </Style>
-
                     </DataGrid.RowStyle>
 
                     <DataGrid.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="BorderThickness"   Value="0"/>
                             <Setter Property="Padding"           Value="12,0"/>
-                            <Setter Property="Foreground"        Value="#111827"/>
-                            <Setter Property="Background"        Value="Transparent"/>
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource TableRowBrush}"/>
                             <Setter Property="FocusVisualStyle"  Value="{x:Null}"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <!-- Corrige orientación de todas las celdas -->
                             <Setter Property="FlowDirection"     Value="LeftToRight"/>
                             <Style.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="Transparent"/>
-                                    <Setter Property="Foreground" Value="#111827"/>
+
+                                    <Setter Property="Background" Value="{DynamicResource TableRowBrush}"/>
+
+                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -323,7 +398,8 @@
                             RelativeSource={RelativeSource AncestorType=Page}}"
                             CommandParameter="{Binding}">
 
-                                            <TextBlock Text="👁" FontSize="15"/>
+                                            <TextBlock Text="👁" FontSize="15"
+                                                        Foreground="{DynamicResource PrimaryTextBrush}"/>
                                         </Button>
 
                                         <Button Style="{StaticResource ActionBtnStyle}"
@@ -332,7 +408,8 @@
                             RelativeSource={RelativeSource AncestorType=Page}}"
                             CommandParameter="{Binding}">
 
-                                            <TextBlock Text="✏" FontSize="15"/>
+                                            <TextBlock Text="✏" FontSize="15"
+                                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
                                         </Button>
 
                                         <Button Style="{StaticResource ActionBtnStyle}"

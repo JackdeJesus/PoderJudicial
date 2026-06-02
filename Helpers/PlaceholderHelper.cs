@@ -6,6 +6,15 @@ namespace PoderJudicial.Helpers
 {
     public static class PlaceholderHelper
     {
+        // COLOR PLACEHOLDER
+        private static readonly Brush PlaceholderBrush =
+            new SolidColorBrush(
+                Color.FromRgb(0x9C, 0xA3, 0xAF));
+
+        // COLOR TEXTO NORMAL (MODO OSCURO)
+        private static readonly Brush NormalBrush =
+            Brushes.White;
+
         // AGREGAR PLACEHOLDER
         public static void AddPlaceholder(
             TextBox tb,
@@ -18,10 +27,8 @@ namespace PoderJudicial.Helpers
             if (string.IsNullOrEmpty(ph))
                 return;
 
-            tb.Foreground =
-                new SolidColorBrush(
-                    Color.FromRgb(0x9C, 0xA3, 0xAF));
-
+            // Placeholder inicial
+            tb.Foreground = PlaceholderBrush;
             tb.Text = ph;
 
             tb.GotFocus += (s, e) =>
@@ -29,10 +36,7 @@ namespace PoderJudicial.Helpers
                 if (tb.Text == ph)
                 {
                     tb.Text = "";
-
-                    tb.Foreground =
-                        new SolidColorBrush(
-                            Color.FromRgb(0x37, 0x41, 0x51));
+                    tb.Foreground = NormalBrush;
                 }
             };
 
@@ -41,10 +45,21 @@ namespace PoderJudicial.Helpers
                 if (string.IsNullOrWhiteSpace(tb.Text))
                 {
                     tb.Text = ph;
+                    tb.Foreground = PlaceholderBrush;
+                }
+                else
+                {
+                    tb.Foreground = NormalBrush;
+                }
+            };
 
-                    tb.Foreground =
-                        new SolidColorBrush(
-                            Color.FromRgb(0x9C, 0xA3, 0xAF));
+            // Cuando escriba texto
+            tb.TextChanged += (s, e) =>
+            {
+                if (tb.Text != ph &&
+                    !string.IsNullOrWhiteSpace(tb.Text))
+                {
+                    tb.Foreground = NormalBrush;
                 }
             };
         }

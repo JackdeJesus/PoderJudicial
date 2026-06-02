@@ -6,7 +6,7 @@
       mc:Ignorable="d"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Stretch"
-      Background="#F3F4F6">
+      Background="{DynamicResource BackgroundBrush}">
 
     <Page.Resources>
 
@@ -14,7 +14,7 @@
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="#1A1A2E"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
 
@@ -23,9 +23,10 @@
 
             <Setter Property="Height" Value="42"/>
             <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Foreground" Value="#374151"/>
-            <Setter Property="Background" Value="#f7f7f7"/>
-            <Setter Property="BorderBrush" Value="#2ECC8F"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource InputBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="12,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -53,7 +54,7 @@
                                 Value="#2ECC8F"/>
 
                                 <Setter Property="Background"
-                                Value="White"/>
+                                Value="{DynamicResource HoverBrush}"/>
                             </Trigger>
 
                         </ControlTemplate.Triggers>
@@ -67,13 +68,128 @@
 
         <!-- ── Estilo base ComboBox ── -->
         <Style x:Key="ComboStyle" TargetType="ComboBox">
+
             <Setter Property="Height" Value="42"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Foreground" Value="#374151"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource InputBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="ComboBox">
+
+                        <Grid>
+
+                            <!-- BOTÓN PRINCIPAL -->
+                            <Border x:Name="Border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="40"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- TEXTO -->
+                                    <TextBlock Text="{TemplateBinding SelectionBoxItem}"
+           Margin="12,0,0,0"
+           VerticalAlignment="Center"
+           HorizontalAlignment="Left"
+           Foreground="{DynamicResource PrimaryTextBrush}"/>
+
+                                    <!-- FLECHA -->
+                                    <TextBlock Grid.Column="1"
+                                       Text="▼"
+                                       FontSize="10"
+                                       Foreground="{DynamicResource PrimaryTextBrush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+
+                                    <!-- BOTÓN -->
+                                    <!-- BOTÓN -->
+                                    <ToggleButton Grid.ColumnSpan="2"
+      Background="Transparent"
+      BorderThickness="0"
+      Focusable="False"
+      IsChecked="{Binding IsDropDownOpen,
+      RelativeSource={RelativeSource TemplatedParent},
+      Mode=TwoWay}">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="Transparent"/>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+                                </Grid>
+
+                            </Border>
+
+                            <!-- POPUP -->
+                            <Popup x:Name="Popup"
+                           Placement="Bottom"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           PopupAnimation="Slide">
+
+                                <Border Background="{DynamicResource CardBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Margin="0,4,0,0">
+
+                                    <ScrollViewer MaxHeight="250">
+
+                                        <StackPanel IsItemsHost="True"/>
+
+                                    </ScrollViewer>
+
+                                </Border>
+
+                            </Popup>
+
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush"
+            Value="{DynamicResource BorderBrush}"/>
+                            </Trigger>
+
+
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border"
+                                Property="BorderBrush"
+                                Value="#2ECC8F"/>
+                            </Trigger>
+
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter Property="BorderBrush"
+            Value="{DynamicResource BorderBrush}"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+            </Setter>
+
+            
+
+               
 
         </Style>
 
@@ -82,63 +198,90 @@
 
             <Setter Property="Height" Value="42"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Foreground" Value="#374151"/>
-            <Setter Property="Background" Value="#FAFAFA"/>
-            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="8,0"/>
 
-            <!-- ===== ESTILOS INTERNOS ===== -->
             <Style.Resources>
 
-                <!-- ===== CALENDARIO ===== -->
                 <Style TargetType="Calendar">
 
-                    <Setter Property="Background" Value="White"/>
-                    <Setter Property="Foreground" Value="#111827"/>
-                    <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                    <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                     <Setter Property="BorderThickness" Value="1"/>
                     <Setter Property="FontSize" Value="16"/>
 
                 </Style>
 
-                <!-- ===== BOTONES DE DÍAS ===== -->
                 <Style TargetType="CalendarDayButton">
 
                     <Setter Property="Width" Value="42"/>
                     <Setter Property="Height" Value="42"/>
                     <Setter Property="FontSize" Value="15"/>
-                    <Setter Property="Foreground" Value="#111827"/>
+                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
                     <Setter Property="BorderBrush" Value="Transparent"/>
                     <Setter Property="Background" Value="Transparent"/>
 
                     <Style.Triggers>
 
-                        <!-- Día seleccionado -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background" Value="#2ECC8F"/>
                             <Setter Property="Foreground" Value="White"/>
                         </Trigger>
 
-                        <!-- Hover -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#D1FAE5"/>
+                            <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
                         </Trigger>
 
                     </Style.Triggers>
 
                 </Style>
 
-                <!-- ===== BOTONES SUPERIORES ===== -->
                 <Style TargetType="CalendarButton">
 
                     <Setter Property="FontSize" Value="16"/>
-                    <Setter Property="Foreground" Value="#111827"/>
+                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
 
                 </Style>
 
             </Style.Resources>
+
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+
+            <Setter Property="Foreground"
+            Value="{DynamicResource PrimaryTextBrush}"/>
+
+            <Setter Property="Background"
+            Value="{DynamicResource CardBrush}"/>
+
+            <Setter Property="Padding"
+            Value="10,6"/>
+
+            <Setter Property="FontSize"
+            Value="13"/>
+
+            <Style.Triggers>
+
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter Property="Background"
+                    Value="{DynamicResource HoverBrush}"/>
+                </Trigger>
+
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background"
+                    Value="#2ECC8F"/>
+
+                    <Setter Property="Foreground"
+                    Value="White"/>
+                </Trigger>
+
+            </Style.Triggers>
 
         </Style>
 
@@ -158,9 +301,9 @@
 ══════════════════════════════════ -->
 
         <Border Grid.Row="0"
-        Background="White"
+        Background="{DynamicResource CardBrush}"
         BorderThickness="0,0,0,1"
-        BorderBrush="#E5E7EB"
+        BorderBrush="{DynamicResource BorderBrush}"
         Padding="32,18"
                 Margin="0,0,0,30">
 
@@ -176,11 +319,11 @@
                     <TextBlock Text="Nuevo Registros"
                        FontSize="22"
                        FontWeight="Bold"
-                       Foreground="#111827"/>
+                       Foreground="{DynamicResource PrimaryTextBrush}"/>
 
                     <TextBlock Text="Complete los campos en el orden indicado."
                        FontSize="12"
-                       Foreground="#6B7280"
+                      Foreground="{DynamicResource SecondaryTextBrush}"
                        Margin="0,3,0,0"/>
 
                 </StackPanel>
@@ -191,12 +334,12 @@
                     <TextBlock x:Name="TxtHora"
                        FontSize="22"
                        FontWeight="Bold"
-                       Foreground="#111827"
+                       Foreground="{DynamicResource PrimaryTextBrush}"
                        HorizontalAlignment="Right"/>
 
                     <TextBlock x:Name="TxtFecha"
                        FontSize="12"
-                       Foreground="#6B7280"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
                        HorizontalAlignment="Right"
                        Margin="0,2,0,0"/>
 
@@ -208,8 +351,8 @@
 
         <!-- ══════════════ SCROLL CONTENIDO ══════════════ -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <Border Background="White"
-                    BorderBrush="#F3F4F6"
+            <Border Background="{DynamicResource CardBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="16"
                     Padding="36,32"
@@ -237,7 +380,8 @@
                                   IsReadOnly="True"
                                   Focusable="False"
                                   Cursor="Arrow"
-                                  Background="#F3F4F6"/>
+                                  Background="{DynamicResource HoverBrush}"
+Foreground="{DynamicResource PrimaryTextBrush}"/>
                         </StackPanel>
 
                         <!-- Fecha y Hora Audiencia -->
@@ -283,7 +427,8 @@
                                       IsReadOnly="True"
                                       Focusable="False"
                                       Cursor="Arrow"
-                                      Background="#F3F4F6"/>
+                                      Background="{DynamicResource HoverBrush}"
+Foreground="{DynamicResource PrimaryTextBrush}"/>
                                 <!-- ★ txt de hora-->
                                 <TextBox x:Name="TxtHoraRecibo"
                                      Grid.Column="2"
@@ -291,13 +436,14 @@
                                      IsReadOnly="True"
                                      Focusable="False"
                                      Cursor="Arrow"
-                                     Background="#F3F4F6"/>
+                                     Background="{DynamicResource HoverBrush}"
+Foreground="{DynamicResource PrimaryTextBrush}"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
 
                     <!-- ─── SEPARADOR ─── -->
-                    <Separator Background="#F3F4F6" Margin="0,4,0,20"/>
+                    <Separator Background="{DynamicResource BorderBrush}" Margin="0,4,0,20"/>
 
                     <!-- ─── FILA 2: Total Discos | Tipo Disco | Juzgado ─── -->
                     <Grid Margin="0,0,0,20">
@@ -400,7 +546,7 @@
                     </Grid>
 
                     <!-- ─── SEPARADOR ─── -->
-                    <Separator Background="#F3F4F6" Margin="0,4,0,20"/>
+                    <Separator Background="{DynamicResource BorderBrush}" Margin="0,4,0,20"/>
 
                     <!-- ─── FILA 4: Juez(ces) ─── -->
                     <StackPanel Margin="0,0,0,20">
@@ -474,7 +620,7 @@
                     </StackPanel>
 
                     <!-- ─── SEPARADOR ─── -->
-                    <Separator Background="#F3F4F6" Margin="0,4,0,20"/>
+                    <Separator Background="{DynamicResource BorderBrush}" Margin="0,4,0,20"/>
 
                     <!-- ─── FILA 5: No. Causa | NUC | Tipo Causa ─── -->
                     <Grid Margin="0,0,0,20">
@@ -680,7 +826,7 @@
                     <StackPanel x:Name="PanelDelitoExtra" Margin="0,8,0,0"/>
 
                     <!-- ─── SEPARADOR ─── -->
-                    <Separator Background="#F3F4F6" Margin="0,4,0,20"/>
+                    <Separator Background="{DynamicResource BorderBrush}" Margin="0,4,0,20"/>
 
                     <!-- ─── FILA 8: No. Causa Juicio | Diferida | Quien Realiza ─── -->
                     <Grid Margin="0,0,0,32">
@@ -728,7 +874,7 @@
                     </Grid>
 
                     <!-- ─── SEPARADOR ─── -->
-                    <Separator Background="#F3F4F6" Margin="0,0,0,24"/>
+                    <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,24"/>
 
                     <!-- ─── BOTÓN GUARDAR ─── -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

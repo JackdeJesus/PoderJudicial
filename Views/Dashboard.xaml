@@ -247,6 +247,32 @@
                             Height="48"
                             Click="BtnConfig_Click">
 
+                        <Button.ContextMenu>
+                            <ContextMenu x:Name="MenuConfig"
+                                Background="White"
+                                BorderBrush="#D1D5DB"
+                                BorderThickness="1">
+
+                                <ContextMenu.Resources>
+
+                                    <Style TargetType="MenuItem">
+                                        <Setter Property="Padding" Value="12,8"/>
+                                        <Setter Property="FontSize" Value="13"/>
+                                    </Style>
+
+                                </ContextMenu.Resources>
+
+                                <MenuItem Header="☀ Modo Claro"
+              Click="ModoClaro_Click"/>
+
+                                <MenuItem Header="🌙 Modo Oscuro"
+              Click="ModoOscuro_Click"/>
+
+                                
+
+                            </ContextMenu>
+                        </Button.ContextMenu>
+
                         <StackPanel Orientation="Horizontal">
 
                             <Border Width="3"

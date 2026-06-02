@@ -4,6 +4,18 @@
              xmlns:local="clr-namespace:PoderJudicial"
              StartupUri="Views/Login.xaml">
     <Application.Resources>
-         
+
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <!-- Tema inicial -->
+                <ResourceDictionary
+                Source="Themes/LightTheme.xaml"/>
+
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+
     </Application.Resources>
 </Application>

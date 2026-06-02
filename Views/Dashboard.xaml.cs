@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PoderJudicial.Views;
+using PoderJudicial.Helpers;
 
 namespace PoderJudicial.Views
 {
@@ -90,11 +91,7 @@ namespace PoderJudicial.Views
         }
 
         // Config
-        private void BtnConfig_Click(object sender, RoutedEventArgs e)
-        {
-            ActivarBoton(BtnConfig);
-
-        }
+        
 
         private void BtnRegresar_Click(object sender, RoutedEventArgs e)
         {
@@ -105,5 +102,30 @@ namespace PoderJudicial.Views
             
             this.Close();
         }
+
+
+        private void BtnConfig_Click(object sender, RoutedEventArgs e)
+        {
+            BtnConfig.ContextMenu.PlacementTarget = BtnConfig;
+            BtnConfig.ContextMenu.IsOpen = true;
+        }
+
+
+        private void ModoClaro_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.CambiarTema("Light");
+        }
+
+        private void ModoOscuro_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.CambiarTema("Dark");
+        }
+
+        private void ModoDescanso_Click(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.CambiarTema("EyeCare");
+        }
+
+
     }
 }
