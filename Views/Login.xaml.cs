@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using PoderJudicial.Views;
 using System.Windows.Media.Imaging;
-
+using PoderJudicial.Data;
 
 namespace PoderJudicial.Views
 {
-    /// <summary>
-    /// </summary>
     public partial class Login : Window
     {
         bool mostrando = false;
@@ -16,52 +13,63 @@ namespace PoderJudicial.Views
         public Login()
         {
             InitializeComponent();
+
+            // TEMPORAL — registra el usuario una vez y luego borra estas 2 líneas
+            var repo = new UserRepository();
+            repo.Register("admin", "1234");
         }
 
         private void btnIngresar_Click(object sender, RoutedEventArgs e)
         {
+            string usuario = txtUsuario.Text.Trim();
+            string password = mostrando ? passVisible.Text : passOculta.Password;
 
-            Dashboard dashboard = new Dashboard();
+            if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("Ingresa usuario y contraseña.", "Aviso",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-            dashboard.Show();
+            var repo = new UserRepository();
+            bool acceso = repo.Login(usuario, password);
 
-            this.Close();
+            if (acceso)
+            {
+                Dashboard dashboard = new Dashboard(usuario);
+                dashboard.Show();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Usuario o contraseña incorrectos.", "Acceso denegado",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        // mostrar y ocultar contraseña
         private void btnMostrar_Click(object sender, RoutedEventArgs e)
         {
             if (!mostrando)
             {
-                //mostrar contraseña
                 passVisible.Text = passOculta.Password;
-
                 passVisible.Visibility = Visibility.Visible;
                 passOculta.Visibility = Visibility.Collapsed;
-
                 imgOjo.Source = new BitmapImage(
                     new Uri("pack://application:,,,/Resources/eye.png"));
-
                 mostrando = true;
             }
             else
             {
-                //ocultar contraseña
                 passOculta.Password = passVisible.Text;
-
                 passVisible.Visibility = Visibility.Collapsed;
                 passOculta.Visibility = Visibility.Visible;
-
                 imgOjo.Source = new BitmapImage(
                     new Uri("pack://application:,,,/Resources/eyeClose.png"));
-
                 mostrando = false;
             }
-
             ActualizarPlaceholderPassword();
         }
 
-        //cuadrito letra usuario
         private void txtUsuario_TextChanged(object sender, TextChangedEventArgs e)
         {
             txtPlaceholderUsuario.Visibility =
@@ -70,29 +78,32 @@ namespace PoderJudicial.Views
                 : Visibility.Hidden;
         }
 
-        //cuadrito letra password visible
         private void passVisible_TextChanged(object sender, TextChangedEventArgs e)
         {
             ActualizarPlaceholderPassword();
         }
 
-        // cuadrito letra  PasswordBox
         private void passOculta_PasswordChanged(object sender, RoutedEventArgs e)
         {
             ActualizarPlaceholderPassword();
         }
 
-        // Método reutilizable
         private void ActualizarPlaceholderPassword()
         {
             string textoPassword = mostrando
                 ? passVisible.Text
                 : passOculta.Password;
-
             txtPlaceholderPassword.Visibility =
                 string.IsNullOrWhiteSpace(textoPassword)
                 ? Visibility.Visible
                 : Visibility.Hidden;
+        }
+
+
+        private void txtRegistrate_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var ventana = new CrearUsuario();
+            ventana.ShowDialog();
         }
     }
 }

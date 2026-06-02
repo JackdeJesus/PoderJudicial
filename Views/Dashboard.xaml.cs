@@ -18,15 +18,15 @@ namespace PoderJudicial.Views
 {
     public partial class Dashboard : Window
     {
-        public Dashboard()
+        public Dashboard(string usuario)
         {
             InitializeComponent();
-
-            // btn activado de boton
             ActivarBoton(BtnConsultar);
-
-            // PÁGINA INICIAL
             MainFrame.Navigate(new ConsultarRegistros());
+
+            // Footer usuario
+            txtAvatar.Text = usuario.Substring(0, 1).ToUpper();
+            txtNombreUsuario.Text = usuario;
         }
         public Frame FramePrincipal => MainFrame;
 
