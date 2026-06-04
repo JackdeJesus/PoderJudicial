@@ -103,10 +103,10 @@
 
                                     <!-- TEXTO -->
                                     <TextBlock Text="{TemplateBinding SelectionBoxItem}"
-           Margin="12,0,0,0"
-           VerticalAlignment="Center"
-           HorizontalAlignment="Left"
-           Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                         Margin="12,0,0,0"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Left"
+                                         Foreground="{DynamicResource PrimaryTextBrush}"/>
 
                                     <!-- FLECHA -->
                                     <TextBlock Grid.Column="1"
@@ -116,15 +116,15 @@
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"/>
 
-                                    <!-- BOTÓN -->
+                                    
                                     <!-- BOTÓN -->
                                     <ToggleButton Grid.ColumnSpan="2"
-      Background="Transparent"
-      BorderThickness="0"
-      Focusable="False"
-      IsChecked="{Binding IsDropDownOpen,
-      RelativeSource={RelativeSource TemplatedParent},
-      Mode=TwoWay}">
+                                       Background="Transparent"
+                                       BorderThickness="0"
+                                       Focusable="False"
+                                       IsChecked="{Binding IsDropDownOpen,
+                                       RelativeSource={RelativeSource TemplatedParent},
+                                       Mode=TwoWay}">
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Border Background="Transparent"/>
@@ -193,64 +193,7 @@
 
         </Style>
 
-        <!-- ── Estilo DatePicker ── -->
-        <Style x:Key="DateStyle" TargetType="DatePicker">
-
-            <Setter Property="Height" Value="42"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-            <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="8,0"/>
-
-            <Style.Resources>
-
-                <Style TargetType="Calendar">
-
-                    <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
-                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                    <Setter Property="BorderThickness" Value="1"/>
-                    <Setter Property="FontSize" Value="16"/>
-
-                </Style>
-
-                <Style TargetType="CalendarDayButton">
-
-                    <Setter Property="Width" Value="42"/>
-                    <Setter Property="Height" Value="42"/>
-                    <Setter Property="FontSize" Value="15"/>
-                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-                    <Setter Property="BorderBrush" Value="Transparent"/>
-                    <Setter Property="Background" Value="Transparent"/>
-
-                    <Style.Triggers>
-
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="#2ECC8F"/>
-                            <Setter Property="Foreground" Value="White"/>
-                        </Trigger>
-
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
-                        </Trigger>
-
-                    </Style.Triggers>
-
-                </Style>
-
-                <Style TargetType="CalendarButton">
-
-                    <Setter Property="FontSize" Value="16"/>
-                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-                    <Setter Property="FontWeight" Value="SemiBold"/>
-
-                </Style>
-
-            </Style.Resources>
-
-        </Style>
+        <!-- ── Estilo Item Combobox ── -->        
 
         <Style TargetType="ComboBoxItem">
 

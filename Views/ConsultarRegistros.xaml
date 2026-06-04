@@ -288,25 +288,21 @@
                         <Style TargetType="{x:Type DataGridRow}">
                             <Setter Property="Focusable" Value="False"/>
                         </Style>
-                        <Style x:Key="ColumnaAccionesStyle"
-       TargetType="DataGridCell">
-
-                            <Setter Property="Background"
-        Value="{DynamicResource ActionColumnBrush}"/>
-
+                        <Style x:Key="ColumnaAccionesStyle" TargetType="DataGridCell">
+                            <Setter Property="Background" Value="{DynamicResource ActionColumnBrush}"/>
                             <!-- Línea divisora -->
-                            <Setter Property="BorderBrush"
-        Value="#CBD5E1"/>
-
-                            <Setter Property="BorderThickness"
-        Value="0,0,2,0"/>
-
-                            <!-- Padding -->
-                            <Setter Property="Padding"
-            Value="10,0"/>
-
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                            <Setter Property="BorderThickness" Value="0,0,2,0"/>
+                            <Setter Property="Padding" Value="10,0"/>
                         </Style>
-                        
+
+                        <!-- Texto centrado -->
+                        <Style x:Key="CenteredCellText" TargetType="TextBlock">
+                            <Setter Property="TextAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+
                     </DataGrid.Resources>
 
                     <!-- HEADER STYLE -->
@@ -324,6 +320,8 @@
 
                             <Setter Property="BorderThickness"
                                     Value="0,0,0,1"/>
+
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
 
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
@@ -432,37 +430,44 @@
                         <!-- ID -->
                         <DataGridTextColumn Header="ID"
                         Width="90"
-                        Binding="{Binding Id}"/>
+                        Binding="{Binding Id}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- FECHA AUDIENCIA -->
                         <DataGridTextColumn Header="Fecha Audiencia"
                         Width="180"
-                        Binding="{Binding FechaAudiencia, StringFormat=dd/MM/yyyy HH:mm}"/>
+                        Binding="{Binding FechaAudiencia, StringFormat=dd/MM/yyyy HH:mm}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- FECHA RECIBO -->
                         <DataGridTextColumn Header="Fecha Recibo"
                         Width="180"
-                        Binding="{Binding FechaRecibo, StringFormat=dd/MM/yyyy HH:mm}"/>
+                        Binding="{Binding FechaRecibo, StringFormat=dd/MM/yyyy HH:mm}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TOTAL DISCOS -->
                         <DataGridTextColumn Header="Total Discos"
                         Width="130"
-                        Binding="{Binding TotDiscos}"/>
+                        Binding="{Binding TotDiscos}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TIPO DISCO -->
                         <DataGridTextColumn Header="Tipo Disco"
                         Width="130"
-                        Binding="{Binding TipoDisco}"/>
+                        Binding="{Binding TipoDisco}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- JUZGADO -->
                         <DataGridTextColumn Header="Juzgado"
                         Width="200"
-                        Binding="{Binding Juzgado}"/>
+                        Binding="{Binding Juzgado}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TOTAL DISCO AUDIENCIA -->
                         <DataGridTextColumn Header="Total Disco Audiencia"
                         Width="180"
-                        Binding="{Binding TotDiscoAudiencia}"/>
+                        Binding="{Binding TotDiscoAudiencia}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- JUEZ -->
                         <DataGridTextColumn Header="Juez"
@@ -472,17 +477,20 @@
                         <!-- NO CAUSA -->
                         <DataGridTextColumn Header="No. Causa"
                         Width="150"
-                        Binding="{Binding NoCausa}"/>
+                        Binding="{Binding NoCausa}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- NUC -->
                         <DataGridTextColumn Header="NUC"
                         Width="170"
-                        Binding="{Binding NUC}"/>
+                        Binding="{Binding NUC}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TIPO CAUSA -->
                         <DataGridTextColumn Header="Tipo Causa"
                         Width="160"
-                        Binding="{Binding TipoCausa}"/>
+                        Binding="{Binding TipoCausa}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TIPO AUDIENCIA -->
                         <DataGridTemplateColumn Header="Tipo Audiencia"
@@ -494,7 +502,7 @@
                                     <Border Style="{StaticResource BadgeStyle}">
                                         <TextBlock Text="{Binding TipoAudiencia}"
                                FontSize="12"
-                               Foreground="#374151"/>
+                               Foreground="{DynamicResource PrimaryTextBrush}" />
                                     </Border>
 
                                 </DataTemplate>
@@ -503,43 +511,45 @@
 
                         <!-- HORA CONCLUSION -->
                         <DataGridTextColumn Header="Hora Conclusión"
-                        Width="150"
-                        Binding="{Binding HoraConclusion}"/>
+                        Width="170"
+                        Binding="{Binding HoraConclusion}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- IMPUTADO -->
                         <DataGridTextColumn Header="Imputado"
-                        Width="220"
+                        Width="250"
                         Binding="{Binding Imputado}"/>
 
                         <!-- DELITO -->
                         <DataGridTextColumn Header="Delito"
-                        Width="220"
+                        Width="250"
                         Binding="{Binding Delito}"/>
 
                         <!-- AGRAVIADO -->
                         <DataGridTextColumn Header="Agraviado"
-                        Width="220"
+                        Width="250"
                         Binding="{Binding Agraviado}"/>
 
                         <!-- SALA -->
                         <DataGridTextColumn Header="Sala"
                         Width="120"
-                        Binding="{Binding Sala}"/>
+                        Binding="{Binding Sala}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- NO CAUSA JUICIO -->
                         <DataGridTextColumn Header="No. Causa Juicio"
                         Width="180"
-                        Binding="{Binding NoCausaJuicio}"/>
+                        Binding="{Binding NoCausaJuicio}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- DIFERIDA -->
-                        <DataGridTextColumn Header="Diferida"
-                        Width="120"
-                        Binding="{Binding Diferida}"/>
+                       
 
                         <!-- QUIEN REALIZA -->
                         <DataGridTextColumn Header="Quien Realiza"
                         Width="180"
-                        Binding="{Binding QuienRealiza}"/>
+                        Binding="{Binding QuienRealiza}"
+                        ElementStyle="{StaticResource CenteredCellText}"/>
 
                     </DataGrid.Columns>
                 </DataGrid>

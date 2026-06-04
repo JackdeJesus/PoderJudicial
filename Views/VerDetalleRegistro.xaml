@@ -16,20 +16,27 @@
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="FontSize" Value="10"/>
-            <Setter Property="Foreground" Value="#9CA3AF"/>
+            <Setter Property="Foreground"
+            Value="{DynamicResource SecondaryTextBrush}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Margin" Value="0,0,0,3"/>
         </Style>
         <Style x:Key="ValorStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="FontSize" Value="13.5"/>
-            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="Foreground"
+            Value="{DynamicResource PrimaryTextBrush}"/>
         </Style>
     </Window.Resources>
 
-    <Border CornerRadius="8" Background="White" Margin="10">
+    <Border CornerRadius="8"
+        Background="{DynamicResource CardBrush}"
+        Margin="10">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="20" ShadowDepth="4" Color="#44000000" Opacity="0.3"/>
+            <DropShadowEffect BlurRadius="45"
+                  ShadowDepth="10"
+                  Color="#000000"
+                  Opacity="0.85"/>
         </Border.Effect>
 
         <Grid>
@@ -39,13 +46,16 @@
             </Grid.RowDefinitions>
 
             <!-- HEADER -->
-            <Border Grid.Row="0" CornerRadius="8,8,0,0" Background="White"
-                    BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+            <Border Grid.Row="0"
+        CornerRadius="8,8,0,0"
+        Background="{DynamicResource CardBrush}"
+        BorderBrush="{DynamicResource BorderBrush}"
+        BorderThickness="0,0,0,1">
                 <Grid>
                     <TextBlock Text="Detalle del Registro"
                                FontFamily="Segoe UI Semibold"
                                FontSize="17"
-                               Foreground="#111827"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
                                VerticalAlignment="Center"
                                Margin="24,0,0,0"/>
                     <Button x:Name="BtnCerrar"
@@ -55,7 +65,7 @@
                             Margin="0,0,16,0"
                             Width="28" Height="28"
                             FontSize="13"
-                            Foreground="#6B7280"
+                            Foreground="{DynamicResource SecondaryTextBrush}"
                             Cursor="Hand" Click="BtnCerrar_Click">
                         <Button.Style>
                             <Style TargetType="Button">
@@ -64,14 +74,16 @@
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="border"
                                                     Background="Transparent"
-                                                    BorderBrush="#D1D5DB"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
                                                     BorderThickness="1"
                                                     CornerRadius="4">
                                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="border" Property="Background" Value="#F3F4F6"/>
+                                                    <Setter TargetName="border"
+        Property="Background"
+        Value="{DynamicResource HoverBrush}"/>
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
