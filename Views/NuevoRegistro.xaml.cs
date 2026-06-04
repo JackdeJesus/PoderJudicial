@@ -528,7 +528,7 @@ namespace PoderJudicial.Views
                 HoraConclusion = horaConclusion,
                 NoCausaJuicio = ObtenerTexto(TxtNoCausaJuicio),
                 Diferida = string.Empty,          // sin campo en el form aún
-                QuienRealiza = string.Empty,          // sin campo en el form aún
+                QuienRealiza = SesionActual.Usuario,         // sin campo en el form aún
                 TotDiscos = totalDiscos,
                 TipoDisco = "Archivo",          
                 TotDiscoAudiencia = totAud

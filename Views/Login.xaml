@@ -57,6 +57,7 @@
                      BorderThickness="0"
                      Padding="15,0"
                      FontSize="14"
+                     CaretBrush="White"
                      VerticalContentAlignment="Center" TextChanged="txtUsuario_TextChanged"
                      />
 
@@ -91,6 +92,7 @@
                          BorderThickness="0"
                          Padding="15,0,45,0"
                          FontSize="14"
+                         CaretBrush="White"
                          VerticalContentAlignment="Center" PasswordChanged="passOculta_PasswordChanged"
                                              
                          />
@@ -103,7 +105,9 @@
                      BorderThickness="0"
                      Padding="15,0,45,0"
                      FontSize="14"
+                      CaretBrush="White"                    
                      VerticalContentAlignment="Center"
+                     
                      Visibility="Collapsed" TextChanged="passVisible_TextChanged" 
                                          />
 
@@ -113,26 +117,37 @@
                        Foreground="#CCFFFFFF"
                        Margin="15,0,0,0"
                        VerticalAlignment="Center"
+                                          
                        IsHitTestVisible="False"/>
 
                                 <!-- Botón ojo -->
+
                                 <Button x:Name="btnMostrar"
-                    Width="24"
-                    Height="24"
-                    HorizontalAlignment="Right"
-                    Margin="0,0,10,0"
-                    VerticalAlignment="Center"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Cursor="Hand"
-                    Click="btnMostrar_Click">
+        Width="24"
+        Height="24"
+        HorizontalAlignment="Right"
+        Margin="0,0,10,0"
+        VerticalAlignment="Center"
+        Background="Transparent"
+        BorderThickness="0"
+        Cursor="Hand"
+        FocusVisualStyle="{x:Null}"
+        Click="btnMostrar_Click">
+
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="Transparent">
+                                                <ContentPresenter
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
 
                                     <Image x:Name="imgOjo"
-                       Source="pack://application:,,,/Resources/eyeClose.png"
-                       Stretch="Uniform"/>
-
+           Source="pack://application:,,,/Resources/eyeClose.png"
+           Stretch="Uniform"/>
                                 </Button>
-
                             </Grid>
 
                         </Border>
@@ -185,7 +200,7 @@
                FontSize="12"
                VerticalAlignment="Center"/>
                         <TextBlock x:Name="txtRegistrate" Text="Regístrate"
-               Foreground="#2ECC8F"
+               Foreground="#E6EBEA"
                FontSize="12"
                FontWeight="SemiBold"
                Cursor="Hand"
@@ -219,3 +234,5 @@
     </Grid>
 
 </Window>
+
+    

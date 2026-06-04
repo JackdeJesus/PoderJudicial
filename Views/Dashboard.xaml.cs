@@ -95,7 +95,7 @@ namespace PoderJudicial.Views
 
         private void BtnRegresar_Click(object sender, RoutedEventArgs e)
         {
-            
+            SesionActual.Usuario = string.Empty;
             Login login = new Login();
             login.Show();
 

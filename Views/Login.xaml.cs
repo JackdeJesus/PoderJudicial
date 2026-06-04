@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using PoderJudicial.Data;
+using PoderJudicial.Helpers;
 
 namespace PoderJudicial.Views
 {
@@ -14,9 +15,7 @@ namespace PoderJudicial.Views
         {
             InitializeComponent();
 
-            // TEMPORAL — registra el usuario una vez y luego borra estas 2 líneas
-            var repo = new UserRepository();
-            repo.Register("admin", "1234");
+            
         }
 
         private void btnIngresar_Click(object sender, RoutedEventArgs e)
@@ -36,6 +35,7 @@ namespace PoderJudicial.Views
 
             if (acceso)
             {
+                SesionActual.Usuario = usuario;
                 Dashboard dashboard = new Dashboard(usuario);
                 dashboard.Show();
                 this.Close();
@@ -105,5 +105,9 @@ namespace PoderJudicial.Views
             var ventana = new CrearUsuario();
             ventana.ShowDialog();
         }
+
+
+        // activa cursor de campo usuario
+       
     }
 }
