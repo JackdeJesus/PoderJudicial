@@ -36,4 +36,7 @@
     <SolidColorBrush x:Key="ActionButtonHoverBrush" Color="#334155"/>
 
 
+    <SolidColorBrush x:Key="InputTextBrush" Color="#F9FAFB"/>
+    <SolidColorBrush x:Key="PlaceholderBrush" Color="#6B7280"/>
+
 </ResourceDictionary>

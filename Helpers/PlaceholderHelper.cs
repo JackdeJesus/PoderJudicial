@@ -1,21 +1,11 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows;
 
 namespace PoderJudicial.Helpers
 {
     public static class PlaceholderHelper
     {
-        // COLOR PLACEHOLDER
-        private static readonly Brush PlaceholderBrush =
-            new SolidColorBrush(
-                Color.FromRgb(0x9C, 0xA3, 0xAF));
-
-        // COLOR TEXTO NORMAL (MODO OSCURO)
-        private static readonly Brush NormalBrush =
-            Brushes.White;
-
-        // AGREGAR PLACEHOLDER
         public static void AddPlaceholder(
             TextBox tb,
             string? placeholder = null)
@@ -27,8 +17,9 @@ namespace PoderJudicial.Helpers
             if (string.IsNullOrEmpty(ph))
                 return;
 
-            // Placeholder inicial
-            tb.Foreground = PlaceholderBrush;
+            tb.Foreground =
+                (Brush)Application.Current.Resources["PlaceholderBrush"];
+
             tb.Text = ph;
 
             tb.GotFocus += (s, e) =>
@@ -36,7 +27,9 @@ namespace PoderJudicial.Helpers
                 if (tb.Text == ph)
                 {
                     tb.Text = "";
-                    tb.Foreground = NormalBrush;
+
+                    tb.Foreground =
+                        (Brush)Application.Current.Resources["InputTextBrush"];
                 }
             };
 
@@ -45,26 +38,13 @@ namespace PoderJudicial.Helpers
                 if (string.IsNullOrWhiteSpace(tb.Text))
                 {
                     tb.Text = ph;
-                    tb.Foreground = PlaceholderBrush;
-                }
-                else
-                {
-                    tb.Foreground = NormalBrush;
-                }
-            };
 
-            // Cuando escriba texto
-            tb.TextChanged += (s, e) =>
-            {
-                if (tb.Text != ph &&
-                    !string.IsNullOrWhiteSpace(tb.Text))
-                {
-                    tb.Foreground = NormalBrush;
+                    tb.Foreground =
+                        (Brush)Application.Current.Resources["PlaceholderBrush"];
                 }
             };
         }
 
-        // OBTENER TEXTO REAL
         public static string GetText(TextBox tb)
         {
             string ph =
@@ -78,7 +58,6 @@ namespace PoderJudicial.Helpers
                 : val;
         }
 
-        // VALIDAR SI ES PLACEHOLDER
         public static bool IsPlaceholder(TextBox tb)
         {
             string ph =
