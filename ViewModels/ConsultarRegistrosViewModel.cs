@@ -133,7 +133,25 @@ namespace PoderJudicial.ViewModels
                     _listaCompleta.Take(10)
                 );
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
-                TotalDiscosBusqueda = "";
+                int totalDiscosGeneral = _listaCompleta.Sum(a =>
+                {
+                    if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
+                        return 0;
+
+                    string numeros = new string(
+                        a.TotDiscoAudiencia
+                        .Where(char.IsDigit)
+                        .ToArray()
+                    );
+
+                    if (int.TryParse(numeros, out int valor))
+                        return valor;
+
+                    return 0;
+                });
+
+                TotalDiscosBusqueda =
+                    $"Total discos audiencia: {totalDiscosGeneral}";
 
                 CargarSugerencias();
             }
@@ -159,11 +177,31 @@ namespace PoderJudicial.ViewModels
             if (string.IsNullOrWhiteSpace(texto))
             {
                 Audiencias = new ObservableCollection<Audiencia>(
-     _listaCompleta.Take(10)
- );
+                    _listaCompleta.Take(10)
+                );
 
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
-                TotalDiscosBusqueda = "";
+
+                int totalDiscosGeneral = _listaCompleta.Sum(a =>
+                {
+                    if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
+                        return 0;
+
+                    string numeros = new string(
+                        a.TotDiscoAudiencia
+                        .Where(char.IsDigit)
+                        .ToArray()
+                    );
+
+                    if (int.TryParse(numeros, out int valor))
+                        return valor;
+
+                    return 0;
+                });
+
+                TotalDiscosBusqueda =
+                    $"Total discos audiencia: {totalDiscosGeneral}";
+
                 return;
             }
 

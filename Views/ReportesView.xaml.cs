@@ -141,7 +141,21 @@ namespace PoderJudicial.Views
 
             DgResultados.ItemsSource = resultado;
             TxtTotalRegistros.Text = resultado.Count.ToString();
-            TxtTotalDiscos.Text = resultado.Sum(x => x.TotDiscos ?? 0).ToString();
+            TxtTotalDiscos.Text = resultado.Sum(x =>
+            {
+                if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia))
+                    return 0;
+
+                string numeros = new string(
+                    x.TotDiscoAudiencia
+                    .Where(char.IsDigit)
+                    .ToArray()
+                );
+
+                return int.TryParse(numeros, out int valor)
+                    ? valor
+                    : 0;
+            }).ToString();
         }
 
         private static int? ObtenerNumeroMes(string nombre) => nombre switch
@@ -256,7 +270,21 @@ namespace PoderJudicial.Views
                 ws.Cell(totalRow, 14).Style.Font.Bold = true;
                 ws.Cell(totalRow, 14).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Right;
 
-                ws.Cell(totalRow, 15).Value = datos.Sum(x => x.TotDiscos ?? 0);
+                ws.Cell(totalRow, 15).Value = datos.Sum(x =>
+                {
+                    if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia))
+                        return 0;
+
+                    string numeros = new string(
+                        x.TotDiscoAudiencia
+                        .Where(char.IsDigit)
+                        .ToArray()
+                    );
+
+                    return int.TryParse(numeros, out int valor)
+                        ? valor
+                        : 0;
+                });
                 ws.Cell(totalRow, 15).Style.Font.Bold = true;
                 ws.Cell(totalRow, 15).Style.Font.FontColor = XLColor.FromHtml("#1F7A5C");
 

@@ -140,7 +140,7 @@
             <Grid Grid.Row="0" Margin="0,0,0,20">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="420"/>
+                    <ColumnDefinition Width="550"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
@@ -250,6 +250,10 @@
 
                 </StackPanel>
             </Grid>
+            
+            
+            
+            
 
             <!-- TABLA -->
             <Border Grid.Row="1"
@@ -553,6 +557,9 @@
 
                     </DataGrid.Columns>
                 </DataGrid>
+                
+                
+                
             </Border>
 
         </Grid>
