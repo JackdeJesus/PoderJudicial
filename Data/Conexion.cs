@@ -11,10 +11,7 @@ namespace PoderJudicial.Data
         public static OleDbConnection ObtenerConexion()
         {
             string rutaBD =
-                Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    "Database",
-                    "p.accdb");
+                @"\\ANTONIOS_LAPTOP\Database\p.accdb";
 
             string connectionString =
                 $@"Provider=Microsoft.ACE.OLEDB.12.0;
