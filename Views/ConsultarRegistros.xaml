@@ -167,7 +167,7 @@
                                      Background="Transparent"
                                      BorderThickness="0"
                                      FontSize="13"
-                                     Foreground="{DynamicResource PrimaryTextBrush}"
+                                     Foreground="{DynamicResource InputTextBrush}"
                                      CaretBrush="{DynamicResource PrimaryTextBrush}"
                                      VerticalContentAlignment="Center"
                                      Padding="0,0,10,0"

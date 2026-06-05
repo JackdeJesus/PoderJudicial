@@ -266,7 +266,7 @@
 
                     <TextBlock Text="Complete los campos en el orden indicado."
                        FontSize="12"
-                      Foreground="{DynamicResource SecondaryTextBrush}"
+                       Foreground="{DynamicResource SecondaryTextBrush}"
                        Margin="0,3,0,0"/>
 
                 </StackPanel>
@@ -323,8 +323,7 @@
                                   IsReadOnly="True"
                                   Focusable="False"
                                   Cursor="Arrow"
-                                  Background="{DynamicResource HoverBrush}"
-Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                  Background="{DynamicResource HoverBrush}" Foreground="{DynamicResource PrimaryTextBrush}"/>
                         </StackPanel>
 
                         <!-- Fecha y Hora Audiencia -->
@@ -370,8 +369,7 @@ Foreground="{DynamicResource PrimaryTextBrush}"/>
                                       IsReadOnly="True"
                                       Focusable="False"
                                       Cursor="Arrow"
-                                      Background="{DynamicResource HoverBrush}"
-Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                      Background="{DynamicResource HoverBrush}" Foreground="{DynamicResource PrimaryTextBrush}"/>
                                 <!-- ★ txt de hora-->
                                 <TextBox x:Name="TxtHoraRecibo"
                                      Grid.Column="2"
@@ -379,8 +377,7 @@ Foreground="{DynamicResource PrimaryTextBrush}"/>
                                      IsReadOnly="True"
                                      Focusable="False"
                                      Cursor="Arrow"
-                                     Background="{DynamicResource HoverBrush}"
-Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                     Background="{DynamicResource HoverBrush}" Foreground="{DynamicResource PrimaryTextBrush}"/>
                             </Grid>
                         </StackPanel>
                     </Grid>
