@@ -152,11 +152,10 @@ namespace PoderJudicial.Helpers
 
             // Tabla
             string[] cols = {
-                "ID", "Fecha Audiencia", "Juzgado", "Juez", "No. Causa", "NUC",
-                "Tipo Audiencia", "Tipo Causa", "Sala", "Imputado", "Agraviado",
-                "Delito", "Fecha Recibo", "Hora Conclusión",
-                 "No. Causa Juicio"
-               
+                "Fecha Audiencia","Tot. Discos", "Juzgado", "Juez", "No. Causa", "NUC",
+       "Tipo Causa","Tipo Audiencia","Hora Conclusión","Imputado", "Delito", "Agraviado",
+       "Sala","No. Causa Juicio"
+
             };
 
             sb.Append("<table><thead><tr>");
@@ -169,16 +168,13 @@ namespace PoderJudicial.Helpers
                 sb.Append("<tr>");
                 foreach (var cel in new string?[]
                 {
-                    a.Id.ToString(),
                     a.FechaAudiencia?.ToString("dd/MM/yyyy"),
-                    a.Juzgado, a.Juez, a.NoCausa, a.NUC,
-                    a.TipoAudiencia, a.TipoCausa, a.Sala,
-                    a.Imputado, a.Agraviado, a.Delito,
-                    a.FechaRecibo?.ToString("dd/MM/yyyy"),
-                    a.HoraConclusion?.ToString("HH:mm"),
                     (a.TotDiscos ?? 0).ToString(),
-                    a.TipoDisco,
-                    a.NoCausaJuicio
+                    a.Juzgado, a.Juez, a.NoCausa, a.NUC,
+                    a.TipoCausa, a.TipoAudiencia,
+                    a.HoraConclusion?.ToString("HH:mm"),
+                    a.Imputado, a.Delito,  a.Agraviado, a.Sala,
+                     a.NoCausaJuicio
                 })
                     sb.Append($"<td>{Encode(cel ?? "")}</td>");
                 sb.Append("</tr>");

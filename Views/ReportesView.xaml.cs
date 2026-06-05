@@ -23,7 +23,6 @@ namespace PoderJudicial.Views
             Loaded += ReportesView_Loaded;
         }
 
-       
         //  CARGA INICIAL
 
         private void ReportesView_Loaded(object sender, RoutedEventArgs e) => CargarDatos();
@@ -47,9 +46,8 @@ namespace PoderJudicial.Views
             }
         }
 
-        
         //  LLENADO DINÁMICO DE COMBOS
-       
+
         private void LlenarComboAnios()
         {
             var anios = _todas
@@ -98,9 +96,8 @@ namespace PoderJudicial.Views
             CmbSala.SelectedIndex = 0;
         }
 
-        
         //  FILTRADO
-      
+
         private void Filtro_Changed(object sender, SelectionChangedEventArgs e)
         {
             if (_cargando) return;
@@ -143,18 +140,9 @@ namespace PoderJudicial.Views
             TxtTotalRegistros.Text = resultado.Count.ToString();
             TxtTotalDiscos.Text = resultado.Sum(x =>
             {
-                if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia))
-                    return 0;
-
-                string numeros = new string(
-                    x.TotDiscoAudiencia
-                    .Where(char.IsDigit)
-                    .ToArray()
-                );
-
-                return int.TryParse(numeros, out int valor)
-                    ? valor
-                    : 0;
+                if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia)) return 0;
+                string numeros = new string(x.TotDiscoAudiencia.Where(char.IsDigit).ToArray());
+                return int.TryParse(numeros, out int valor) ? valor : 0;
             }).ToString();
         }
 
@@ -177,7 +165,7 @@ namespace PoderJudicial.Views
 
         //  EXPORTAR EXCEL  —  .xlsx real con ClosedXML
         //  NuGet: Install-Package ClosedXML
-        
+
         private void BtnExportarExcel_Click(object sender, RoutedEventArgs e)
         {
             var datos = DgResultados.ItemsSource as List<Audiencia>;
@@ -201,14 +189,12 @@ namespace PoderJudicial.Views
                 using var wb = new XLWorkbook();
                 var ws = wb.Worksheets.Add("Audiencias");
 
-                // ── Encabezados 
+                // ── Encabezados
                 string[] headers =
                 {
-                    "ID", "Fecha Audiencia", "Juzgado", "Juez", "No. Causa", "NUC",
-                    "Tipo Audiencia", "Tipo Causa", "Sala", "Imputado", "Agraviado",
-                    "Delito", "Fecha Recibo", "Hora Conclusión", "Tot. Discos",
-                    "Tipo Disco", "Tot. Disco Audiencia", "No. Causa Juicio",
-                    
+                    "Fecha Audiencia", "Tot. Discos", "Juzgado", "Juez", "No. Causa", "NUC",
+                    "Tipo Causa", "Tipo Audiencia", "Hora Conclusión", "Imputado", "Delito",
+                    "Agraviado", "Sala", "No. Causa Juicio"
                 };
 
                 for (int i = 0; i < headers.Length; i++)
@@ -222,29 +208,25 @@ namespace PoderJudicial.Views
                 headerRange.Style.Border.BottomBorder = XLBorderStyleValues.Medium;
 
                 // ── Datos
-              
                 for (int row = 0; row < datos.Count; row++)
                 {
-                    var a = datos[row];
+                    var aud = datos[row];
                     int r = row + 2;
 
-                    ws.Cell(r, 1).Value = a.Id;
-                    ws.Cell(r, 2).Value = a.FechaAudiencia?.ToString("dd/MM/yyyy") ?? "";
-                    ws.Cell(r, 3).Value = a.Juzgado ?? "";
-                    ws.Cell(r, 4).Value = a.Juez ?? "";
-                    ws.Cell(r, 5).Value = a.NoCausa ?? "";
-                    ws.Cell(r, 6).Value = a.NUC ?? "";
-                    ws.Cell(r, 7).Value = a.TipoAudiencia ?? "";
-                    ws.Cell(r, 8).Value = a.TipoCausa ?? "";
-                    ws.Cell(r, 9).Value = a.Sala ?? "";
-                    ws.Cell(r, 10).Value = a.Imputado ?? "";
-                    ws.Cell(r, 11).Value = a.Agraviado ?? "";
-                    ws.Cell(r, 12).Value = a.Delito ?? "";
-                    ws.Cell(r, 13).Value = a.FechaRecibo?.ToString("dd/MM/yyyy") ?? "";
-                    ws.Cell(r, 14).Value = a.HoraConclusion?.ToString("HH:mm") ?? "";
-                    ws.Cell(r, 17).Value = a.TotDiscoAudiencia ?? "";
-                    ws.Cell(r, 18).Value = a.NoCausaJuicio ?? "";
-                    
+                    ws.Cell(r, 1).Value = aud.FechaAudiencia?.ToString("dd/MM/yyyy") ?? "";
+                    ws.Cell(r, 2).Value = aud.TotDiscos.HasValue ? aud.TotDiscos.Value : "";
+                    ws.Cell(r, 3).Value = aud.Juzgado ?? "";
+                    ws.Cell(r, 4).Value = aud.Juez ?? "";
+                    ws.Cell(r, 5).Value = aud.NoCausa ?? "";
+                    ws.Cell(r, 6).Value = aud.NUC ?? "";
+                    ws.Cell(r, 7).Value = aud.TipoCausa ?? "";
+                    ws.Cell(r, 8).Value = aud.TipoAudiencia ?? "";
+                    ws.Cell(r, 9).Value = aud.HoraConclusion?.ToString("HH:mm") ?? "";
+                    ws.Cell(r, 10).Value = aud.Imputado ?? "";
+                    ws.Cell(r, 11).Value = aud.Delito ?? "";
+                    ws.Cell(r, 12).Value = aud.Agraviado ?? "";
+                    ws.Cell(r, 13).Value = aud.Sala ?? "";
+                    ws.Cell(r, 14).Value = aud.NoCausaJuicio ?? "";
 
                     if (row % 2 == 1)
                         ws.Range(r, 1, r, headers.Length)
@@ -261,7 +243,7 @@ namespace PoderJudicial.Views
                 ws.Style.Font.FontName = "Arial";
                 ws.Style.Font.FontSize = 10;
 
-                // ── Fila de totales 
+                // ── Fila de totales
                 int totalRow = datos.Count + 2;
                 ws.Cell(totalRow, 1).Value = $"Registros: {datos.Count}";
                 ws.Cell(totalRow, 1).Style.Font.Bold = true;
@@ -272,18 +254,9 @@ namespace PoderJudicial.Views
 
                 ws.Cell(totalRow, 15).Value = datos.Sum(x =>
                 {
-                    if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia))
-                        return 0;
-
-                    string numeros = new string(
-                        x.TotDiscoAudiencia
-                        .Where(char.IsDigit)
-                        .ToArray()
-                    );
-
-                    return int.TryParse(numeros, out int valor)
-                        ? valor
-                        : 0;
+                    if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia)) return 0;
+                    string numeros = new string(x.TotDiscoAudiencia.Where(char.IsDigit).ToArray());
+                    return int.TryParse(numeros, out int valor) ? valor : 0;
                 });
                 ws.Cell(totalRow, 15).Style.Font.Bold = true;
                 ws.Cell(totalRow, 15).Style.Font.FontColor = XLColor.FromHtml("#1F7A5C");
@@ -315,9 +288,8 @@ namespace PoderJudicial.Views
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════
         //  EXPORTAR PDF  —  delega a Helpers/PdfExporter.cs
-        // ═══════════════════════════════════════════════════════════════
+
         private void BtnExportarPdf_Click(object sender, RoutedEventArgs e)
         {
             var datos = DgResultados.ItemsSource as List<Audiencia>;
