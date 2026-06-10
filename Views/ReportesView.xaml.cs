@@ -12,7 +12,7 @@ namespace PoderJudicial.Views
 {
     public partial class ReportesView : Page
     {
-        // ── Capa de datos 
+        // ── Capa de Datos
         private readonly AudienciaData _data = new AudienciaData();
         private List<Audiencia> _todas = new();
         private bool _cargando = true;

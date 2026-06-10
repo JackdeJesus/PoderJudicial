@@ -128,7 +128,7 @@
             </Grid>
         </Border>
 
-        <!-- CONTENIDO -->
+        <!-- contenido -->
         <Grid Grid.Row="1" Margin="32">
 
             <Grid.RowDefinitions>
