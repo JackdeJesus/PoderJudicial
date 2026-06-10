@@ -68,13 +68,22 @@ namespace PoderJudicial.Helpers
             }
         }
 
-        // LISTBOX TECLADO
-        public static void ManejarTecladoListBox(
-            ListBox lst,
-            KeyEventArgs e)
+        
+// LISTBOX TECLADO
+public static void ManejarTecladoListBox(
+    ListBox lst,
+    KeyEventArgs e)
         {
             // ENTER
             if (e.Key == Key.Enter)
+            {
+                SeleccionarItem(lst);
+
+                e.Handled = true;
+            }
+
+            // TAB
+            if (e.Key == Key.Tab)
             {
                 SeleccionarItem(lst);
 
@@ -120,6 +129,7 @@ namespace PoderJudicial.Helpers
                 e.Handled = true;
             }
         }
+
 
         // CLICK MOUSE
         public static void ManejarClickMouse(

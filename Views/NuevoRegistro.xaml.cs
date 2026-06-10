@@ -29,11 +29,16 @@ namespace PoderJudicial.Views
             CargarIdVisual();
 
             // Cargar datos para listas autocompletar
+
             AudienciaRepository audienciaRepo = new AudienciaRepository();
-            DelitoRepository delitoRepo = new DelitoRepository();
+
+            historialAudiencias =
+    new AudienciaData()
+    .ObtenerAudiencias();
+
+
             JuezRepository juezRepo = new JuezRepository();
-            audiencia = audienciaRepo.ObtenerTiposAudiencia();
-            delitos = delitoRepo.ObtenerDelitos();
+            
             jueces = juezRepo.ObtenerJueces();
 
             //metodo hora real
@@ -51,7 +56,8 @@ namespace PoderJudicial.Views
             PlaceholderHelper.AddPlaceholder(TxtHoraConclusion, "hh:mm");
             PlaceholderHelper.AddPlaceholder(TxtFechaAudiencia, "dd/MM/yyyy");
             PlaceholderHelper.AddPlaceholder(TxtHoraAudiencia, "hh:mm");
-            
+            PlaceholderHelper.AddPlaceholder(TxtJuez, "Nombre del juez");
+
 
 
 
@@ -314,6 +320,10 @@ namespace PoderJudicial.Views
         }
 
 
+
+        //--------------
+        private List<Audiencia> historialAudiencias;
+
         // -─────────────────────────────────────────────
         //  METODOS PARA AGREGAR JUEZ Y + Juez
         // ─────────────────────────────────────────────
@@ -321,47 +331,57 @@ namespace PoderJudicial.Views
         private List<string> jueces;
         private void txtJuez_TextChanged(object sender,TextChangedEventArgs e)
         {
+            TextBox txt = (TextBox)sender;
+
+            string texto = ObtenerTexto(txt);
+
+            // Ignorar placeholder o vacío
+            if (string.IsNullOrWhiteSpace(texto))
+                return;
+
             AutocompleteHelper
                 .FiltrarDesdeSender(
                     sender,
                     jueces);
         }
 
-        private void BtnAgregarJuez_Click(object sender,RoutedEventArgs e)
+        private void BtnAgregarJuez_Click(object sender, RoutedEventArgs e)
         {
-            DynamicFieldFactory.CrearCampoAutocomplete(
-                PanelJuecesExtra,
-                "Escriba el nombre del juez",
-                txtJuez_TextChanged,
-                TxtAutocomplete_PreviewKeyDown,
-                lstAutocomplete_PreviewKeyDown,
-                lstAutocomplete_MouseClick,
-                (s, ev) =>
-                {
-                    Button btn = (Button)s;
-
-                    Grid grid =
-                        (Grid)btn.Parent;
-
-                    PanelJuecesExtra
-                        .Children
-                        .Remove(grid);
-                },
-                (Style)FindResource("InputStyle"));
+            AgregarCampoJuez();
         }
 
 
         // ──────────────────────────────────────────
         //  METODO PARA AGREGAR DELITO Y + Delito
         // ──────────────────────────────────────────
-        private List<string> delitos;
 
-        private void TxtDelito_TextChanged(object sender,TextChangedEventArgs e)
+
+        private void TxtDelito_TextChanged(object sender, TextChangedEventArgs e)
         {
+            TextBox txt = (TextBox)sender;
+
+            string texto = ObtenerTexto(txt);
+
+            // Ignorar placeholder o vacío
+            if (string.IsNullOrWhiteSpace(texto))
+                return;
+
+            string tipoCausa =
+                ObtenerTipoCausaSeleccionado();
+
+            List<string> delitosFiltrados =
+                historialAudiencias
+                .Where(x =>
+                    x.TipoCausa == tipoCausa &&
+                    !string.IsNullOrWhiteSpace(x.Delito))
+                .Select(x => x.Delito)
+                .Distinct()
+                .ToList();
+
             AutocompleteHelper
                 .FiltrarDesdeSender(
                     sender,
-                    delitos);
+                    delitosFiltrados);
         }
 
         private void BtnAgregarDelito_Click(object sender,RoutedEventArgs e)
@@ -392,14 +412,26 @@ namespace PoderJudicial.Views
         // ──────────────────────────────────────────
         //  METODO PARA AGREGAR AUDIENCIA y + Audiencia
         // ──────────────────────────────────────────
-        private List<string> audiencia;
 
-        private void TxtTipoAudiencia_TextChanged(object sender, TextChangedEventArgs e)
+
+        private void TxtTipoAudiencia_TextChanged(object sender,TextChangedEventArgs e)
         {
+            string tipoCausa =
+                ObtenerTipoCausaSeleccionado();
+
+            List<string> audienciasFiltradas =
+                historialAudiencias
+                .Where(x =>
+                    x.TipoCausa == tipoCausa &&
+                    !string.IsNullOrWhiteSpace(x.TipoAudiencia))
+                .Select(x => x.TipoAudiencia)
+                .Distinct()
+                .ToList();
+
             AutocompleteHelper
                 .FiltrarDesdeSender(
                     sender,
-                    audiencia);
+                    audienciasFiltradas);
         }
 
         private void BtnAgregarAudiencia_Click(object sender,RoutedEventArgs e)
@@ -431,23 +463,8 @@ namespace PoderJudicial.Views
         // -───────────────────────────────────────
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            // ── Validaciones ──────────────────────────────────────────────────────
-            if (PlaceholderHelper.IsPlaceholder(TxtId) ||
-                string.IsNullOrWhiteSpace(TxtId.Text))
-            {
-                MessageBox.Show("El campo 'Id' es obligatorio.", "Validación",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (!ValidarFormulario())
                 return;
-            }
-
-            var juzgadoItem = CmbJuzgado.SelectedItem as ComboBoxItem;
-            if (juzgadoItem == null ||
-                juzgadoItem.Content.ToString() == "Seleccione juzgado")
-            {
-                MessageBox.Show("El campo 'Juzgado' es obligatorio.", "Validación",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
 
             // ── Recopilar valores ─────────────────────────────────────────────────
             string juzgado = ObtenerValorComboOtro(CmbJuzgado, TxtJuzgadoOtro);
@@ -456,7 +473,7 @@ namespace PoderJudicial.Views
             string tipoDiscoTexto = ObtenerValorCombo(CmbTipoDisco);
             // Campos con paneles dinámicos — combina el TextBox principal
             // con los campos extra que el usuario haya agregado con "+"
-            string juezFinal = ObtenerTextosPanelDinamico(PanelJuecesExtra, txtJuez);
+            string juezFinal = ObtenerTextosPanelDinamico(PanelJuecesExtra, TxtJuez);
             string delitoFinal = ObtenerTextosPanelDinamico(PanelDelitoExtra, TxtDelito);
             string audienciaFinal = ObtenerTextosPanelDinamico(PanelAudienciaExtra, TxtTipoAudiencia);
             string cantidadDiscos = tipoDiscoTexto.Split(' ')[0];
@@ -587,6 +604,18 @@ namespace PoderJudicial.Views
           }
 
 
+        private string ObtenerTipoCausaSeleccionado()
+        {
+            var item =
+                CmbTipoCausa.SelectedItem as ComboBoxItem;
+
+            if (item == null)
+                return string.Empty;
+
+            return item.Content?.ToString() ?? "";
+        }
+
+
         // ──────────────────────────────────────────
         //  HELPERS PRIVADOS
         // ──────────────────────────────────────────
@@ -597,8 +626,302 @@ namespace PoderJudicial.Views
         /// </summary>
         private string ObtenerTexto(TextBox txt)
         {
-            if (PlaceholderHelper.IsPlaceholder(txt)) return string.Empty;
-            return txt.Text.Trim();
+            if (txt == null)
+                return string.Empty;
+
+            string texto = txt.Text?.Trim() ?? "";
+
+            // PlaceholderHelper
+            if (PlaceholderHelper.IsPlaceholder(txt))
+                return string.Empty;
+
+            // Placeholders manuales/dinámicos
+            string[] placeholders =
+            {
+        "Nombre del juez",
+        "Escriba el nombre del juez",
+        "Tipo de delito",
+        "Tipo de Audiencia",
+        "Escriba el tipo de audiencia",
+        "Ej: 123/2024",
+        "Ej: 89/2024",
+        "Ej: 12-2024-00567",
+        "hh:mm",
+        "dd/MM/yyyy"
+    };
+
+            if (placeholders.Contains(texto))
+                return string.Empty;
+
+            return texto;
+        }
+
+
+        private bool ValidarFormulario()
+        {
+            string tipoCausa =
+                ObtenerValorCombo(CmbTipoCausa);
+
+            // ─────────────────────────────
+            // ID
+            // ─────────────────────────────
+            if (ValidationHelper.CampoVacio(TxtId))
+            {
+                MessageBox.Show(
+                    "El campo 'Id' es obligatorio.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            //______________
+            //  NO CAUSA
+            //--------------
+
+            string noCausa = ObtenerTexto(TxtNoCausa);
+
+            if (!ValidationHelper.NumerosYDiagonal(noCausa))
+            {
+                MessageBox.Show(
+                    "El campo 'No. Causa' solo permite números y '/'.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+
+
+            if (ValidationHelper.CampoVacio(TxtNoCausa))
+            {
+                MessageBox.Show(
+                    "El campo 'No. Causa' es obligatorio.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+
+
+            //-----------------------
+            //  NUC
+            //-----------------------
+
+            if (ValidationHelper.CampoVacio(TxtNUC))
+            {
+                MessageBox.Show(
+                    "El campo 'NUC' es obligatorio.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+
+
+
+
+
+            // ─────────────────────────────
+            // JUZGADO
+            // ─────────────────────────────
+            var juzgadoItem =
+                CmbJuzgado.SelectedItem as ComboBoxItem;
+
+            if (juzgadoItem == null ||
+                juzgadoItem.Content.ToString() ==
+                "Seleccione juzgado")
+            {
+                MessageBox.Show(
+                    "El campo 'Juzgado' es obligatorio.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            // ─────────────────────────────
+            // NO CAUSA
+            // ─────────────────────────────
+            if (!ValidationHelper.NumerosYDiagonal(
+                ObtenerTexto(TxtNoCausa)))
+            {
+                MessageBox.Show(
+                    "El campo 'No. Causa' solo permite números y '/'.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            // ─────────────────────────────
+            // FECHA AUDIENCIA
+            // ─────────────────────────────
+            if (!ValidationHelper.FechaValida(
+                ObtenerTexto(TxtFechaAudiencia)))
+            {
+                MessageBox.Show(
+                    "La fecha de audiencia no es válida.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            // ─────────────────────────────
+            // HORA AUDIENCIA
+            // ─────────────────────────────
+            if (!ValidationHelper.HoraValida(
+                ObtenerTexto(TxtHoraAudiencia)))
+            {
+                MessageBox.Show(
+                    "La hora de audiencia no es válida.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            // ─────────────────────────────
+            // HORA CONCLUSIÓN
+            // ─────────────────────────────
+            if (!ValidationHelper.HoraValida(
+                ObtenerTexto(TxtHoraConclusion)))
+            {
+                MessageBox.Show(
+                    "La hora de conclusión no es válida.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            // ─────────────────────────────
+            // JUEZ OBLIGATORIO
+            // ─────────────────────────────
+            string juezFinal =
+                ObtenerTextosPanelDinamico(
+                    PanelJuecesExtra,
+                    TxtJuez);
+
+            if (string.IsNullOrWhiteSpace(juezFinal))
+            {
+                MessageBox.Show(
+                    "Debe capturar al menos un juez.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            // ─────────────────────────────
+            // TIPO AUDIENCIA
+            // ─────────────────────────────
+            string audienciaFinal =
+                ObtenerTextosPanelDinamico(
+                    PanelAudienciaExtra,
+                    TxtTipoAudiencia);
+
+            if (string.IsNullOrWhiteSpace(audienciaFinal))
+            {
+                MessageBox.Show(
+                    "El tipo de audiencia es obligatorio.",
+                    "Validación",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                return false;
+            }
+
+            // ─────────────────────────────
+            // VALIDACIONES PARA C y JO
+            // ─────────────────────────────
+            if (tipoCausa != "CP")
+            {
+                if (string.IsNullOrWhiteSpace(
+                    ObtenerTexto(TxtImputado)))
+                {
+                    MessageBox.Show(
+                        "El imputado es obligatorio.",
+                        "Validación",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return false;
+                }
+
+                string delitoFinal =
+                    ObtenerTextosPanelDinamico(
+                        PanelDelitoExtra,
+                        TxtDelito);
+
+                if (string.IsNullOrWhiteSpace(delitoFinal))
+                {
+                    MessageBox.Show(
+                        "El delito es obligatorio.",
+                        "Validación",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return false;
+                }
+
+                if (string.IsNullOrWhiteSpace(
+                    ObtenerTexto(TxtAgraviado)))
+                {
+                    MessageBox.Show(
+                        "El agraviado es obligatorio.",
+                        "Validación",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return false;
+                }
+            }
+
+            // ─────────────────────────────
+            // NO CAUSA JUICIO SOLO JO
+            // ─────────────────────────────
+            if (tipoCausa == "JO")
+            {
+                if (string.IsNullOrWhiteSpace(
+                    ObtenerTexto(TxtNoCausaJuicio)))
+                {
+                    MessageBox.Show(
+                        "El No. Causa Juicio es obligatorio para JO.",
+                        "Validación",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return false;
+                }
+
+                if (!ValidationHelper.NumerosYDiagonal(
+                    ObtenerTexto(TxtNoCausaJuicio)))
+                {
+                    MessageBox.Show(
+                        "No. Causa Juicio solo permite números y '/'.",
+                        "Validación",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -652,7 +975,7 @@ namespace PoderJudicial.Views
             TxtAgraviado.Text = string.Empty;
             TxtHoraConclusion.Text = string.Empty;
             TxtNoCausaJuicio.Text = string.Empty;
-            txtJuez.Text = string.Empty;
+            TxtJuez.Text = string.Empty;
             TxtHoraAudiencia.Text = string.Empty;
             TxtHoraRecibo.Text = string.Empty;
             TxtFechaRecibo.Text = string.Empty;
@@ -682,8 +1005,9 @@ namespace PoderJudicial.Views
             PlaceholderHelper.AddPlaceholder(TxtHoraConclusion, "hh:mm");
             PlaceholderHelper.AddPlaceholder(TxtFechaAudiencia, "dd/MM/yyyy");
             PlaceholderHelper.AddPlaceholder(TxtHoraAudiencia, "hh:mm");
-            
-            
+            PlaceholderHelper.AddPlaceholder(TxtJuez, "Nombre del juez");
+
+
         }
 
         
@@ -703,6 +1027,116 @@ namespace PoderJudicial.Views
             AutocompleteHelper
                 .ManejarClickMouse(lst);
         }
+
+
+
+
+        private void AgregarCampoJuez()
+        {
+            DynamicFieldFactory.CrearCampoAutocomplete(
+                PanelJuecesExtra,
+                "Escriba el nombre del juez",
+                txtJuez_TextChanged,
+                TxtAutocomplete_PreviewKeyDown,
+                lstAutocomplete_PreviewKeyDown,
+                lstAutocomplete_MouseClick,
+                (s, ev) =>
+                {
+                    Button btn = (Button)s;
+
+                    Grid grid = (Grid)btn.Parent;
+
+                    PanelJuecesExtra
+                        .Children
+                        .Remove(grid);
+                },
+                (Style)FindResource("InputStyle"));
+        }
+
+
+        private void CmbTipoCausa_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            if (CmbTipoCausa.SelectedItem is not ComboBoxItem item)
+                return;
+
+            string tipo = item.Content.ToString();
+
+            // Reset base
+            PanelNoCausaJuicio.Visibility = Visibility.Collapsed;
+
+            TxtNoCausaJuicio.Text = "";
+
+            // Limpiar jueces extra
+            PanelJuecesExtra.Children.Clear();
+
+            switch (tipo)
+            {
+                // ─────────────────────────────
+                // C → solo 1 juez
+                // ─────────────────────────────
+                case "C":
+
+                    BtnAgregarJuez.Visibility =
+                        Visibility.Collapsed;
+
+                    break;
+
+                // ─────────────────────────────
+                // CP → solo 1 juez
+                // ─────────────────────────────
+                case "CP":
+
+                    BtnAgregarJuez.Visibility =
+                        Visibility.Collapsed;
+
+                    break;
+
+                // ─────────────────────────────
+                // JO → múltiples jueces
+                // ─────────────────────────────
+                case "JO":
+
+                    PanelNoCausaJuicio.Visibility =
+                        Visibility.Visible;
+
+                    BtnAgregarJuez.Visibility =
+                        Visibility.Visible;
+
+                    // Agregar automáticamente
+                    // un juez extra
+                    if (PanelJuecesExtra.Children.Count == 0)
+                    {
+                        AgregarCampoJuez();
+                    }
+
+                    break;
+            }
+        }
+
+
+        private void SoloNumeros_PreviewTextInput(
+    object sender,
+    TextCompositionEventArgs e)
+        {
+            e.Handled =
+                !e.Text.All(char.IsDigit);
+        }
+
+        private void NoCausa_PreviewTextInput(
+    object sender,
+    TextCompositionEventArgs e)
+        {
+            char c = e.Text.FirstOrDefault();
+
+            e.Handled =
+                !(char.IsDigit(c) || c == '/');
+        }
+
+
+
 
     }
 

@@ -343,12 +343,13 @@
                                          Style="{StaticResource InputStyle}"
                                          Tag="Ej: 25/12/2024"
                                          TextChanged="TxtFechaAudiencia_TextChanged"
+                                         PreviewTextInput="SoloNumeros_PreviewTextInput"
                                        />
                                 <!-- ★ txt de hora-->
                                 <TextBox x:Name="TxtHoraAudiencia"
                                           Grid.Column="2"
                                            Style="{StaticResource InputStyle}"
-                                         
+                                         PreviewTextInput="SoloNumeros_PreviewTextInput"                                       
                                          TextChanged="TxtHoraAudiencia_TextChanged"
                                           />
                             </Grid>
@@ -488,8 +489,20 @@
                     <!-- ─── SEPARADOR ─── -->
                     <Separator Background="{DynamicResource BorderBrush}" Margin="0,4,0,20"/>
 
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Text="Tipo Causa" Style="{StaticResource LabelStyle}"/>
+                        <ComboBox x:Name="CmbTipoCausa" Style="{StaticResource ComboStyle}"
+                              SelectedIndex="1"
+                              SelectionChanged="CmbTipoCausa_SelectionChanged">
+                            <ComboBoxItem Content="Seleccione tipo"/>
+                            <ComboBoxItem Content="C"/>
+                            <ComboBoxItem Content="CP"/>
+                            <ComboBoxItem Content="JO"/>
+                        </ComboBox>
+                    </StackPanel>
+
                     <!-- ─── FILA 4: Juez(ces) ─── -->
-                    <StackPanel Margin="0,0,0,20">
+                    <StackPanel Margin="0,20,0,20">
                         <TextBlock Text="Juez(es)" Style="{StaticResource LabelStyle}"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -502,7 +515,7 @@
                             <StackPanel Grid.Column="0">
 
                                 <TextBox
-                                      x:Name="txtJuez"
+                                      x:Name="TxtJuez"
                                       TextChanged="txtJuez_TextChanged"
                                       PreviewKeyDown="TxtAutocomplete_PreviewKeyDown"
                                       Tag="Escriba el nombre del juez"
@@ -576,6 +589,7 @@
                             <TextBlock Text="No. Causa" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtNoCausa"
                                      Style="{StaticResource InputStyle}"
+                                     PreviewTextInput="NoCausa_PreviewTextInput"
                                      Tag="Ej: 123/2024"/>
                         </StackPanel>
 
@@ -586,16 +600,7 @@
                                      Tag="Ej: 12-2024-00567"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="4">
-                            <TextBlock Text="Tipo Causa" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox x:Name="CmbTipoCausa" Style="{StaticResource ComboStyle}"
-                                      SelectedIndex="1">
-                                <ComboBoxItem Content="Seleccione tipo"/>
-                                <ComboBoxItem Content="C"/>
-                                <ComboBoxItem Content="CP"/>
-                                <ComboBoxItem Content="JO"/>
-                            </ComboBox>
-                        </StackPanel>
+                       
                     </Grid>
 
                     <!-- ─── FILA 6: Tipo Audiencia | Hora Conclusión | Imputado ─── -->
@@ -686,7 +691,7 @@
                             <TextBox x:Name="TxtHoraConclusion"
                 Grid.Column="2"
                 Style="{StaticResource InputStyle}"
-                
+                PreviewTextInput="SoloNumeros_PreviewTextInput"
                 TextChanged="TxtHoraConclusion_TextChanged" 
                  />
                         </StackPanel>
@@ -801,11 +806,16 @@
                                 <ComboBoxItem Content="CJMP"/>
                             </ComboBox>
                         </StackPanel>
-                        <StackPanel Grid.Column="4">
-                            <TextBlock Text="No. Causa Juicio" Style="{StaticResource LabelStyle}"/>
+                        <StackPanel x:Name="PanelNoCausaJuicio"
+            Grid.Column="4">
+
+                            <TextBlock Text="No. Causa Juicio"
+               Style="{StaticResource LabelStyle}"/>
+
                             <TextBox x:Name="TxtNoCausaJuicio"
-                                     Style="{StaticResource InputStyle}"
-                                     Tag="Ej: 89/2024"/>
+             Style="{StaticResource InputStyle}"
+             Tag="Ej: 89/2024"/>
+
                         </StackPanel>
 
 

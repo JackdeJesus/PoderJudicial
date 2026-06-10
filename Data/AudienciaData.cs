@@ -175,6 +175,39 @@ namespace PoderJudicial.Data
             return null;
         }
 
+
+        
+        // ──────────────────────────────────────────
+        //  OBTENER UNO POR ID
+        // ──────────────────────────────────────────
+        public Audiencia ObtenerAudienciaPorId(int id)
+        {
+            using (OleDbConnection conn =
+                Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query =
+                    $"SELECT * FROM [{TableDetector.TablaActual}] WHERE Id = ?";
+
+                using (OleDbCommand cmd =
+                    new OleDbCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("?", id);
+
+                    using (OleDbDataReader reader =
+                        cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                            return MapearDesdeReader(reader);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
         // ──────────────────────────────────────────
         //  INSERT
         // ──────────────────────────────────────────

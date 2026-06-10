@@ -346,7 +346,7 @@ namespace PoderJudicial.ViewModels
                 try
                 {
                     AudienciaData data = new AudienciaData();
-                    Audiencia detalle = data.ObtenerAudienciaPorNoCausa(audiencia.NoCausa);
+                    Audiencia detalle = data.ObtenerAudienciaPorId( audiencia.Id);
 
                     if (detalle != null)
                     {
