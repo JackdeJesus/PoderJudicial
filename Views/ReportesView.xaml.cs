@@ -213,7 +213,7 @@ namespace PoderJudicial.Views
                     var aud = datos[row];
                     int r = row + 2;
 
-                    ws.Cell(r, 1).Value = aud.FechaAudiencia?.ToString("dd/MM/yyyy") ?? "";
+                    ws.Cell(r, 1).Value = aud.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm") ?? "";
                     ws.Cell(r, 2).Value = aud.TotDiscos.HasValue ? aud.TotDiscos.Value : "";
                     ws.Cell(r, 3).Value = aud.Juzgado ?? "";
                     ws.Cell(r, 4).Value = aud.Juez ?? "";

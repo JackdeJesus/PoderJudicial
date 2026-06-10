@@ -170,7 +170,7 @@ Value="{DynamicResource BorderBrush}"/>
 
 
 
-        <!-- Estilo Label filtro -->
+        <!-- Estilo del filtro -->
         <Style x:Key="FiltroLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -305,7 +305,7 @@ Value="{DynamicResource BorderBrush}"/>
         </Grid>
     </Border>
 
-    <!-- ═══════════════════════════ CONTENIDO ═══════════════════════════ -->
+    <!-- CONTENIDO -->
     <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="32,24,32,32">

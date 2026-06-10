@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.OleDb;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -422,7 +423,7 @@ namespace PoderJudicial.ViewModels
                 }
             }
         }
-        private void EjecutarEliminar(object param)
+        private async void EjecutarEliminar(object param)
         {
             if (param is Audiencia audiencia)
             {
@@ -434,9 +435,42 @@ namespace PoderJudicial.ViewModels
 
                 if (resultado == MessageBoxResult.Yes)
                 {
-                    _listaCompleta.Remove(audiencia);
-                    Filtrar();
+                    if (await EliminarDeBaseDeDatos(audiencia))
+                    {
+                        _listaCompleta.Remove(audiencia);
+                        Filtrar();
+                    }
                 }
+            }
+        }
+
+        private async Task<bool> EliminarDeBaseDeDatos(Audiencia audiencia)
+        {
+            try
+            {
+                using (var connection = Conexion.ObtenerConexion())
+                {
+                    await connection.OpenAsync();
+
+                    string tabla = TableDetector.TablaActual;
+                    string query = $"DELETE FROM [{tabla}] WHERE NoCausa = @NoCausa";
+
+                    using (var command = new OleDbCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@NoCausa", audiencia.NoCausa);
+                        int filasAfectadas = await command.ExecuteNonQueryAsync();
+                        return filasAfectadas > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error al eliminar: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return false;
             }
         }
     }
