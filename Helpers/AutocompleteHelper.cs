@@ -139,8 +139,7 @@ public static void ManejarTecladoListBox(
         }
 
         // SELECCIONAR
-        public static void SeleccionarItem(
-            ListBox lst)
+        private static void SeleccionarItem(ListBox lst)
         {
             if (lst.SelectedItem == null)
                 return;
@@ -148,7 +147,8 @@ public static void ManejarTecladoListBox(
             StackPanel stack =
                 (StackPanel)lst.Parent;
 
-            TextBox txt = stack.Children
+            TextBox txt =
+                stack.Children
                 .OfType<TextBox>()
                 .First();
 
@@ -162,10 +162,6 @@ public static void ManejarTecladoListBox(
                 Visibility.Collapsed;
 
             txt.Focus();
-
-
-
-
         }
 
         public static void FiltrarDesdeSender(object sender, List<string> origen)
