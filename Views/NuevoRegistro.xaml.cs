@@ -32,14 +32,17 @@ namespace PoderJudicial.Views
 
             AudienciaRepository audienciaRepo = new AudienciaRepository();
 
-            historialAudiencias =
-    new AudienciaData()
-    .ObtenerAudiencias();
+            historialAudiencias = new AudienciaData().ObtenerAudiencias();
 
 
             JuezRepository juezRepo = new JuezRepository();
             
             jueces = juezRepo.ObtenerJueces();
+
+
+            historialEjecuciones = new EjecucionData().ObtenerEjecuciones();
+
+
 
             //metodo hora real
             IniciarReloj();
@@ -57,6 +60,8 @@ namespace PoderJudicial.Views
             PlaceholderHelper.AddPlaceholder(TxtFechaAudiencia, "dd/MM/yyyy");
             PlaceholderHelper.AddPlaceholder(TxtHoraAudiencia, "hh:mm");
             PlaceholderHelper.AddPlaceholder(TxtJuez, "Nombre del juez");
+            PlaceholderHelper.AddPlaceholder(TxtExpediente, "Número de expediente");
+            PlaceholderHelper.AddPlaceholder(TxtObservaciones,"Observaciones");
 
 
 
@@ -70,9 +75,21 @@ namespace PoderJudicial.Views
         {
             try
             {
-                int id =
-                    new AudienciaData()
-                    .ObtenerSiguienteIdVisual();
+                string tipoCausa =
+                    ObtenerValorCombo(CmbTipoCausa);
+
+                int id;
+
+                if (tipoCausa == "EXP")
+                {
+                    id = new EjecucionData()
+                        .ObtenerSiguienteId();
+                }
+                else
+                {
+                    id = new AudienciaData()
+                        .ObtenerSiguienteIdVisual();
+                }
 
                 TxtId.Text = id.ToString();
             }
@@ -320,6 +337,13 @@ namespace PoderJudicial.Views
         }
 
 
+        /// HISTORIAL EJECUCION
+        /// 
+        private List<Ejecucion> historialEjecuciones;
+
+
+
+
 
         //--------------
         private List<Audiencia> historialAudiencias;
@@ -356,27 +380,34 @@ namespace PoderJudicial.Views
         // ──────────────────────────────────────────
 
 
-        private void TxtDelito_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtDelito_TextChanged( object sender,TextChangedEventArgs e)
         {
-            TextBox txt = (TextBox)sender;
-
-            string texto = ObtenerTexto(txt);
-
-            // Ignorar placeholder o vacío
-            if (string.IsNullOrWhiteSpace(texto))
-                return;
-
             string tipoCausa =
                 ObtenerTipoCausaSeleccionado();
 
-            List<string> delitosFiltrados =
-                historialAudiencias
-                .Where(x =>
-                    x.TipoCausa == tipoCausa &&
-                    !string.IsNullOrWhiteSpace(x.Delito))
-                .Select(x => x.Delito)
-                .Distinct()
-                .ToList();
+            List<string> delitosFiltrados;
+
+            if (tipoCausa == "EXP")
+            {
+                delitosFiltrados =
+                    historialEjecuciones
+                    .Where(x =>
+                        !string.IsNullOrWhiteSpace(x.Delito))
+                    .Select(x => x.Delito)
+                    .Distinct()
+                    .ToList();
+            }
+            else
+            {
+                delitosFiltrados =
+                    historialAudiencias
+                    .Where(x =>
+                        x.TipoCausa == tipoCausa &&
+                        !string.IsNullOrWhiteSpace(x.Delito))
+                    .Select(x => x.Delito)
+                    .Distinct()
+                    .ToList();
+            }
 
             AutocompleteHelper
                 .FiltrarDesdeSender(
@@ -419,19 +450,35 @@ namespace PoderJudicial.Views
             string tipoCausa =
                 ObtenerTipoCausaSeleccionado();
 
-            List<string> audienciasFiltradas =
-                historialAudiencias
-                .Where(x =>
-                    x.TipoCausa == tipoCausa &&
-                    !string.IsNullOrWhiteSpace(x.TipoAudiencia))
-                .Select(x => x.TipoAudiencia)
-                .Distinct()
-                .ToList();
+            List<string> audienciasFiltradas;
 
+
+            if (tipoCausa == "EXP")
+            {
+                audienciasFiltradas =
+                    historialEjecuciones
+                    .Where(x =>
+                        !string.IsNullOrWhiteSpace(x.TipoAudiencia))
+                    .Select(x => x.TipoAudiencia)
+                    .Distinct()
+                    .ToList();
+            }
+            else
+            {
+                audienciasFiltradas =
+                    historialAudiencias
+                    .Where(x =>
+                        x.TipoCausa == tipoCausa &&
+                        !string.IsNullOrWhiteSpace(x.TipoAudiencia))
+                    .Select(x => x.TipoAudiencia)
+                    .Distinct()
+                    .ToList();
+            }
             AutocompleteHelper
                 .FiltrarDesdeSender(
                     sender,
-                    audienciasFiltradas);
+                    audienciasFiltradas);   
+
         }
 
         private void BtnAgregarAudiencia_Click(object sender,RoutedEventArgs e)
@@ -525,6 +572,16 @@ namespace PoderJudicial.Views
             }
 
 
+            string tipoCausa =
+    ObtenerValorCombo(CmbTipoCausa);
+
+            if (tipoCausa == "EXP")
+            {
+                GuardarEjecucion();
+
+                return;
+            }
+
 
             // ── Construir modelo ──────────────────────────────────────────────────
             var registro = new Audiencia
@@ -590,7 +647,7 @@ namespace PoderJudicial.Views
            /// Devuelve el Content del item seleccionado en un ComboBox simple
             /// (sin opción "Otro..." con TextBox).
         /// </summary>
-          private string ObtenerValorCombo(ComboBox combo)
+        private string ObtenerValorCombo(ComboBox combo)
           {
                var item = combo.SelectedItem as ComboBoxItem;
                if (item == null) return string.Empty;
@@ -712,15 +769,19 @@ namespace PoderJudicial.Views
             //  NUC
             //-----------------------
 
-            if (ValidationHelper.CampoVacio(TxtNUC))
+            if (tipoCausa != "EXP")
             {
-                MessageBox.Show(
-                    "El campo 'NUC' es obligatorio.",
-                    "Validación",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                if (string.IsNullOrWhiteSpace(
+                    ObtenerTexto(TxtNUC)))
+                {
+                    MessageBox.Show(
+                        "El campo NUC es obligatorio.",
+                        "Validación",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
 
-                return false;
+                    return false;
+                }
             }
 
 
@@ -979,6 +1040,8 @@ namespace PoderJudicial.Views
             TxtHoraAudiencia.Text = string.Empty;
             TxtHoraRecibo.Text = string.Empty;
             TxtFechaRecibo.Text = string.Empty;
+            TxtExpediente.Text = string.Empty;
+            TxtObservaciones.Text = string.Empty;
 
             // Limpiar ComboBox
             CmbJuzgado.SelectedIndex = 1;
@@ -1006,12 +1069,11 @@ namespace PoderJudicial.Views
             PlaceholderHelper.AddPlaceholder(TxtFechaAudiencia, "dd/MM/yyyy");
             PlaceholderHelper.AddPlaceholder(TxtHoraAudiencia, "hh:mm");
             PlaceholderHelper.AddPlaceholder(TxtJuez, "Nombre del juez");
+            PlaceholderHelper.AddPlaceholder(TxtExpediente, "Número de expediente");
+            PlaceholderHelper.AddPlaceholder(TxtObservaciones, "Observaciones");
 
 
         }
-
-        
-
 
         private void lstAutocomplete_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -1027,9 +1089,6 @@ namespace PoderJudicial.Views
             AutocompleteHelper
                 .ManejarClickMouse(lst);
         }
-
-
-
 
         private void AgregarCampoJuez()
         {
@@ -1053,7 +1112,6 @@ namespace PoderJudicial.Views
                 (Style)FindResource("InputStyle"));
         }
 
-
         private void CmbTipoCausa_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsLoaded)
@@ -1064,10 +1122,19 @@ namespace PoderJudicial.Views
 
             string tipo = item.Content.ToString();
 
-            // Reset base
-            PanelNoCausaJuicio.Visibility = Visibility.Collapsed;
+            // Reset general
+            PanelNUC.Visibility = Visibility.Visible;
 
+            PanelNoCausaJuicio.Visibility =
+                Visibility.Collapsed;
+
+            PanelCamposEXP.Visibility =
+                Visibility.Collapsed;
             TxtNoCausaJuicio.Text = "";
+
+            TxtExpediente.Text = "";
+
+            TxtObservaciones.Text = "";
 
             // Limpiar jueces extra
             PanelJuecesExtra.Children.Clear();
@@ -1113,26 +1180,154 @@ namespace PoderJudicial.Views
                     }
 
                     break;
+
+
+                // ─────────────────────────────
+                // EXP
+                // ─────────────────────────────
+                case "EXP":
+
+                    BtnAgregarJuez.Visibility =
+                        Visibility.Collapsed;
+
+                    PanelCamposEXP.Visibility =
+    Visibility.Visible;
+
+                    PanelNUC.Visibility = Visibility.Collapsed;
+
+
+                    TxtObservaciones.Text =
+    SesionActual.Usuario;
+
+                    TxtObservaciones.IsReadOnly = true;
+
+                    break;
             }
+            CargarIdVisual();
         }
 
 
-        private void SoloNumeros_PreviewTextInput(
-    object sender,
-    TextCompositionEventArgs e)
+        private void SoloNumeros_PreviewTextInput( object sender, TextCompositionEventArgs e)
         {
             e.Handled =
                 !e.Text.All(char.IsDigit);
         }
 
-        private void NoCausa_PreviewTextInput(
-    object sender,
-    TextCompositionEventArgs e)
+        private void NoCausa_PreviewTextInput( object sender, TextCompositionEventArgs e)
         {
             char c = e.Text.FirstOrDefault();
 
             e.Handled =
                 !(char.IsDigit(c) || c == '/');
+        }
+
+        private void GuardarEjecucion()
+        {
+            DateTime? fechaAudiencia = null;
+
+            string fechaAudienciaTexto =
+                $"{ObtenerTexto(TxtFechaAudiencia)} {ObtenerTexto(TxtHoraAudiencia)}";
+
+            if (DateTime.TryParse(
+                fechaAudienciaTexto,
+                out DateTime fechaAud))
+            {
+                fechaAudiencia = fechaAud;
+            }
+
+            DateTime? horaConclusion = null;
+
+            if (DateTime.TryParse(
+                ObtenerTexto(TxtHoraConclusion),
+                out DateTime hora))
+            {
+                horaConclusion = hora;
+            }
+
+            string juezFinal =
+                ObtenerTextosPanelDinamico(
+                    PanelJuecesExtra,
+                    TxtJuez);
+
+            string delitoFinal =
+                ObtenerTextosPanelDinamico(
+                    PanelDelitoExtra,
+                    TxtDelito);
+
+            string audienciaFinal =
+                ObtenerTextosPanelDinamico(
+                    PanelAudienciaExtra,
+                    TxtTipoAudiencia);
+
+            var expediente = new Ejecucion
+            {
+                Id =
+                    int.Parse(TxtId.Text),
+
+                FechaAudiencia =
+                    fechaAudiencia,
+
+                TotalDiscos =
+                    ObtenerValorComboOtro(
+                        CmbTotDiscoAudiencia,
+                        TxtTotDiscoAudienciaOtro),
+
+                Juez =
+                    juezFinal,
+
+                ExpedienteNumero =
+                    ObtenerTexto(TxtExpediente),
+
+                Causa =
+                    ObtenerTexto(TxtNoCausa),
+
+                TipoAudiencia =
+                    audienciaFinal,
+
+                HoraTermino =
+                    ObtenerTexto(TxtHoraConclusion),
+
+                Imputado =
+                    ObtenerTexto(TxtImputado),
+
+                Delito =
+                    delitoFinal,
+
+                Victima =
+                    ObtenerTexto(TxtAgraviado),
+
+                Sala =
+                    ObtenerValorCombo(CmbSala),
+
+
+
+                Observaciones =
+    SesionActual.Usuario
+            };
+
+            try
+            {
+                new EjecucionData()
+                    .Insertar(expediente);
+
+                MessageBox.Show(
+                    "Expediente guardado correctamente.",
+                    "Éxito",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
+                LimpiarFormulario();
+
+                CargarIdVisual();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error al guardar expediente:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
 

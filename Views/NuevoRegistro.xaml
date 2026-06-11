@@ -498,6 +498,7 @@
                             <ComboBoxItem Content="C"/>
                             <ComboBoxItem Content="CP"/>
                             <ComboBoxItem Content="JO"/>
+                            <ComboBoxItem Content="EXP"/>
                         </ComboBox>
                     </StackPanel>
 
@@ -593,7 +594,7 @@
                                      Tag="Ej: 123/2024"/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="2">
+                        <StackPanel Grid.Column="2" x:Name="PanelNUC">
                             <TextBlock Text="NUC" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtNUC"
                                      Style="{StaticResource InputStyle}"
@@ -818,10 +819,39 @@
 
                         </StackPanel>
 
-
-
-
+                        
                     </Grid>
+
+                    <!-- CAMPOS EXP -->
+                    <StackPanel x:Name="PanelCamposEXP"
+            Visibility="Collapsed"
+            Margin="0,0,0,32">
+
+                        <!-- EXPEDIENTE -->
+                        <StackPanel Margin="0,0,0,16">
+
+                            <TextBlock Text="Expediente"
+                   Style="{StaticResource LabelStyle}"/>
+
+                            <TextBox x:Name="TxtExpediente"
+                 Style="{StaticResource InputStyle}"/>
+                        </StackPanel>
+
+                        <!-- OBSERVACIONES -->
+                        <StackPanel>
+
+                            <TextBlock Text="Observaciones"
+                   Style="{StaticResource LabelStyle}"/>
+
+                            <TextBox x:Name="TxtObservaciones"
+                 Height="80"
+                 AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 VerticalScrollBarVisibility="Auto"
+                 Style="{StaticResource InputStyle}"/>
+                        </StackPanel>
+
+                    </StackPanel>
 
                     <!-- ─── SEPARADOR ─── -->
                     <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,24"/>
