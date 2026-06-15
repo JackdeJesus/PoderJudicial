@@ -10,7 +10,7 @@
     <SolidColorBrush x:Key="ContentBg"
                  Color="Transparent"/>
 
-    <!-- ComboBox filtro -->
+    <!-- ComboBox  -->
         <Style x:Key="FiltroCombo" TargetType="ComboBox">
 
             <Setter Property="Height" Value="42"/>

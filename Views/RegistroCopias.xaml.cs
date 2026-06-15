@@ -80,9 +80,9 @@ namespace PoderJudicial.Views
             TxtFeRecibo.Text = ahora.ToString("dd/MM/yyyy");
         }
 
-        // ──────────────────────────────────────────
+       
         //  PLACEHOLDERS
-        // ──────────────────────────────────────────
+
         private void RegistrarPlaceholders()
         {
             PlaceholderHelper.AddPlaceholder(TxtId);
@@ -95,9 +95,8 @@ namespace PoderJudicial.Views
             PlaceholderHelper.AddPlaceholder(TxtObservaciones, "Escriba observaciones adicionales...");
         }
 
-        // ──────────────────────────────────────────
         //  FORMATO FECHA AUDIENCIA
-        // ──────────────────────────────────────────
+        
         private void TxtFeAudiencia_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox txt = (TextBox)sender;
@@ -115,9 +114,9 @@ namespace PoderJudicial.Views
             txt.CaretIndex = txt.Text.Length;
         }
 
-        // ──────────────────────────────────────────
+        
         //  TIPO CAUSA → visibilidad de controles
-        // ──────────────────────────────────────────
+        
         private void CmbTipoCausa_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // No hacer nada si la UI aún no cargó
@@ -136,9 +135,9 @@ namespace PoderJudicial.Views
             e.Handled = !(char.IsDigit(c) || c == '/');
         }
 
-        // ──────────────────────────────────────────
         //  GUARDAR
-        // ──────────────────────────────────────────
+        
+      
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidarFormulario())
