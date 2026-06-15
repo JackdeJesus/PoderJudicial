@@ -214,6 +214,33 @@
 
                     </Button>
 
+
+
+                    <!-- COPIAS -->
+                    <Button x:Name="BtnCopias"
+                    Style="{StaticResource SidebarButtonStyle}"
+                    Height="48"
+                    Click="BtnCopias_Click">
+                     <StackPanel Orientation="Horizontal">
+                     <Border Width="3"
+                      Height="24"
+                      CornerRadius="2"
+                      Background="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                      Margin="0,0,12,0"/>
+
+                      <TextBlock Text="💽"
+                      FontSize="16"
+                      Margin="0,0,10,0"
+                      Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+
+                            <TextBlock Text="Registro de Copias"
+                      FontSize="13"
+                      Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                         
+                        </StackPanel>
+
+                    </Button>
+
                     <!-- REPORTES -->
                     <Button x:Name="BtnReportes"
                             Style="{StaticResource SidebarButtonStyle}"

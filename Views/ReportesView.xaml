@@ -320,87 +320,105 @@ Value="{DynamicResource BorderBrush}"/>
                 <StackPanel>
 
                     <!-- Título filtros -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                        <TextBlock Text="⧗ " FontSize="15" Foreground="#2ECC8F"
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="⧗ " FontSize="15" Foreground="#2ECC8F"
                                        VerticalAlignment="Center"/>
-                        <TextBlock Text="Filtros"
+                            <TextBlock Text="Filtros"
                                        FontSize="15" FontWeight="Bold"
                                        Foreground="{DynamicResource PrimaryTextBrush}"
                                        VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- FILA DE FILTROS: Mes / Año / Juzgado / Tipo Causa / Sala -->
+                        <!-- FILA DE FILTROS: Tipo Causa / Mes / Año / Juzgado / Sala -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- TIPO CAUSA -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Tipo Causa" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbTipoCausa"
+                  Style="{StaticResource FiltroCombo}"
+                  SelectionChanged="Filtro_Changed">
+                                    <ComboBoxItem Content="Todos" IsSelected="True"/>
+                                    <ComboBoxItem Content="C"/>
+                                    <ComboBoxItem Content="CP"/>
+                                    <ComboBoxItem Content="JO"/>
+                                    <ComboBoxItem Content="XP"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- MES -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Mes" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbMes"
+                  Style="{StaticResource FiltroCombo}"
+                  SelectionChanged="Filtro_Changed">
+                                    <ComboBoxItem Content="Todos" IsSelected="True"/>
+                                    <ComboBoxItem Content="Enero"/>
+                                    <ComboBoxItem Content="Febrero"/>
+                                    <ComboBoxItem Content="Marzo"/>
+                                    <ComboBoxItem Content="Abril"/>
+                                    <ComboBoxItem Content="Mayo"/>
+                                    <ComboBoxItem Content="Junio"/>
+                                    <ComboBoxItem Content="Julio"/>
+                                    <ComboBoxItem Content="Agosto"/>
+                                    <ComboBoxItem Content="Septiembre"/>
+                                    <ComboBoxItem Content="Octubre"/>
+                                    <ComboBoxItem Content="Noviembre"/>
+                                    <ComboBoxItem Content="Diciembre"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- AÑO -->
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Año" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbAnio"
+                  Style="{StaticResource FiltroCombo}"
+                  SelectionChanged="Filtro_Changed"/>
+                            </StackPanel>
+
+                            <!-- JUZGADO -->
+                            <StackPanel Grid.Column="6">
+                                <TextBlock Text="Juzgado" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbJuzgado"
+                  Style="{StaticResource FiltroCombo}"
+                  SelectionChanged="Filtro_Changed">
+                                    <ComboBoxItem Content="Todos" IsSelected="True"/>
+                                    <ComboBoxItem Content="Control"/>
+                                    <ComboBoxItem Content="Centro"/>
+                                    <ComboBoxItem Content="Otra..."/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- SALA -->
+                            <StackPanel Grid.Column="8">
+                                <TextBlock Text="Sala" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbSala"
+                  Style="{StaticResource FiltroCombo}"
+                  SelectionChanged="Filtro_Changed">
+                                    <ComboBoxItem Content="Todas" IsSelected="True"/>
+                                    <ComboBoxItem Content="I"/>
+                                    <ComboBoxItem Content="II"/>
+                                    <ComboBoxItem Content="III"/>
+                                    <ComboBoxItem Content="IV"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                        </Grid>
+
+
                     </StackPanel>
-
-                    <!-- FILA DE FILTROS: Mes / Año / Juzgado / Sala -->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="20"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <!-- MES -->
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Mes" Style="{StaticResource FiltroLabel}"/>
-                            <ComboBox x:Name="CmbMes"
-                                          Style="{StaticResource FiltroCombo}"
-                                          SelectionChanged="Filtro_Changed">
-                                <ComboBoxItem Content="Todos" IsSelected="True"/>
-                                <ComboBoxItem Content="Enero"/>
-                                <ComboBoxItem Content="Febrero"/>
-                                <ComboBoxItem Content="Marzo"/>
-                                <ComboBoxItem Content="Abril"/>
-                                <ComboBoxItem Content="Mayo"/>
-                                <ComboBoxItem Content="Junio"/>
-                                <ComboBoxItem Content="Julio"/>
-                                <ComboBoxItem Content="Agosto"/>
-                                <ComboBoxItem Content="Septiembre"/>
-                                <ComboBoxItem Content="Octubre"/>
-                                <ComboBoxItem Content="Noviembre"/>
-                                <ComboBoxItem Content="Diciembre"/>
-                            </ComboBox>
-                        </StackPanel>
-
-                        <!-- AÑO -->
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Año" Style="{StaticResource FiltroLabel}"/>
-                            <ComboBox x:Name="CmbAnio"
-                                          Style="{StaticResource FiltroCombo}"
-                                          SelectionChanged="Filtro_Changed"/>
-                        </StackPanel>
-
-                        <!-- JUZGADO -->
-                        <StackPanel Grid.Column="4">
-                            <TextBlock Text="Juzgado" Style="{StaticResource FiltroLabel}"/>
-                            <ComboBox x:Name="CmbJuzgado"
-                                          Style="{StaticResource FiltroCombo}"
-                                          SelectionChanged="Filtro_Changed">
-                                <ComboBoxItem Content="Todos" IsSelected="True"/>
-                                <ComboBoxItem Content="Control"/>
-                                <ComboBoxItem Content="Centro"/>
-                                <ComboBoxItem Content="Otra..."/>
-                            </ComboBox>
-                        </StackPanel>
-
-                        <!-- SALA -->
-                        <StackPanel Grid.Column="6">
-                            <TextBlock Text="Sala" Style="{StaticResource FiltroLabel}"/>
-                            <ComboBox x:Name="CmbSala"
-                                          Style="{StaticResource FiltroCombo}"
-                                          SelectionChanged="Filtro_Changed">
-                                <ComboBoxItem Content="Todas" IsSelected="True"/>
-                                <ComboBoxItem Content="I"/>
-                                <ComboBoxItem Content="II"/>
-                                <ComboBoxItem Content="III"/>
-                                <ComboBoxItem Content="IV"/>
-                            </ComboBox>
-                        </StackPanel>
-
-                    </Grid>
-
-                </StackPanel>
             </Border>
 
             <!-- ── RESUMEN ── -->

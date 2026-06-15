@@ -38,6 +38,7 @@ namespace PoderJudicial.Views
             {
                 BtnConsultar,
                 BtnNuevo,
+                BtnCopias,
                 BtnReportes,
                 BtnConfig
             };
@@ -80,6 +81,12 @@ namespace PoderJudicial.Views
             ActivarBoton(BtnNuevo);
 
             MainFrame.Navigate(new NuevoRegistro());
+        }
+        // Copias
+        private void BtnCopias_Click(object sender, RoutedEventArgs e)
+        {
+            ActivarBoton(BtnCopias);
+            MainFrame.Navigate(new RegistroCopias());
         }
 
         // REPORTES
@@ -125,6 +132,23 @@ namespace PoderJudicial.Views
         {
             ThemeManager.CambiarTema("EyeCare");
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     }
