@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Data.OleDb;
-using PoderJudicial.Models;
+﻿using PoderJudicial.Models;
 using PoderJudicial.Views;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
 
 
 namespace PoderJudicial.Data
@@ -11,63 +12,277 @@ namespace PoderJudicial.Data
         // ──────────────────────────────────────────
         //  Mapeo centralizado — un solo lugar para
         //  leer columnas del reader al modelo
-        private static Audiencia MapearDesdeReader(OleDbDataReader reader)
+        private static Audiencia MapearDesdeReader(
+    OleDbDataReader reader)
         {
             Audiencia a = new Audiencia
             {
-                Id = reader["Id"] != DBNull.Value
+                // ─────────────────────────────
+                // ID
+                // ─────────────────────────────
+                Id = ExisteColumna(reader, "Id") &&
+                     reader["Id"] != DBNull.Value
                     ? Convert.ToInt32(reader["Id"])
                     : 0,
 
-                FechaAudiencia = reader["FeAudiencia"] != DBNull.Value
-                    ? Convert.ToDateTime(reader["FeAudiencia"])
-                    : null,
+                // ─────────────────────────────
+                // FECHA AUDIENCIA
+                // ─────────────────────────────
+                FechaAudiencia =
+    ExisteColumna(reader, "FeAudiencia") &&
+    DateTime.TryParse(
+        reader["FeAudiencia"]?.ToString(),
+        out DateTime fechaAud1)
 
-                FechaRecibo = reader["FeRecibo"] != DBNull.Value
-                    ? Convert.ToDateTime(reader["FeRecibo"])
-                    : null,
+        ? fechaAud1
 
-                TotDiscos = reader["TotDiscos"] != DBNull.Value
-                    ? Convert.ToInt32(reader["TotDiscos"])
-                    : null,
+        : ExisteColumna(reader, "FechaAudiencia") &&
+          DateTime.TryParse(
+              reader["FechaAudiencia"]?.ToString(),
+              out DateTime fechaAud2)
 
-                TipoDisco = reader["TipoDisco"]?.ToString(),
+            ? fechaAud2
 
-                Juzgado = reader["Juzgado"]?.ToString(),
+            : null,
 
-                TotDiscoAudiencia = reader["TotDiscoAudiencia"]?.ToString(),
+                // ─────────────────────────────
+                // FECHA RECIBO
+                // ─────────────────────────────
+                FechaRecibo =
+    ExisteColumna(reader, "FeRecibo") &&
+    DateTime.TryParse(
+        reader["FeRecibo"]?.ToString(),
+        out DateTime fechaRec)
 
-                Juez = reader["Juez"]?.ToString(),
+        ? fechaRec
 
-                NoCausa = reader["NoCausa"]?.ToString(),
+        : null,
 
-                NUC = reader["NUC"]?.ToString(),
+                // ─────────────────────────────
+                // TOTAL DISCOS
+                // ─────────────────────────────
+                
+TotDiscos =
+    ExisteColumna(reader, "TotDiscos") &&
+    int.TryParse(
+        reader["TotDiscos"]?.ToString(),
+        out int discosAud)
+        ? discosAud
 
-                TipoCausa = reader["TipoCausa"]?.ToString(),
+    : ExisteColumna(reader, "TotalDiscos") &&
+      int.TryParse(
+          new string(
+              reader["TotalDiscos"]
+                  ?.ToString()
+                  .Where(char.IsDigit)
+                  .ToArray()),
+          out int discosEjec)
+        ? discosEjec
 
-                TipoAudiencia = reader["TipoAudiencia"]?.ToString(),
+    : ExisteColumna(reader, "TotDiscosEntregados") &&
+      int.TryParse(
+          reader["TotDiscosEntregados"]?.ToString(),
+          out int discosCopias)
+        ? discosCopias
 
-                HoraConclusion = reader["Hora conclusion"] != DBNull.Value
-                    ? Convert.ToDateTime(reader["Hora conclusion"])
-                    : null,
+    : null,
+                // ─────────────────────────────
+                // TIPO DISCO
+                // ─────────────────────────────
+                TipoDisco =
+                    ExisteColumna(reader, "TipoDisco")
+                        ? reader["TipoDisco"]?.ToString()
+                        : "",
 
-                Imputado = reader["Imputado"]?.ToString(),
+                // ─────────────────────────────
+                // JUZGADO
+                // ─────────────────────────────
+                Juzgado =
+                    ExisteColumna(reader, "Juzgado")
+                        ? reader["Juzgado"]?.ToString()
+                        : "",
 
-                Delito = reader["Delito"]?.ToString(),
+                // ─────────────────────────────
+                // TOTAL DISCO AUDIENCIA
+                // ─────────────────────────────
+                TotDiscoAudiencia =
+    ExisteColumna(reader, "TotDiscoAudiencia")
+        ? reader["TotDiscoAudiencia"]?.ToString()
 
-                Agraviado = reader["Agraviado"]?.ToString(),
+    : ExisteColumna(reader, "DiscosExternos")
+        ? reader["DiscosExternos"]?.ToString()
 
-                Sala = reader["Sala"]?.ToString(),
+    : "",
 
-                NoCausaJuicio = reader["NoCausaJuicio"]?.ToString(),
+                // ─────────────────────────────
+                // JUEZ
+                // ─────────────────────────────
+                Juez =
+                    ExisteColumna(reader, "Juez")
+                        ? reader["Juez"]?.ToString()
+                        : "",
 
-                Diferida = reader["Diferida"]?.ToString(),
+                // ─────────────────────────────
+                // NO CAUSA
+                // ─────────────────────────────
+                NoCausa =
+                    ExisteColumna(reader, "NoCausa")
+                        ? reader["NoCausa"]?.ToString()
+                        : ExisteColumna(reader, "Causa")
+                            ? reader["Causa"]?.ToString()
+                            : "",
 
-                QuienRealiza = reader["Quien Realiza"]?.ToString()
+                // ─────────────────────────────
+                // NUC
+                // ─────────────────────────────
+                NUC =
+                    ExisteColumna(reader, "NUC")
+                        ? reader["NUC"]?.ToString()
+                        : "",
+
+                // ─────────────────────────────
+                // TIPO CAUSA
+                // ─────────────────────────────
+                TipoCausa =
+                    ExisteColumna(reader, "TipoCausa")
+                        ? reader["TipoCausa"]?.ToString()
+                        : "EXP",
+
+                // ─────────────────────────────
+                // TIPO AUDIENCIA
+                // ─────────────────────────────
+                TipoAudiencia =
+                    ExisteColumna(reader, "TipoAudiencia")
+                        ? reader["TipoAudiencia"]?.ToString()
+                        : "",
+
+                // ─────────────────────────────
+                // HORA CONCLUSION / TERMINO
+                // ─────────────────────────────
+                HoraConclusion =
+    ExisteColumna(reader, "Hora conclusion") &&
+    DateTime.TryParse(
+        reader["Hora conclusion"]?.ToString(),
+        out DateTime hora1)
+
+        ? hora1
+
+        : ExisteColumna(reader, "HoraTermino") &&
+          DateTime.TryParse(
+              reader["HoraTermino"]?.ToString(),
+              out DateTime hora2)
+
+            ? hora2
+
+            : null,
+
+                // ─────────────────────────────
+                // IMPUTADO
+                // ─────────────────────────────
+                Imputado =
+                    ExisteColumna(reader, "Imputado")
+                        ? reader["Imputado"]?.ToString()
+                        : "",
+
+                // ─────────────────────────────
+                // DELITO
+                // ─────────────────────────────
+                Delito =
+                    ExisteColumna(reader, "Delito")
+                        ? reader["Delito"]?.ToString()
+                        : "",
+
+                // ─────────────────────────────
+                // AGRAVIADO / VICTIMA
+                // ─────────────────────────────
+                Agraviado =
+    ExisteColumna(reader, "Agraviado")
+        ? reader["Agraviado"]?.ToString()
+        : ExisteColumna(reader, "Victima")
+            ? reader["Victima"]?.ToString()
+            : "",
+
+                // ─────────────────────────────
+                // SALA
+                // ─────────────────────────────
+                Sala =
+                    ExisteColumna(reader, "Sala")
+                        ? reader["Sala"]?.ToString()
+                        : "",
+
+                // ─────────────────────────────
+                // NO CAUSA JUICIO
+                // ─────────────────────────────
+                NoCausaJuicio =
+                    ExisteColumna(reader, "NoCausaJuicio")
+                        ? reader["NoCausaJuicio"]?.ToString()
+                        : "",
+
+                // ─────────────────────────────
+                // DIFERIDA
+                // ─────────────────────────────
+                Diferida =
+                    ExisteColumna(reader, "Diferida")
+                        ? reader["Diferida"]?.ToString()
+                        : "",
+
+
+                // ─────────────────────────────
+                // QUIEN REALIZA
+                // ─────────────────────────────
+                QuienRealiza =
+ExisteColumna(reader, "QuienRealiza")
+    ? reader["QuienRealiza"]?.ToString()
+
+: ExisteColumna(reader, "Quien Realiza")
+    ? reader["Quien Realiza"]?.ToString()
+
+: ExisteColumna(reader, "Observaciones")
+    ? reader["Observaciones"]?.ToString()
+
+: "",
+
+                // ─────────────────────────────
+                // OBSERVACIONES
+                // ─────────────────────────────
+                Observaciones =
+    ExisteColumna(reader, "Observaciones")
+        ? reader["Observaciones"]?.ToString()
+        : "",
+
+
+                //
+                //EXPEDIENTE (NO EN TODOS LOS REGISTROS)  Y ETIQUETAS ENTREGADAS (NO EN TODOS LOS REGISTROS)
+                //
+
+                Expediente =
+    ExisteColumna(reader, "Expediente")
+        ? reader["Expediente"]?.ToString()
+        : "",
+
+                
+        
+
+                DiscosExternos =
+    ExisteColumna(reader, "DiscosExternos")
+        ? reader["DiscosExternos"]?.ToString()
+        : "",
+
+                EtiquetasEntregadas =
+    ExisteColumna(reader, "Etiquetas entregadas")
+        ? reader["Etiquetas entregadas"]?.ToString()
+        : "",
+
+                AQuienEntrega =
+    ExisteColumna(reader, "A quien se entraga")
+        ? reader["A quien se entraga"]?.ToString()
+        : "",
+
+
             };
 
-            // ÍNDICE DE BÚSQUEDA OPTIMIZADO
-            a.TextoBusqueda = string.Join(" ", new[]
+        // ÍNDICE DE BÚSQUEDA OPTIMIZADO
+        a.TextoBusqueda = string.Join(" ", new[]
             {
         a.Id.ToString(),
         a.NoCausa,
@@ -336,6 +551,136 @@ namespace PoderJudicial.Data
 
             TableDetector.InvalidarCache();
         }
+
+
+        public List<Audiencia> ObtenerAudiencias(
+    string tabla)
+        {
+            List<Audiencia> lista = new();
+
+            using (OleDbConnection conn =
+                Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query =
+                    $"SELECT * FROM [{tabla}]";
+
+                using (OleDbCommand cmd =
+                    new OleDbCommand(query, conn))
+                {
+                    using (OleDbDataReader reader =
+                        cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            lista.Add(
+                                MapearDesdeReader(reader));
+                        }
+                    }
+                }
+            }
+
+            return lista;
+        }
+
+
+        public Audiencia ObtenerAudienciaPorId(
+    int id,
+    string tabla)
+        {
+            using (OleDbConnection conn =
+                Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query =
+                    $"SELECT * FROM [{tabla}] WHERE Id = ?";
+
+                using (OleDbCommand cmd =
+                    new OleDbCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        id);
+
+                    using (OleDbDataReader reader =
+                        cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return MapearDesdeReader(reader);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+
+        private static bool ExisteColumna(
+    OleDbDataReader reader,
+    string columna)
+        {
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                if (reader.GetName(i)
+                    .Equals(columna,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+
+        public string ObtenerNUCPorNoCausa(string noCausa)
+        {
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                DataTable schema =
+                    conn.GetSchema("Tables");
+
+                foreach (DataRow row in schema.Rows)
+                {
+                    string nombreTabla =
+                        row["TABLE_NAME"].ToString();
+
+                    if (!nombreTabla.Contains("Audiencias"))
+                        continue;
+
+                    if (nombreTabla.StartsWith("MSys"))
+                        continue;
+
+                    string query =
+                        $"SELECT TOP 1 NUC FROM [{nombreTabla}] WHERE NoCausa = ?";
+
+                    using (OleDbCommand cmd =
+                        new OleDbCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("?", noCausa);
+
+                        object resultado =
+                            cmd.ExecuteScalar();
+
+                        if (resultado != null &&
+                            resultado != DBNull.Value)
+                        {
+                            return resultado.ToString();
+                        }
+                    }
+                }
+            }
+
+            return "";
+        }
+
 
 
     }

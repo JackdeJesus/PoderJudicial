@@ -17,10 +17,11 @@ namespace PoderJudicial.ViewModels
         
         private List<Audiencia> _listaCompleta = new List<Audiencia>();
         private DispatcherTimer _reloj;
+        private string _tablaActual;
 
-     
+
         //  PROPIEDADES
-        
+
         private ObservableCollection<Audiencia> _audiencias;
         public ObservableCollection<Audiencia> Audiencias
         {
@@ -88,21 +89,30 @@ namespace PoderJudicial.ViewModels
         public ICommand EditarCommand { get; }
         public ICommand EliminarCommand { get; }
 
-       
+
         //  CONSTRUCTOR
-       
-        public ConsultarRegistrosViewModel()
+
+        public ConsultarRegistrosViewModel(
+    string tabla)
         {
-            VerCommand = new RelayCommand(EjecutarVer);
-            EditarCommand = new RelayCommand(EjecutarEditar);
-            EliminarCommand = new RelayCommand(EjecutarEliminar);
+            _tablaActual = tabla;
+
+            VerCommand =
+                new RelayCommand(EjecutarVer);
+
+            EditarCommand =
+                new RelayCommand(EjecutarEditar);
+
+            EliminarCommand =
+                new RelayCommand(EjecutarEliminar);
 
             IniciarReloj();
+
             CargarDatos();
         }
 
         //  RELOJ
-      
+
         private void IniciarReloj()
         {
             _reloj = new DispatcherTimer();
@@ -126,8 +136,9 @@ namespace PoderJudicial.ViewModels
             try
             {
                 AudienciaData data = new AudienciaData();
-                _listaCompleta = data.ObtenerAudiencias()
-    .OrderByDescending(a => a.Id)
+                _listaCompleta = data
+                    .ObtenerAudiencias(_tablaActual)
+                    .OrderByDescending(a => a.Id)
     .ToList();
 
                 Audiencias = new ObservableCollection<Audiencia>(
@@ -347,7 +358,10 @@ namespace PoderJudicial.ViewModels
                 try
                 {
                     AudienciaData data = new AudienciaData();
-                    Audiencia detalle = data.ObtenerAudienciaPorId( audiencia.Id);
+                    Audiencia detalle =
+     data.ObtenerAudienciaPorId(
+         audiencia.Id,
+         _tablaActual);
 
                     if (detalle != null)
                     {
@@ -452,7 +466,7 @@ namespace PoderJudicial.ViewModels
                 {
                     await connection.OpenAsync();
 
-                    string tabla = TableDetector.TablaActual;
+                    string tabla = _tablaActual;
                     string query = $"DELETE FROM [{tabla}] WHERE NoCausa = @NoCausa";
 
                     using (var command = new OleDbCommand(query, connection))

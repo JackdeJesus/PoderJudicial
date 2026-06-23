@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Windows.Media;
+
 
 namespace PoderJudicial.Views
 {
@@ -42,7 +44,10 @@ namespace PoderJudicial.Views
         {
             try
             {
-                int id = new CopiasData().ObtenerSiguienteIdVisual();
+                int id =
+                    new CopiasData()
+                    .ObtenerSiguienteIdVisual();
+
                 TxtId.Text = id.ToString();
             }
             catch
@@ -90,7 +95,7 @@ namespace PoderJudicial.Views
             PlaceholderHelper.AddPlaceholder(TxtFeRecibo, "dd/MM/yyyy");
             PlaceholderHelper.AddPlaceholder(TxtNoCausa, "Ej: 123/2024");
             PlaceholderHelper.AddPlaceholder(TxtNUC, "Ej: 12-2024-00567");
-            PlaceholderHelper.AddPlaceholder(TxtTipoDisco, " Copias certificadas y/o Simples");
+            
             PlaceholderHelper.AddPlaceholder(TxtAQuienSeEntrega, "Nombre de quien recibe");
             PlaceholderHelper.AddPlaceholder(TxtObservaciones, "Escriba observaciones adicionales...");
         }
@@ -173,17 +178,24 @@ namespace PoderJudicial.Views
                 totDiscos = discos;
 
             int? discosExternos = null;
-            string extTexto = ObtenerValorCombo(CmbDiscosExternos);
-            string extStr = extTexto.Split(' ')[0];
-            if (int.TryParse(extStr, out int ext))
-                discosExternos = ext;
+            string extTexto =
+                ObtenerValorCombo(CmbDiscosExternos);
+            if (!string.IsNullOrWhiteSpace(extTexto))
+            {
+                string extStr =
+                    extTexto.Split(' ')[0];
+                if (int.TryParse(extStr, out int ext))
+                    discosExternos = ext;
+            }
 
             int? etiquetas = null;
             string etqTexto = ObtenerValorCombo(CmbEtiquetasEntregadas);
-            string etqStr = etqTexto.Split(' ')[0];
+            if (!string.IsNullOrWhiteSpace(etqTexto))
+            { 
+                string etqStr = etqTexto.Split(' ')[0];
             if (int.TryParse(etqStr, out int etq))
                 etiquetas = etq;
-
+            }
             // ── Construir modelo ───────────────────────────
             var registro = new RegistroCopia
             {
@@ -191,12 +203,17 @@ namespace PoderJudicial.Views
                 FeAudiencia = fechaAudiencia,
                 FeRecibo = fechaRecibo,
                 TotDiscosEntregados = totDiscos,
-                TipoDisco = ObtenerTexto(TxtTipoDisco),
+                TipoDisco = ObtenerValorCombo(CmbTipoDisco),
                 NoCausa = ObtenerTexto(TxtNoCausa),
                 NUC = ObtenerTexto(TxtNUC),
                 TipoCausa = ObtenerValorCombo(CmbTipoCausa),
-                DiscosExternos = discosExternos,
-                EtiquetasEntregadas = etiquetas,
+
+                DiscosExternos =
+        ObtenerValorCombo(CmbDiscosExternos),
+
+                EtiquetasEntregadas =
+        ObtenerValorCombo(CmbEtiquetasEntregadas),
+
                 AQuienSeEntrega = ObtenerTexto(TxtAQuienSeEntrega),
                 Observaciones = ObtenerTexto(TxtObservaciones),
                 QuienRegistra = SesionActual.Usuario
@@ -215,6 +232,7 @@ namespace PoderJudicial.Views
 
                 LimpiarFormulario();
                 CargarIdVisual();
+               
             }
             catch (Exception ex)
             {
@@ -252,12 +270,7 @@ namespace PoderJudicial.Views
                 return false;
             }
 
-            // Tipo Disco
-            if (string.IsNullOrWhiteSpace(ObtenerTexto(TxtTipoDisco)))
-            {
-                Alerta("El campo 'Tipo de Disco' es obligatorio.");
-                return false;
-            }
+           
 
             // No. Causa
             string noCausa = ObtenerTexto(TxtNoCausa);
@@ -276,6 +289,12 @@ namespace PoderJudicial.Views
             if (string.IsNullOrWhiteSpace(ObtenerTexto(TxtNUC)))
             {
                 Alerta("El campo 'NUC' es obligatorio.");
+                return false;
+            }
+
+            if (CmbTipoDisco.SelectedIndex == 0)
+            {
+                Alerta("Debe seleccionar el tipo de disco.");
                 return false;
             }
 
@@ -307,19 +326,21 @@ namespace PoderJudicial.Views
         {
             TxtId.Text = string.Empty;
             TxtFeAudiencia.Text = string.Empty;
-            TxtFeRecibo.Text = string.Empty;
+            
             TxtNoCausa.Text = string.Empty;
             TxtNUC.Text = string.Empty;
             TxtAQuienSeEntrega.Text = string.Empty;
             TxtObservaciones.Text = string.Empty;
-
+            CmbTipoDisco.SelectedIndex = 0;
             CmbTotDiscosEntregados.SelectedIndex = 0;
-            TxtTipoDisco.Text = string.Empty;
+            
             CmbTipoCausa.SelectedIndex = 0;
             CmbDiscosExternos.SelectedIndex = 0;
             CmbEtiquetasEntregadas.SelectedIndex = 0;
 
             RegistrarPlaceholders();
+
+            
         }
 
         // ──────────────────────────────────────────
@@ -355,5 +376,31 @@ namespace PoderJudicial.Views
                 ? string.Empty
                 : content;
         }
+
+
+        private void TxtNoCausa_LostFocus(
+    object sender,
+    RoutedEventArgs e)
+        {
+            string causa =
+                ObtenerTexto(TxtNoCausa);
+
+            if (string.IsNullOrWhiteSpace(causa))
+                return;
+
+            string nuc =
+                new AudienciaData()
+                    .ObtenerNUCPorNoCausa(causa);
+
+            if (!string.IsNullOrWhiteSpace(nuc))
+            {
+                TxtNUC.Text = nuc;
+
+                TxtNUC.Foreground =
+                    (Brush)Application.Current.Resources["PrimaryTextBrush"];
+            }
+        }
+
+
     }
 }

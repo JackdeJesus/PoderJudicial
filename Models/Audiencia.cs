@@ -43,5 +43,16 @@
         public string QuienRealiza { get; set; }
 
         public string TextoBusqueda { get; set; }
+
+
+        public string Expediente { get; set; }
+
+        public string Observaciones { get; set; }
+
+        public string DiscosExternos { get; set; }
+
+        public string EtiquetasEntregadas { get; set; }
+
+        public string AQuienEntrega { get; set; }
     }
 }

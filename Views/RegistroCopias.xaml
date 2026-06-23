@@ -298,9 +298,14 @@
                                 <TextBlock Text="Tipo de Disco" Style="{StaticResource LabelStyle}"/>
                                 <TextBlock Text=" *" Foreground="#EF4444" FontWeight="Bold" Margin="0,0,0,6"/>
                             </StackPanel>
-                            <TextBox x:Name="TxtTipoDisco"
-                        Style="{StaticResource InputStyle}"
-                        Tag="Ej: CD, USB, Disco Duro..."/>
+                            <ComboBox x:Name="CmbTipoDisco"
+               Style="{StaticResource ComboStyle}"
+               SelectedIndex="0">
+                                <ComboBoxItem Content="Seleccione tipo"/>
+                                <ComboBoxItem Content="Copia Simple"/>
+                                <ComboBoxItem Content="Copia Autentica"/>
+                               
+                            </ComboBox>
                         </StackPanel>
 
                         <!-- No. Causa -->
@@ -309,7 +314,8 @@
                             <TextBox x:Name="TxtNoCausa"
                                      Style="{StaticResource InputStyle}"
                                      Tag="Ej: 123/2024"
-                                     PreviewTextInput="NoCausa_PreviewTextInput"/>
+                                     PreviewTextInput="NoCausa_PreviewTextInput"
+                                     LostFocus="TxtNoCausa_LostFocus"/>
                         </StackPanel>
                     </Grid>
 

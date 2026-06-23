@@ -1,5 +1,10 @@
-﻿using System;
+﻿using PoderJudicial.Data;
+using PoderJudicial.Helpers;
+using PoderJudicial.Views;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,18 +16,27 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using PoderJudicial.Views;
-using PoderJudicial.Helpers;
 
 namespace PoderJudicial.Views
 {
     public partial class Dashboard : Window
-    {
+       {
+
+        private bool _submenuConsultasVisible = false;
+        private Button _tablaSeleccionada = null;
+        
+
         public Dashboard(string usuario)
         {
             InitializeComponent();
+
+            MainFrame.Navigate(
+    new ConsultarRegistros(
+        TableDetector.TablaActual));
+
             ActivarBoton(BtnConsultar);
-            MainFrame.Navigate(new ConsultarRegistros());
+
+            CargarTablasBD();
 
             // Footer usuario
             txtAvatar.Text = usuario.Substring(0, 1).ToUpper();
@@ -30,18 +44,94 @@ namespace PoderJudicial.Views
         }
         public Frame FramePrincipal => MainFrame;
 
+        private void CargarTablasBD()
+        {
+            List<string> tablas = new();
+
+            using (OleDbConnection conn =
+                Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                DataTable schema =
+                    conn.GetSchema("Tables");
+
+                foreach (DataRow row in schema.Rows)
+                {
+                    string nombreTabla =
+                        row["TABLE_NAME"].ToString();
+
+                    // IGNORAR tablas del sistema
+                    if (nombreTabla.StartsWith("MSys"))
+                        continue;
+
+                    // IGNORAR tablas temporales
+                    if (nombreTabla.StartsWith("~"))
+                        continue;
+
+                    tablas.Add(nombreTabla);
+                }
+            }
+
+            // Ordenar
+            tablas = tablas
+                .OrderByDescending(x => x)
+                .ToList();
+
+            PanelTablas.ItemsSource = tablas;
+        }
+
+        private void BtnTablaDinamica_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            ActivarBoton(BtnConsultar);
+
+            Button btn = (Button)sender;
+
+            string nombreTabla =
+                btn.Content.ToString();
+
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background =
+                    Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString(
+                            "#B8C1D1"));
+            }
+
+            _tablaSeleccionada = btn;
+
+            _tablaSeleccionada.Background =
+                new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString(
+                        "#2A3147"));
+
+            _tablaSeleccionada.Foreground =
+                new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString(
+                        "#2ECC8F"));
+
+            MainFrame.Navigate(
+                new ConsultarRegistros(nombreTabla));
+        }
+
+
         // ACTIVAR BOTÓN
         private void ActivarBoton(Button botonActivo)
         {
             // TODOS LOS BOTONES
             Button[] botones =
-            {
-                BtnConsultar,
-                BtnNuevo,
-                BtnCopias,
-                BtnReportes,
-                BtnConfig
-            };
+ {
+    BtnConsultar,
+    BtnNuevo,
+    BtnCopias,
+    BtnReportes,
+    BtnConfig
+};
 
             // Desactivar todos
             foreach (Button btn in botones)
@@ -68,11 +158,22 @@ namespace PoderJudicial.Views
         }
 
         // Cosultar
-        private void BtnConsultar_Click(object sender, RoutedEventArgs e)
+        private void BtnConsultar_Click(
+    object sender,
+    RoutedEventArgs e)
         {
-            ActivarBoton(BtnConsultar);
+            _submenuConsultasVisible =
+                !_submenuConsultasVisible;
 
-            MainFrame.Navigate(new ConsultarRegistros());
+            PanelTablas.Visibility =
+                _submenuConsultasVisible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            TxtFlechaConsultar.Text =
+                _submenuConsultasVisible
+                ? "▲"
+                : "▼";
         }
 
         // Nuevo
@@ -80,25 +181,69 @@ namespace PoderJudicial.Views
         {
             ActivarBoton(BtnNuevo);
 
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background =
+                    Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString(
+                            "#B8C1D1"));
+            }
+
             MainFrame.Navigate(new NuevoRegistro());
         }
         // Copias
-        private void BtnCopias_Click(object sender, RoutedEventArgs e)
+        private void BtnCopias_Click(
+    object sender,
+    RoutedEventArgs e)
         {
             ActivarBoton(BtnCopias);
-            MainFrame.Navigate(new RegistroCopias());
+
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background =
+                    Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString(
+                            "#B8C1D1"));
+
+                _tablaSeleccionada = null;
+            }
+
+            MainFrame.Navigate(
+                new RegistroCopias());
         }
 
         // REPORTES
-        private void BtnReportes_Click(object sender, RoutedEventArgs e)
+        private void BtnReportes_Click(
+    object sender,
+    RoutedEventArgs e)
         {
             ActivarBoton(BtnReportes);
 
-             MainFrame.Navigate(new ReportesView());
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background =
+                    Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString(
+                            "#B8C1D1"));
+
+                _tablaSeleccionada = null;
+            }
+
+            MainFrame.Navigate(
+                new ReportesView());
         }
 
         // Config
-        
+
 
         private void BtnRegresar_Click(object sender, RoutedEventArgs e)
         {
@@ -111,9 +256,28 @@ namespace PoderJudicial.Views
         }
 
 
-        private void BtnConfig_Click(object sender, RoutedEventArgs e)
+        private void BtnConfig_Click(
+    object sender,
+    RoutedEventArgs e)
         {
-            BtnConfig.ContextMenu.PlacementTarget = BtnConfig;
+            ActivarBoton(BtnConfig);
+
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background =
+                    Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString(
+                            "#B8C1D1"));
+
+                _tablaSeleccionada = null;
+            }
+
+            BtnConfig.ContextMenu.PlacementTarget =
+                BtnConfig;
+
             BtnConfig.ContextMenu.IsOpen = true;
         }
 
@@ -135,8 +299,7 @@ namespace PoderJudicial.Views
 
 
 
-
-
+        
 
 
 

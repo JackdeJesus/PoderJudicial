@@ -16,29 +16,51 @@ namespace PoderJudicial.Views
         private DispatcherTimer _timerBusqueda;
         private ConsultarRegistrosViewModel _vm;
         private const string Placeholder = "Buscar por causa, NUC, imputado o fecha...";
+        private string TablaActualSeleccionada = "";
 
-        public ConsultarRegistros()
+
+        public ConsultarRegistros(
+     string tabla)
         {
             InitializeComponent();
-            _vm = new ConsultarRegistrosViewModel();
+
+            TablaActualSeleccionada =
+                string.IsNullOrWhiteSpace(tabla)
+                    ? "Audiencias"
+                    : tabla;
+
+            _vm =
+                new ConsultarRegistrosViewModel(
+                    TablaActualSeleccionada);
+
             DataContext = _vm;
 
-            txtBuscar.Text = Placeholder;
-            txtBuscar.Foreground =
-                (Brush)Application.Current.Resources["SubTextBrush"];
+            Loaded += ConsultarRegistros_Loaded;
 
-            _timerBusqueda = new DispatcherTimer();
-            _timerBusqueda.Interval = TimeSpan.FromMilliseconds(300);
+            txtBuscar.Text = Placeholder;
+
+            txtBuscar.Foreground =
+                (Brush)Application.Current
+                .Resources["SubTextBrush"];
+
+            _timerBusqueda =
+                new DispatcherTimer();
+
+            _timerBusqueda.Interval =
+                TimeSpan.FromMilliseconds(300);
 
             _timerBusqueda.Tick += (s, e) =>
             {
                 _timerBusqueda.Stop();
 
-                _vm.TextoBusqueda = txtBuscar.Text;
+                _vm.TextoBusqueda =
+                    txtBuscar.Text;
 
                 if (_vm.Sugerencias?.Count > 0)
                 {
-                    lstSugerencias.ItemsSource = _vm.Sugerencias;
+                    lstSugerencias.ItemsSource =
+                        _vm.Sugerencias;
+
                     popupSugerencias.IsOpen = true;
                 }
                 else
@@ -46,6 +68,14 @@ namespace PoderJudicial.Views
                     popupSugerencias.IsOpen = false;
                 }
             };
+        }
+
+
+        private void ConsultarRegistros_Loaded(
+    object sender,
+    RoutedEventArgs e)
+        {
+            ConfigurarColumnas();
         }
 
         // Placeholder
@@ -127,5 +157,119 @@ namespace PoderJudicial.Views
             txtBuscar.CaretIndex = txtBuscar.Text.Length;
             txtBuscar.Focus();
         }
+
+
+        private void ConfigurarColumnas()
+        {
+            if (dgAudiencias == null)
+                return;
+
+            string tabla =
+                TablaActualSeleccionada ?? "";
+
+            foreach (DataGridColumn col in dgAudiencias.Columns)
+            {
+                col.Visibility =
+                    Visibility.Collapsed;
+            }
+
+            
+        
+
+            // =========================
+            // AUDIENCIAS
+            // =========================
+            if (tabla.StartsWith(
+        "Audiencias",
+        StringComparison.OrdinalIgnoreCase))
+            {
+                MostrarColumnas(
+                    "ID",
+                    "Fecha Audiencia",
+                    "Fecha Recibo",
+                    "Total Discos",
+                    "Tipo Disco",
+                    "Juzgado",
+                    "Total Disco Audiencia",
+                    "Juez",
+                    "No. Causa",
+                    "NUC",
+                    "Tipo Causa",
+                    "Tipo Audiencia",
+                    "Hora Conclusión",
+                    "Imputado",
+                    "Delito",
+                    "Agraviado",
+                    "Sala",
+                    "No. Causa Juicio",
+                    "Quien Realiza"
+                );
+            }
+
+            // =========================
+            // EJECUCION
+            // =========================
+            else if (tabla.StartsWith(
+              "Ejecucion",
+              StringComparison.OrdinalIgnoreCase))
+            {
+                MostrarColumnas(
+                    "ID",
+                    "Fecha Audiencia",
+                    "Total Discos",
+                    "Juez",
+                    "Expediente",
+                    "No. Causa",
+                    "Tipo Audiencia",
+                    "Hora Conclusión",
+                    "Imputado",
+                    "Delito",
+                    "Agraviado",
+                    "Sala",
+                    "Observaciones"
+                );
+            }
+
+            // =========================
+            // COPIAS
+            // =========================
+            else if (tabla.StartsWith(
+             "CopiasAudiencias",
+             StringComparison.OrdinalIgnoreCase))
+            {
+                MostrarColumnas(
+                    "ID",
+                    "Fecha Audiencia",
+                    "Fecha Recibo",
+                    "Total Discos",
+                    "Tipo Disco",
+                    "No. Causa",
+                    "NUC",
+                    "Tipo Causa",
+                    "Discos Externos",
+                    "Etiquetas Entregadas",
+                    "A Quien Se Entrega",
+                    "Observaciones",
+                    "Quien Realiza"
+                );
+            }
+        }
+
+
+        private void MostrarColumnas(params string[] headers)
+        {
+            foreach (string header in headers)
+            {
+                var columna = dgAudiencias.Columns
+                    .FirstOrDefault(c => c.Header?.ToString() == header);
+
+                if (columna != null)
+                {
+                    columna.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+
     }
 }

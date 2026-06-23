@@ -433,71 +433,94 @@
 
                         <!-- ID -->
                         <DataGridTextColumn Header="ID"
+                                            x:Name="ColId"
                         Width="90"
                         Binding="{Binding Id}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- FECHA AUDIENCIA -->
                         <DataGridTextColumn Header="Fecha Audiencia"
+                                            x:Name="ColFechaAudiencia"
                         Width="180"
                         Binding="{Binding FechaAudiencia, StringFormat=dd/MM/yyyy HH:mm}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- FECHA RECIBO -->
                         <DataGridTextColumn Header="Fecha Recibo"
+                                            x:Name="ColFechaRecibo"
                         Width="180"
                         Binding="{Binding FechaRecibo, StringFormat=dd/MM/yyyy HH:mm}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TOTAL DISCOS -->
                         <DataGridTextColumn Header="Total Discos"
+                                            x:Name="ColTotDiscos"
                         Width="130"
                         Binding="{Binding TotDiscos}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TIPO DISCO -->
                         <DataGridTextColumn Header="Tipo Disco"
+                                            x:Name="ColTipoDisco"
                         Width="130"
                         Binding="{Binding TipoDisco}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- JUZGADO -->
                         <DataGridTextColumn Header="Juzgado"
+                                            x:Name="ColJuzgado"
                         Width="200"
                         Binding="{Binding Juzgado}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TOTAL DISCO AUDIENCIA -->
                         <DataGridTextColumn Header="Total Disco Audiencia"
+                                            x:Name="ColTotDiscoAudiencia"
                         Width="180"
                         Binding="{Binding TotDiscoAudiencia}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- JUEZ -->
                         <DataGridTextColumn Header="Juez"
+                                            x:Name="ColJuez"
                         Width="220"
                         Binding="{Binding Juez}"/>
 
+                        <!-- EXPEDIENTE -->
+                        <DataGridTextColumn Header="Expediente"
+                        x:Name="ColExpediente"
+Width="180"
+Binding="{Binding Expediente}"
+ElementStyle="{StaticResource CenteredCellText}"/>
+
                         <!-- NO CAUSA -->
                         <DataGridTextColumn Header="No. Causa"
+                                              x:Name="ColNoCausa" 
                         Width="150"
                         Binding="{Binding NoCausa}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
+                       
+
+                       
+
                         <!-- NUC -->
                         <DataGridTextColumn Header="NUC"
+                                            x:Name="ColNUC"
                         Width="170"
                         Binding="{Binding NUC}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TIPO CAUSA -->
                         <DataGridTextColumn Header="Tipo Causa"
+                                            x:Name="ColTipoCausa"
                         Width="160"
                         Binding="{Binding TipoCausa}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- TIPO AUDIENCIA -->
                         <DataGridTemplateColumn Header="Tipo Audiencia"
+                                                x:Name="ColTipoAudiencia"
                             Width="220">
 
                             <DataGridTemplateColumn.CellTemplate>
@@ -515,33 +538,39 @@
 
                         <!-- HORA CONCLUSION -->
                         <DataGridTextColumn Header="Hora Conclusión"
+                                            x:Name="ColHoraConclusion"
                         Width="170"
                         Binding="{Binding HoraConclusion}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- IMPUTADO -->
                         <DataGridTextColumn Header="Imputado"
+                                            x:Name="ColImputado"
                         Width="250"
                         Binding="{Binding Imputado}"/>
 
                         <!-- DELITO -->
                         <DataGridTextColumn Header="Delito"
+                                            x:Name="ColDelito"
                         Width="250"
                         Binding="{Binding Delito}"/>
 
                         <!-- AGRAVIADO -->
                         <DataGridTextColumn Header="Agraviado"
+                                            x:Name="ColAgraviado"
                         Width="250"
                         Binding="{Binding Agraviado}"/>
 
                         <!-- SALA -->
                         <DataGridTextColumn Header="Sala"
+                                            x:Name="ColSala"
                         Width="120"
                         Binding="{Binding Sala}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
 
                         <!-- NO CAUSA JUICIO -->
                         <DataGridTextColumn Header="No. Causa Juicio"
+                                            x:Name="ColNoCausaJuicio"
                         Width="180"
                         Binding="{Binding NoCausaJuicio}"
                         ElementStyle="{StaticResource CenteredCellText}"/>
@@ -549,11 +578,44 @@
                         <!-- DIFERIDA -->
                        
 
+                       
+
+
+                        <DataGridTextColumn
+    x:Name="ColDiscosExternos"
+    Header="Discos Externos"
+    Width="160"
+    Binding="{Binding DiscosExternos}" 
+                             ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <DataGridTextColumn
+    x:Name="ColEtiquetasEntregadas"
+    Header="Etiquetas Entregadas"
+    Width="180"
+    Binding="{Binding EtiquetasEntregadas}" 
+                           ElementStyle="{StaticResource CenteredCellText}"/>
+
+                        <DataGridTextColumn
+    x:Name="ColAQuienEntrega"
+    Header="A Quien Se Entrega"
+    Width="220"
+    Binding="{Binding AQuienEntrega}" />
+
+
+                        <!-- OBSERVACIONES -->
+                        <DataGridTextColumn Header="Observaciones"
+                        x:Name="ColObservaciones"
+Width="250"
+Binding="{Binding Observaciones}"/>
+
                         <!-- QUIEN REALIZA -->
                         <DataGridTextColumn Header="Quien Realiza"
-                        Width="180"
-                        Binding="{Binding QuienRealiza}"
-                        ElementStyle="{StaticResource CenteredCellText}"/>
+                     x:Name="ColQuienRealiza"
+ Width="180"
+ Binding="{Binding QuienRealiza}"
+ ElementStyle="{StaticResource CenteredCellText}"/>
+
+
 
                     </DataGrid.Columns>
                 </DataGrid>
