@@ -164,6 +164,39 @@
                     <!-- CONSULTAR -->
                     <StackPanel>
 
+
+                        <Button x:Name="BtnHome"
+    Style="{StaticResource SidebarButtonStyle}"
+    Height="48"
+    Click="BtnHome_Click">
+
+                            <StackPanel Orientation="Horizontal"
+            >
+
+                                <Border Width="3"
+            Height="24"                                    
+            CornerRadius="2"
+            Background="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+            Margin="0,0,20,0"
+            />
+
+                                <TextBlock Text="🏠"
+               FontSize="16"
+               Margin="0,0,10,0"
+               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+
+                                <TextBlock Text="Home"
+               FontSize="13"
+               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+
+                            </StackPanel>
+
+                        </Button>
+
+
+
+
+
                         <!-- BOTON PRINCIPAL -->
                         <Button x:Name="BtnConsultar"
             Style="{StaticResource SidebarButtonStyle}"

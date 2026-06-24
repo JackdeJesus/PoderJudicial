@@ -240,8 +240,8 @@
         </Grid.RowDefinitions>
 
         <!-- ══════════════════════════════════
-     HEADER
-══════════════════════════════════ -->
+                 HEADER
+             ══════════════════════════════════ -->
 
         <Border Grid.Row="0"
         Background="{DynamicResource CardBrush}"

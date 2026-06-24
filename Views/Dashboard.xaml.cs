@@ -24,21 +24,18 @@ namespace PoderJudicial.Views
 
         private bool _submenuConsultasVisible = false;
         private Button _tablaSeleccionada = null;
-        
+
 
         public Dashboard(string usuario)
         {
             InitializeComponent();
 
-            MainFrame.Navigate(
-    new ConsultarRegistros(
-        TableDetector.TablaActual));
+            MainFrame.Navigate(new HomePage());
 
-            ActivarBoton(BtnConsultar);
+            ActivarBoton(BtnHome);
 
             CargarTablasBD();
 
-            // Footer usuario
             txtAvatar.Text = usuario.Substring(0, 1).ToUpper();
             txtNombreUsuario.Text = usuario;
         }
@@ -130,7 +127,8 @@ namespace PoderJudicial.Views
     BtnNuevo,
     BtnCopias,
     BtnReportes,
-    BtnConfig
+    BtnConfig,
+    BtnHome
 };
 
             // Desactivar todos
@@ -242,7 +240,7 @@ namespace PoderJudicial.Views
                 new ReportesView());
         }
 
-        // Config
+        
 
 
         private void BtnRegresar_Click(object sender, RoutedEventArgs e)
@@ -255,6 +253,8 @@ namespace PoderJudicial.Views
             this.Close();
         }
 
+
+// Config
 
         private void BtnConfig_Click(
     object sender,
@@ -281,6 +281,31 @@ namespace PoderJudicial.Views
             BtnConfig.ContextMenu.IsOpen = true;
         }
 
+        //HOME
+
+        private void BtnHome_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            ActivarBoton(BtnHome);
+
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background =
+                    Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString(
+                            "#B8C1D1"));
+
+                _tablaSeleccionada = null;
+            }
+
+            MainFrame.Navigate(
+                new HomePage());
+        }
+
 
         private void ModoClaro_Click(object sender, RoutedEventArgs e)
         {
@@ -297,22 +322,6 @@ namespace PoderJudicial.Views
             ThemeManager.CambiarTema("EyeCare");
         }
 
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+       
     }
 }
