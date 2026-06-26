@@ -124,12 +124,12 @@ Padding="32,18"
 
                     <StackPanel Grid.Column="0">
 
-                        <TextBlock Text="Home Page"
+                        <TextBlock Text="Panel Principal"
                FontSize="22"
                FontWeight="Bold"
                Foreground="{DynamicResource PrimaryTextBrush}"/>
 
-                        <TextBlock Text="Sistema de control. by JJ"
+                        <TextBlock Text="SSistema de Control de Audiencias y Copias"
                FontSize="12"
                Foreground="{DynamicResource SecondaryTextBrush}"
                Margin="0,3,0,0"/>
@@ -221,7 +221,9 @@ Padding="32,18"
                     <UniformGrid Rows="1" Columns="5" Margin="0,0,0,24">
 
                         <!-- Card: Nuevo Registro -->
-                        <Border Style="{StaticResource QuickCardStyle}">
+                        <Border Style="{StaticResource QuickCardStyle}"
+        Cursor="Hand"
+        MouseLeftButtonUp="CardNuevoRegistro_Click">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -248,7 +250,9 @@ Padding="32,18"
                         </Border>
 
                         <!-- Card: Consultar Registros -->
-                        <Border Style="{StaticResource QuickCardStyle}">
+                        <Border Style = "{StaticResource QuickCardStyle}"
+        Cursor="Hand"
+        MouseLeftButtonUp="CardConsultar_Click">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -275,7 +279,9 @@ Padding="32,18"
                         </Border>
 
                         <!-- Card: Registro de Copias -->
-                        <Border Style="{StaticResource QuickCardStyle}">
+                        <Border Style="{StaticResource QuickCardStyle}"
+        Cursor="Hand"
+        MouseLeftButtonUp="CardCopias_Click">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -303,7 +309,9 @@ Padding="32,18"
                         </Border>
 
                         <!-- Card: Reportes -->
-                        <Border Style="{StaticResource QuickCardStyle}">
+                        <Border Style="{StaticResource QuickCardStyle}"
+        Cursor="Hand"
+        MouseLeftButtonUp="CardReportes_Click">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -330,7 +338,9 @@ Padding="32,18"
                         </Border>
 
                         <!-- Card: Configuración -->
-                        <Border Style="{StaticResource QuickCardStyle}" Margin="0">
+                        <Border Style="{StaticResource QuickCardStyle}"
+        Cursor="Hand"
+        MouseLeftButtonUp="CardConfiguracion_Click">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -388,7 +398,7 @@ Padding="32,18"
                                                        Foreground="#2563EB"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="124" FontSize="26"
+                                            <TextBlock Text="{Binding TotalAudienciasMes}" FontSize="26"
                                                        FontWeight="Bold" Foreground="#1E293B"/>
                                             <TextBlock Text="Audiencias este mes"
                                                        FontSize="11" Foreground="#64748B"/>
@@ -407,7 +417,7 @@ Padding="32,18"
                                                        Foreground="#16A34A"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="38" FontSize="26"
+                                            <TextBlock Text="{Binding TotalEjecucionesMes}" FontSize="26"
                                                        FontWeight="Bold" Foreground="#1E293B"/>
                                             <TextBlock Text="Ejecuciones este mes"
                                                        FontSize="11" Foreground="#64748B"/>
@@ -426,7 +436,7 @@ Padding="32,18"
                                                        Foreground="#7C3AED"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="76" FontSize="26"
+                                            <TextBlock Text="{Binding TotalCopiasMes}" FontSize="26"
                                                        FontWeight="Bold" Foreground="#1E293B"/>
                                             <TextBlock Text="Copias Entregadas este mes"
                                                        FontSize="11" Foreground="#64748B"
@@ -445,7 +455,7 @@ Padding="32,18"
                                                        VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="12" FontSize="26"
+                                            <TextBlock Text="{Binding AudienciasHoy}" FontSize="26"
                                                        FontWeight="Bold" Foreground="#1E293B"/>
                                             <TextBlock Text="Audiencias Hoy"
                                                        FontSize="11" Foreground="#64748B"/>
@@ -483,10 +493,10 @@ Padding="32,18"
                                                    FontWeight="SemiBold"
                                                     Margin="0,0,0,8"/>
                                         <TextBlock Text="Versión del Sistema:" Foreground="#64748B" FontSize="12"/>
-                                        <TextBlock Text="1.0.0.0" Foreground="#2563EB"
+                                        <TextBlock Text="{Binding VersionSistema}" Foreground="#2563EB"
                                                    FontWeight="SemiBold" FontSize="13" Margin="0,2,0,8"/>
                                         <TextBlock Text="Base de Datos:" Foreground="#64748B" FontSize="12"/>
-                                        <TextBlock Text="PoderJudicial.accdb"
+                                        <TextBlock Text="{Binding NombreBaseDatos}"
                                                    Foreground="#2563EB" FontSize="13"
                                                    FontWeight="SemiBold" Margin="0,2,0,0"/>
                                     </StackPanel>
@@ -496,14 +506,14 @@ Padding="32,18"
                                                 Margin="16,0,0,0">
                                         <TextBlock Text=" " FontSize="10" Margin="0,0,0,8"/>
                                         <TextBlock Text="Última Copia de Seguridad:" Foreground="#64748B" FontSize="12"/>
-                                        <TextBlock Text="23/05/2025  08:00 a. m."
+                                        <TextBlock Text="{Binding UltimaCopiaSeguridad}"
                                                    Foreground="#2563EB" FontSize="13"
                                                    FontWeight="SemiBold" Margin="0,2,0,8"/>
                                         <TextBlock Text="Estado del Sistema:" Foreground="#64748B" FontSize="12"/>
                                         <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                             <Ellipse Width="10" Height="10" Fill="#16A34A"
                                                      VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Operativo" Foreground="#16A34A"
+                                            <TextBlock Text="{Binding EstadoSistema}" Foreground="#16A34A"
                                                        FontWeight="SemiBold" FontSize="13"/>
                                         </StackPanel>
                                     </StackPanel>
@@ -541,100 +551,42 @@ Padding="32,18"
                                 <Border Height="1" Background="#F1F5F9" Margin="0,0,0,6"/>
 
                                 <!-- Rows -->
-                                <!-- Row 1 -->
-                                <Grid Margin="0,0,0,10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="90"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="23/05/2025" Foreground="#1E293B" FontSize="12"/>
-                                        <TextBlock Text="10:32 a. m." Foreground="#94A3B8" FontSize="11"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" Text="Registro de audiencia"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="Juan Pérez"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                </Grid>
+                                <ItemsControl ItemsSource="{Binding Actividades}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,10">
 
-                                <!-- Row 2 -->
-                                <Grid Margin="0,0,0,10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="90"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="23/05/2025" Foreground="#1E293B" FontSize="12"/>
-                                        <TextBlock Text="09:45 a. m." Foreground="#94A3B8" FontSize="11"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" Text="Entrega de copias"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="María López"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                </Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="90"/>
+                                                </Grid.ColumnDefinitions>
 
-                                <!-- Row 3 -->
-                                <Grid Margin="0,0,0,10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="90"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="22/05/2025" Foreground="#1E293B" FontSize="12"/>
-                                        <TextBlock Text="04:15 p. m." Foreground="#94A3B8" FontSize="11"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" Text="Registro de ejecución"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="Carlos Ramírez"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                </Grid>
+                                                <StackPanel Grid.Column="0">
+                                                    <TextBlock Text="{Binding Fecha}"
+                               Foreground="#1E293B"
+                               FontSize="12"/>
 
-                                <!-- Row 4 -->
-                                <Grid Margin="0,0,0,10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="90"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="22/05/2025" Foreground="#1E293B" FontSize="12"/>
-                                        <TextBlock Text="11:20 a. m." Foreground="#94A3B8" FontSize="11"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" Text="Consulta de registros"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="Ana Gómez"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                </Grid>
+                                                    <TextBlock Text="{Binding Hora}"
+                               Foreground="#94A3B8"
+                               FontSize="11"/>
+                                                </StackPanel>
 
-                                <!-- Row 5 -->
-                                <Grid Margin="0,0,0,10">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="90"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="22/05/2025" Foreground="#1E293B" FontSize="12"/>
-                                        <TextBlock Text="09:05 a. m." Foreground="#94A3B8" FontSize="11"/>
-                                    </StackPanel>
-                                    <TextBlock Grid.Column="1" Text="Registro de audiencia"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="Juan Pérez"
-                                               Foreground="#475569" FontSize="12"
-                                               VerticalAlignment="Center"/>
-                                </Grid>
+                                                <TextBlock Grid.Column="1"
+                           Text="{Binding Descripcion}"
+                           Foreground="#475569"
+                           FontSize="12"
+                           VerticalAlignment="Center"/>
+
+                                                <TextBlock Grid.Column="2"
+                           Text="{Binding Usuario}"
+                           Foreground="#475569"
+                           FontSize="12"
+                           VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
                                 <Border Height="1" Background="#F1F5F9" Margin="0,4,0,10"/>
 

@@ -48,5 +48,38 @@ namespace PoderJudicial.Views
             ActualizarFechaHora();
         }
 
+
+        private void CardNuevoRegistro_Click(object sender, RoutedEventArgs e)
+        {
+            // Lógica para manejar el evento de clic en "Nuevo Registro"
+            MessageBox.Show("Nuevo Registro clicado.");
+        }
+
+        private void CardConsultar_Click(object sender, RoutedEventArgs e)
+        {
+            // Lógica para manejar el evento de clic en "Consultar Registros"
+            MessageBox.Show("Consultar Registros clicado.");
+        }
+
+        private void CardCopias_Click(object sender, RoutedEventArgs e)
+        {
+            // Lógica para manejar el evento de clic en "Registro de Copias"
+            MessageBox.Show("Registro de Copias clicado.");
+        }
+
+        private void CardReportes_Click(object sender, RoutedEventArgs e)
+        {
+            // Lógica para manejar el evento de clic en "Reportes"
+            MessageBox.Show("Reportes clicado.");
+        }
+
+        private void CardConfiguracion_Click(object sender, RoutedEventArgs e)
+        {
+            // Lógica para manejar el evento de clic en "Configuración"
+            MessageBox.Show("Configuración clicada.");
+        }
+
+
+
     }
 }
