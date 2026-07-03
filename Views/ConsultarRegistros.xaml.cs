@@ -180,10 +180,11 @@ namespace PoderJudicial.Views
             // AUDIENCIAS
             // =========================
             if (tabla.StartsWith(
-        "Audiencias",
+        "Audiencias ",
         StringComparison.OrdinalIgnoreCase))
             {
                 MostrarColumnas(
+                    "Acciones",
                     "ID",
                     "Fecha Audiencia",
                     "Fecha Recibo",
@@ -214,6 +215,7 @@ namespace PoderJudicial.Views
               StringComparison.OrdinalIgnoreCase))
             {
                 MostrarColumnas(
+                    "Acciones",
                     "ID",
                     "Fecha Audiencia",
                     "Total Discos",
@@ -238,6 +240,7 @@ namespace PoderJudicial.Views
              StringComparison.OrdinalIgnoreCase))
             {
                 MostrarColumnas(
+                    "Acciones",
                     "ID",
                     "Fecha Audiencia",
                     "Fecha Recibo",

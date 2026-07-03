@@ -14,6 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using PoderJudicial.Data;
+using PoderJudicial.Helpers;
+using PoderJudicial.ViewModels;
 
 namespace PoderJudicial.Views
 {
@@ -23,12 +26,25 @@ namespace PoderJudicial.Views
     public partial class HomePage : Page
     {
 
+        private HomePageViewModel vm;
+
         private DispatcherTimer timer;
         public HomePage()
         {
             
             InitializeComponent();
+
+            vm = new HomePageViewModel();
+            DataContext = vm;
+
             IniciarReloj();
+            CargarDashboard();
+            
+        }
+
+        private Dashboard ObtenerDashboard()
+        {
+            return Window.GetWindow(this) as Dashboard;
         }
 
         private void ActualizarFechaHora()
@@ -48,35 +64,68 @@ namespace PoderJudicial.Views
             ActualizarFechaHora();
         }
 
-
-        private void CardNuevoRegistro_Click(object sender, RoutedEventArgs e)
+        private void CargarDashboard()
         {
-            // Lógica para manejar el evento de clic en "Nuevo Registro"
-            MessageBox.Show("Nuevo Registro clicado.");
+            DashboardData dashboard =
+                new DashboardData();
+
+            vm.TotalAudienciasMes =
+                dashboard.ObtenerTotalAudienciasMes();
+
+            vm.TotalEjecucionesMes =
+                dashboard.ObtenerTotalEjecucionesMes();
+
+
+            vm.TotalCopiasMes =
+    dashboard.ObtenerTotalCopiasMes();
+
+
+            vm.AudienciasHoy = dashboard.ObtenerAudienciasHoy();
+
+
+            vm.VersionSistema = dashboard.ObtenerVersionSistema();
+            vm.NombreBaseDatos = dashboard.ObtenerNombreBaseDatos();
+            vm.EstadoSistema = dashboard.ObtenerEstadoSistema();
+
+
+            // Temporal mientras no exista la lógica de respaldos
+            vm.UltimaCopiaSeguridad = "No disponible";
+
         }
 
-        private void CardConsultar_Click(object sender, RoutedEventArgs e)
+
+        private void CardNuevoRegistro_Click(
+     object sender,
+     RoutedEventArgs e)
         {
-            // Lógica para manejar el evento de clic en "Consultar Registros"
-            MessageBox.Show("Consultar Registros clicado.");
+            ObtenerDashboard()?.AbrirNuevoRegistro();
         }
 
-        private void CardCopias_Click(object sender, RoutedEventArgs e)
+        private void CardConsultar_Click(
+    object sender,
+    RoutedEventArgs e)
         {
-            // Lógica para manejar el evento de clic en "Registro de Copias"
-            MessageBox.Show("Registro de Copias clicado.");
+            ObtenerDashboard()?.AbrirConsultarRegistros();
+        }
+        private void CardCopias_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            ObtenerDashboard()?.AbrirRegistroCopias();
         }
 
-        private void CardReportes_Click(object sender, RoutedEventArgs e)
+        private void CardReportes_Click(
+    object sender,
+    RoutedEventArgs e)
         {
-            // Lógica para manejar el evento de clic en "Reportes"
-            MessageBox.Show("Reportes clicado.");
+            ObtenerDashboard()?.AbrirReportes();
         }
 
-        private void CardConfiguracion_Click(object sender, RoutedEventArgs e)
+        private void CardConfiguracion_Click(
+    object sender,
+    RoutedEventArgs e)
         {
-            // Lógica para manejar el evento de clic en "Configuración"
-            MessageBox.Show("Configuración clicada.");
+            ObtenerDashboard()?.AbrirConfiguracion();
         }
 
 

@@ -11,7 +11,7 @@
     TextOptions.TextRenderingMode="ClearType"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
-        Background="#F0F4F8"
+        Background="{DynamicResource BackgroundBrush}"
         FontFamily="Segoe UI">
 
     <Page.Resources>
@@ -20,35 +20,60 @@
         <!-- TextDark: #1E293B  | TextMid: #64748B   | GreenStat: #16A34A -->
         <!-- OrangeStat: #EA580C | PurpleStat: #7C3AED | TealStat: #0D9488 -->
 
-        
 
-      
+
+
 
         <!-- ===== QUICK-ACCESS CARD STYLE ===== -->
         <Style x:Key="QuickCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="#FFFFFF"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Margin" Value="0,0,12,0"/>
+            <Setter Property="Background"
+            Value="{DynamicResource CardBrush}"/>
+            <Setter Property="BorderBrush"
+            Value="{DynamicResource BorderBrushCustom}"/>
+            <Setter Property="BorderThickness"
+            Value="1"/>
+            <Setter Property="CornerRadius"
+            Value="12"/>
+            <Setter Property="Padding"
+            Value="20"/>
+            <Setter Property="Margin"
+            Value="0,0,12,0"/>
+            <Setter Property="Height"
+            Value="230"/>
+
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect Color="#000000" Opacity="0.06"
-                                      BlurRadius="16" ShadowDepth="2"/>
+                    <DropShadowEffect Color="#000000"
+                              Opacity="0.18"
+                              BlurRadius="18"
+                              ShadowDepth="2"/>
                 </Setter.Value>
             </Setter>
         </Style>
 
         <!-- ===== STAT CARD STYLE ===== -->
         <Style x:Key="StatCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="#FFFFFF"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Margin" Value="0,0,12,0"/>
-            <Setter Property="Height" Value="130"/>
+            <Setter Property="Background"
+            Value="{DynamicResource CardBrush}"/>
+            <Setter Property="BorderBrush"
+            Value="{DynamicResource BorderBrushCustom}"/>
+            <Setter Property="BorderThickness"
+            Value="1"/>
+            <Setter Property="CornerRadius"
+            Value="12"/>
+            <Setter Property="Padding"
+            Value="20"/>
+            <Setter Property="Margin"
+            Value="0,0,12,0"/>
+            <Setter Property="Height"
+            Value="170"/>
+
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect Color="#000000" Opacity="0.05"
-                                      BlurRadius="12" ShadowDepth="2"/>
+                    <DropShadowEffect Color="#000000"
+                              Opacity="0.18"
+                              BlurRadius="18"
+                              ShadowDepth="2"/>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -62,36 +87,52 @@
             <Setter Property="Margin" Value="0,0,0,12"/>
         </Style>
 
-        <!-- ===== ARROW BUTTON ===== -->
-        <Style x:Key="ArrowButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="HorizontalAlignment" Value="Right"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Foreground" Value="#2563EB"/>
+        <Style x:Key="SystemCardStyle" TargetType="Border">
+            <Setter Property="Background"
+    Value="{DynamicResource CardBrush}"/>
+            <Setter Property="BorderBrush"
+    Value="{DynamicResource BorderBrushCustom}"/>
+            <Setter Property="BorderThickness"
+    Value="1"/>
+            <Setter Property="CornerRadius"
+    Value="12"/>
+            <Setter Property="Padding"
+    Value="20"/>
+            <Setter Property="Margin"
+    Value="0,0,0,0"/>
+            <Setter Property="Height"
+    Value="230"/>
+
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000"
+                      Opacity="0.18"
+                      BlurRadius="18"
+                      ShadowDepth="2"/>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Page.Resources>
 
-    
+
 
 
 
     <Grid>
-        
-        
-        
+
+
+
         <Grid.RowDefinitions>
             <RowDefinition Height="4*"/>
             <RowDefinition Height="17*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-           
+
             <!-- Main content -->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-       
+
 
         <!-- ══════════════════════════════════════════
              MAIN AREA
@@ -178,8 +219,8 @@ Padding="32,18"
                             </Border>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto" MinWidth="198"/>
                                 </Grid.ColumnDefinitions>
                                 <!-- Left: text + accent bar -->
                                 <Grid Grid.Column="0">
@@ -188,23 +229,23 @@ Padding="32,18"
                                             CornerRadius="4,0,0,4"/>
                                     <StackPanel Margin="24,24,24,24">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="¡Bienvenido! " FontSize="26"
+                                            <TextBlock Text="¡Bienvenido! " FontSize="28"
                                                        FontWeight="Bold" Foreground="#1E293B"/>
                                             <TextBlock Text="👋" FontSize="26"
                                                        VerticalAlignment="Center"/>
                                         </StackPanel>
                                         <TextBlock Text="Sistema de gestión y control de audiencias, ejecuciones y copias."
-                                                   Foreground="#475569" FontSize="14"
+                                                   Foreground="#475569" FontSize="16"
                                                    Margin="0,6,0,2"/>
                                         <TextBlock Text="Seleccione una opción del menú para comenzar."
-                                                   Foreground="#475569" FontSize="14"/>
+                                                   Foreground="#475569" FontSize="16"/>
                                     </StackPanel>
                                 </Grid>
                                 <!-- Right: courthouse illustration placeholder -->
-                                <Border Grid.Column="1" Width="180" Height="120"
-                                        Margin="0,0,24,0" VerticalAlignment="Center"
+                                <Border Grid.Column="1" Height="120"
+                                        Margin="4,0,29,0" VerticalAlignment="Center"
                                         Opacity="0.25">
-                                    <TextBlock Text="🏛" FontSize="80"
+                                    <TextBlock Text="🏛" FontSize="120"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"/>
                                 </Border>
@@ -233,19 +274,18 @@ Padding="32,18"
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Border Grid.Row="0" Style="{StaticResource IconCircleStyle}"
-                                        Background="#EFF6FF">
-                                    <TextBlock Text="📄" FontSize="22"
+                                        Background="#DDEDFE">
+                                    <TextBlock Text="📄" FontSize="28"
                                                HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center" Foreground="#3979CD"/>
                                 </Border>
                                 <TextBlock Grid.Row="1" Text="Nuevo Registro"
-                                           FontWeight="Bold" FontSize="16"
-                                           Foreground="#1E293B" Margin="0,0,0,4"/>
+                                           FontWeight="SemiBold" FontSize="23"
+                                           Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,4"/>
                                 <TextBlock Grid.Row="2" Text="Registrar una nueva audiencia o ejecución."
-                                           Foreground="#64748B" FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextBrush}" FontSize="16"
                                            TextWrapping="Wrap"/>
-                                <Button Grid.Row="4" Style="{StaticResource ArrowButtonStyle}"
-                                        Content="→" Foreground="#2563EB"/>
+
                             </Grid>
                         </Border>
 
@@ -262,19 +302,18 @@ Padding="32,18"
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Border Grid.Row="0" Style="{StaticResource IconCircleStyle}"
-                                        Background="#ECFDF5">
+                                        Background="#DDF3E9">
                                     <TextBlock Text="🔍" FontSize="22"
                                                HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center" Foreground="#308879"/>
                                 </Border>
                                 <TextBlock Grid.Row="1" Text="Consultar Registros"
-                                           FontWeight="SemiBold" FontSize="16"
-                                           Foreground="#1E293B" Margin="0,0,0,4"/>
+                                           FontWeight="SemiBold" FontSize="23"
+                                           Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,4"/>
                                 <TextBlock Grid.Row="2" Text="Buscar y consultar audiencias, ejecuciones y copias."
-                                           Foreground="#64748B" FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextBrush}" FontSize="16"
                                            TextWrapping="Wrap"/>
-                                <Button Grid.Row="4" Style="{StaticResource ArrowButtonStyle}"
-                                        Content="→" Foreground="#16A34A"/>
+
                             </Grid>
                         </Border>
 
@@ -291,20 +330,19 @@ Padding="32,18"
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Border Grid.Row="0" Style="{StaticResource IconCircleStyle}"
-                                        Background="#F5F3FF">
-                                    <TextBlock Text="◎" FontSize="22"
+                                        Background="#E6DDFB">
+                                    <TextBlock Text="◎" FontSize="30"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
-                                               Foreground="#7C3AED"/>
+                                               Foreground="#7E65C9"/>
                                 </Border>
                                 <TextBlock Grid.Row="1" Text="Registro de Copias"
-                                           FontWeight="SemiBold" FontSize="16"
-                                           Foreground="#1E293B" Margin="0,0,0,4"/>
+                                           FontWeight="SemiBold" FontSize="23"
+                                           Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,4"/>
                                 <TextBlock Grid.Row="2" Text="Registrar entrega de copias de audiencias."
-                                           Foreground="#64748B" FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextBrush}" FontSize="16"
                                            TextWrapping="Wrap"/>
-                                <Button Grid.Row="4" Style="{StaticResource ArrowButtonStyle}"
-                                        Content="→" Foreground="#7C3AED"/>
+
                             </Grid>
                         </Border>
 
@@ -321,19 +359,18 @@ Padding="32,18"
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Border Grid.Row="0" Style="{StaticResource IconCircleStyle}"
-                                        Background="#FFF7ED">
-                                    <TextBlock Text="📊" FontSize="22"
+                                        Background="#FDEEDC">
+                                    <TextBlock Text="📊" FontSize="28"
                                                HorizontalAlignment="Center"
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center" Foreground="#E3A04A"/>
                                 </Border>
                                 <TextBlock Grid.Row="1" Text="Reportes"
-                                           FontWeight="SemiBold" FontSize="16"
-                                           Foreground="#1E293B" Margin="0,0,0,4"/>
+                                           FontWeight="SemiBold" FontSize="23"
+                                           Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,4"/>
                                 <TextBlock Grid.Row="2" Text="Generar reportes y estadísticas del sistema."
-                                           Foreground="#64748B" FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextBrush}" FontSize="16"
                                            TextWrapping="Wrap"/>
-                                <Button Grid.Row="4" Style="{StaticResource ArrowButtonStyle}"
-                                        Content="→" Foreground="#EA580C"/>
+
                             </Grid>
                         </Border>
 
@@ -351,19 +388,18 @@ Padding="32,18"
                                 </Grid.RowDefinitions>
                                 <Border Grid.Row="0" Style="{StaticResource IconCircleStyle}"
                                         Background="#F0FDFA">
-                                    <TextBlock Text="⚙" FontSize="22"
+                                    <TextBlock Text="⚙" FontSize="28"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center"
                                                Foreground="#0D9488"/>
                                 </Border>
                                 <TextBlock Grid.Row="1" Text="Configuración"
-                                           FontWeight="SemiBold" FontSize="16"
-                                           Foreground="#1E293B" Margin="0,0,0,4"/>
+                                           FontWeight="SemiBold" FontSize="25"
+                                           Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,0,4"/>
                                 <TextBlock Grid.Row="2" Text="Administrar parámetros del sistema."
-                                           Foreground="#64748B" FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextBrush}" FontSize="16"
                                            TextWrapping="Wrap"/>
-                                <Button Grid.Row="4" Style="{StaticResource ArrowButtonStyle}"
-                                        Content="→" Foreground="#0D9488"/>
+
                             </Grid>
                         </Border>
                     </UniformGrid>
@@ -390,18 +426,18 @@ Padding="32,18"
                                 <!-- Audiencias -->
                                 <Border Style="{StaticResource StatCardStyle}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="44" Height="44" CornerRadius="12"
-                                                Background="#EFF6FF" Margin="0,0,12,0">
+                                        <Border Width="50" Height="50" CornerRadius="12"
+                                                Background="#2563EB" Margin="0,0,12,0">
                                             <TextBlock Text="⚖" FontSize="22"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"
-                                                       Foreground="#2563EB"/>
+                                                       Foreground="#EFF6FF"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding TotalAudienciasMes}" FontSize="26"
-                                                       FontWeight="Bold" Foreground="#1E293B"/>
+                                            <TextBlock Text="{Binding TotalAudienciasMes}" FontSize="30"
+                                                       FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                                             <TextBlock Text="Audiencias este mes"
-                                                       FontSize="11" Foreground="#64748B"/>
+                                                       FontSize="16" Foreground="{DynamicResource SecondaryTextBrush}"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
@@ -409,18 +445,19 @@ Padding="32,18"
                                 <!-- Ejecuciones -->
                                 <Border Style="{StaticResource StatCardStyle}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="44" Height="44" CornerRadius="12"
-                                                Background="#ECFDF5" Margin="0,0,12,0">
+                                        <Border Width="50" Height="50" CornerRadius="12"
+                                                Background="#16A34A" Margin="0,0,12,0">
                                             <TextBlock Text="✔" FontSize="22"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"
-                                                       Foreground="#16A34A"/>
+                                                       Foreground="#ECFDF5
+"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding TotalEjecucionesMes}" FontSize="26"
-                                                       FontWeight="Bold" Foreground="#1E293B"/>
+                                            <TextBlock Text="{Binding TotalEjecucionesMes}" FontSize="30"
+                                                       FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                                             <TextBlock Text="Ejecuciones este mes"
-                                                       FontSize="11" Foreground="#64748B"/>
+                                                       FontSize="16" Foreground="{DynamicResource SecondaryTextBrush}"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
@@ -428,18 +465,19 @@ Padding="32,18"
                                 <!-- Copias -->
                                 <Border Style="{StaticResource StatCardStyle}">
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="44" Height="44" CornerRadius="12"
-                                                Background="#F5F3FF" Margin="0,0,12,0">
+                                        <Border Width="50" Height="50" CornerRadius="12"
+                                                Background="#7C3AED" Margin="0,0,12,0">
                                             <TextBlock Text="◎" FontSize="22"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"
-                                                       Foreground="#7C3AED"/>
+                                                       Foreground="#F5F3FF"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding TotalCopiasMes}" FontSize="26"
-                                                       FontWeight="Bold" Foreground="#1E293B"/>
+                                            <TextBlock Text="{Binding TotalCopiasMes}" FontSize="30"
+                                                       FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                                             <TextBlock Text="Copias Entregadas este mes"
-                                                       FontSize="11" Foreground="#64748B"
+                                                       MaxWidth="140"
+                                                       FontSize="16" Foreground="{DynamicResource SecondaryTextBrush}"
                                                        TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </StackPanel>
@@ -448,28 +486,23 @@ Padding="32,18"
                                 <!-- Audiencias hoy -->
                                 <Border Style="{StaticResource StatCardStyle}" Margin="0">
                                     <StackPanel Orientation="Horizontal">
-                                        <Border Width="44" Height="44" CornerRadius="12"
-                                                Background="#FFF7ED" Margin="0,0,12,0">
+                                        <Border Width="50" Height="50" CornerRadius="12"
+                                                Background="#E3A04A" Margin="0,0,12,0">
                                             <TextBlock Text="📅" FontSize="20"
                                                        HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center"/>
+                                                       VerticalAlignment="Center" Foreground="#FFF7ED"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding AudienciasHoy}" FontSize="26"
-                                                       FontWeight="Bold" Foreground="#1E293B"/>
+                                            <TextBlock Text="{Binding AudienciasHoy}" FontSize="30"
+                                                       FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
                                             <TextBlock Text="Audiencias Hoy"
-                                                       FontSize="11" Foreground="#64748B"/>
+                                                       FontSize="16" Foreground="{DynamicResource SecondaryTextBrush}"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
                             </UniformGrid>
+                            <Border Style="{StaticResource SystemCardStyle}">
 
-                            <!-- Información del Sistema -->
-                            <Border Background="#FFFFFF" CornerRadius="12" Padding="20">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="#000000" Opacity="0.05"
-                                                      BlurRadius="12" ShadowDepth="2"/>
-                                </Border.Effect>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
@@ -519,6 +552,8 @@ Padding="32,18"
                                     </StackPanel>
                                 </Grid>
                             </Border>
+
+                            <!-- Información del Sistema -->
                         </StackPanel>
 
                         <!-- RIGHT: Actividad Reciente -->

@@ -4,18 +4,16 @@ using System.IO;
 
 namespace PoderJudicial.Data
 {
-
-    //cambios en esta parte
     public static class Conexion
     {
+        public static readonly string RutaBD =
+            @"\\ANTONIOS_LAPTOP\Database\p.accdb";
+
         public static OleDbConnection ObtenerConexion()
         {
-            string rutaBD =
-                @"\\ANTONIOS_LAPTOP\Database\p.accdb";
-
             string connectionString =
                 $@"Provider=Microsoft.ACE.OLEDB.12.0;
-                   Data Source={rutaBD};";
+                   Data Source={RutaBD};";
 
             return new OleDbConnection(connectionString);
         }

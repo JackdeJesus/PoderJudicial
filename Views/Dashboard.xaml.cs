@@ -1,4 +1,4 @@
-﻿using PoderJudicial.Data;
+﻿ using PoderJudicial.Data;
 using PoderJudicial.Helpers;
 using PoderJudicial.Views;
 using System;
@@ -155,6 +155,27 @@ namespace PoderJudicial.Views
                     System.Windows.Media.ColorConverter.ConvertFromString("#2ECC8F"));
         }
 
+        private void Navegar(Page pagina, Button boton)
+        {
+            ActivarBoton(boton);
+
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background =
+                    Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString(
+                            "#B8C1D1"));
+
+                _tablaSeleccionada = null;
+            }
+
+            MainFrame.Navigate(pagina);
+        }
+
+
         // Cosultar
         private void BtnConsultar_Click(
     object sender,
@@ -175,72 +196,37 @@ namespace PoderJudicial.Views
         }
 
         // Nuevo
-        private void BtnNuevo_Click(object sender, RoutedEventArgs e)
+        private void BtnNuevo_Click(
+    object sender,
+    RoutedEventArgs e)
         {
-            ActivarBoton(BtnNuevo);
-
-            if (_tablaSeleccionada != null)
-            {
-                _tablaSeleccionada.Background =
-                    Brushes.Transparent;
-
-                _tablaSeleccionada.Foreground =
-                    new SolidColorBrush(
-                        (Color)ColorConverter.ConvertFromString(
-                            "#B8C1D1"));
-            }
-
-            MainFrame.Navigate(new NuevoRegistro());
+            Navegar(
+                new NuevoRegistro(),
+                BtnNuevo);
         }
+
+
         // Copias
         private void BtnCopias_Click(
     object sender,
     RoutedEventArgs e)
         {
-            ActivarBoton(BtnCopias);
-
-            if (_tablaSeleccionada != null)
-            {
-                _tablaSeleccionada.Background =
-                    Brushes.Transparent;
-
-                _tablaSeleccionada.Foreground =
-                    new SolidColorBrush(
-                        (Color)ColorConverter.ConvertFromString(
-                            "#B8C1D1"));
-
-                _tablaSeleccionada = null;
-            }
-
-            MainFrame.Navigate(
-                new RegistroCopias());
+            Navegar(
+                new RegistroCopias(),
+                BtnCopias);
         }
 
         // REPORTES
         private void BtnReportes_Click(
-    object sender,
-    RoutedEventArgs e)
+     object sender,
+     RoutedEventArgs e)
         {
-            ActivarBoton(BtnReportes);
-
-            if (_tablaSeleccionada != null)
-            {
-                _tablaSeleccionada.Background =
-                    Brushes.Transparent;
-
-                _tablaSeleccionada.Foreground =
-                    new SolidColorBrush(
-                        (Color)ColorConverter.ConvertFromString(
-                            "#B8C1D1"));
-
-                _tablaSeleccionada = null;
-            }
-
-            MainFrame.Navigate(
-                new ReportesView());
+            Navegar(
+                new ReportesView(),
+                BtnReportes);
         }
 
-        
+
 
 
         private void BtnRegresar_Click(object sender, RoutedEventArgs e)
@@ -287,7 +273,66 @@ namespace PoderJudicial.Views
     object sender,
     RoutedEventArgs e)
         {
-            ActivarBoton(BtnHome);
+            Navegar(
+                new HomePage(),
+                BtnHome);
+        }
+
+
+        public void AbrirNuevoRegistro()
+        {
+            Navegar(
+                new NuevoRegistro(),
+                BtnNuevo);
+        }
+
+        public void AbrirRegistroCopias()
+        {
+            Navegar(
+                new RegistroCopias(),
+                BtnCopias);
+        }
+
+        public void AbrirReportes()
+        {
+            Navegar(
+                new ReportesView(),
+                BtnReportes);
+        }
+
+        public void AbrirHome()
+        {
+            Navegar(
+                new HomePage(),
+                BtnHome);
+        }
+
+        public void AbrirConfiguracion()
+        {
+            ActivarBoton(BtnConfig);
+
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background =
+                    Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString(
+                            "#B8C1D1"));
+
+                _tablaSeleccionada = null;
+            }
+
+            BtnConfig.ContextMenu.PlacementTarget =
+                BtnConfig;
+
+            BtnConfig.ContextMenu.IsOpen = true;
+        }
+
+        public void AbrirConsultarRegistros()
+        {
+            ActivarBoton(BtnConsultar);
 
             if (_tablaSeleccionada != null)
             {
@@ -303,7 +348,8 @@ namespace PoderJudicial.Views
             }
 
             MainFrame.Navigate(
-                new HomePage());
+                new ConsultarRegistros(
+                    TableDetector.TablaActual));
         }
 
 

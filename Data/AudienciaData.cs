@@ -3,6 +3,8 @@ using PoderJudicial.Views;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.Reflection;
+using System.Reflection;
 
 
 namespace PoderJudicial.Data
@@ -683,6 +685,21 @@ ExisteColumna(reader, "QuienRealiza")
 
 
 
+        
+
+public string ObtenerVersionSistema()
+    {
+        return Assembly
+            .GetExecutingAssembly()
+            .GetName()
+            .Version
+            ?.ToString() ?? "1.0.0";
     }
+
+
+
+
+
+}
 
 }
