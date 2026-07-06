@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PoderJudicial.Models;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
-using System.Reflection;
 using System.IO;
-using PoderJudicial.Models;
-using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Windows;
 
 namespace PoderJudicial.Data
 {
@@ -53,9 +54,11 @@ namespace PoderJudicial.Data
                             }
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Ignorar tablas que no correspondan
+                        MessageBox.Show(
+                            ex.Message,
+                            nombreTabla);
                     }
                 }
             }
@@ -204,9 +207,11 @@ namespace PoderJudicial.Data
                             }
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Ignorar tablas que no correspondan
+                        MessageBox.Show(
+                            ex.Message,
+                            nombreTabla);
                     }
                 }
             }
@@ -302,9 +307,11 @@ namespace PoderJudicial.Data
                             }
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Ignorar tablas que no coincidan
+                        MessageBox.Show(
+                            ex.Message,
+                            nombreTabla);
                     }
                 }
             }

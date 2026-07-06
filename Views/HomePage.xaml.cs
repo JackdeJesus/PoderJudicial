@@ -93,8 +93,8 @@ namespace PoderJudicial.Views
             // Temporal mientras no exista la lógica de respaldos
             vm.UltimaCopiaSeguridad = "No disponible";
 
-            //vm.Actividades = new ObservableCollection<ActividadReciente>(
-           // dashboard.ObtenerActividadesRecientes());
+            vm.Actividades = new ObservableCollection<ActividadReciente>(
+            dashboard.ObtenerActividadesRecientes());
 
         }
 
