@@ -3,7 +3,9 @@ using System.Data;
 using System.Data.OleDb;
 using System.Reflection;
 using System.IO;
-
+using PoderJudicial.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PoderJudicial.Data
 {
@@ -22,61 +24,38 @@ namespace PoderJudicial.Data
             DateTime inicioSiguienteMes =
                 inicioMes.AddMonths(1);
 
-            using (OleDbConnection conn =
-                Conexion.ObtenerConexion())
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
                 conn.Open();
 
-                DataTable schema =
-                    conn.GetSchema("Tables");
-
-                foreach (DataRow row in schema.Rows)
+                foreach (string nombreTabla in ObtenerTablasAudiencias(conn))
                 {
-                    string nombreTabla =
-                        row["TABLE_NAME"].ToString();
-
-                    if (nombreTabla.StartsWith("MSys"))
-                        continue;
-
-                    if (!nombreTabla.StartsWith(
-                            "Audiencias ",
-                            StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
                     try
                     {
                         string query = $@"
-                            SELECT COUNT(*)
-                            FROM [{nombreTabla}]
-                            WHERE FeAudiencia >= ?
-                            AND FeAudiencia < ?";
+                SELECT COUNT(*)
+                FROM [{nombreTabla}]
+                WHERE FeAudiencia >= ?
+                AND FeAudiencia < ?";
 
                         using (OleDbCommand cmd =
                             new OleDbCommand(query, conn))
                         {
-                            cmd.Parameters.AddWithValue(
-                                "?",
-                                inicioMes);
+                            cmd.Parameters.AddWithValue("?", inicioMes);
+                            cmd.Parameters.AddWithValue("?", inicioSiguienteMes);
 
-                            cmd.Parameters.AddWithValue(
-                                "?",
-                                inicioSiguienteMes);
-
-                            object resultado =
-                                cmd.ExecuteScalar();
+                            object resultado = cmd.ExecuteScalar();
 
                             if (resultado != null &&
                                 resultado != DBNull.Value)
                             {
-                                total +=
-                                    Convert.ToInt32(resultado);
+                                total += Convert.ToInt32(resultado);
                             }
                         }
                     }
                     catch
                     {
+                        // Ignorar tablas que no correspondan
                     }
                 }
             }
@@ -198,22 +177,11 @@ namespace PoderJudicial.Data
             {
                 conn.Open();
 
-                DataTable schema = conn.GetSchema("Tables");
+               
 
-                foreach (DataRow row in schema.Rows)
+                foreach (string nombreTabla in ObtenerTablasAudiencias(conn))
                 {
-                    string nombreTabla = row["TABLE_NAME"].ToString();
-
-                    if (nombreTabla.StartsWith("MSys"))
-                        continue;
-
-                    if (!nombreTabla.StartsWith(
-                            "Audiencias ",
-                            StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
+                    
                     try
                     {
                         string query = @"
@@ -276,6 +244,107 @@ namespace PoderJudicial.Data
         public string ObtenerNombreBaseDatos()
         {
             return Path.GetFileName(Conexion.RutaBD);
+        }
+
+
+        public List<ActividadReciente> ObtenerActividadesRecientes()
+        {
+            List<ActividadReciente> actividades = new List<ActividadReciente>();
+
+            actividades.AddRange(ObtenerActividadesAudiencias());
+
+            actividades.AddRange(ObtenerActividadesCopias());
+
+            actividades.AddRange(ObtenerActividadesEjecuciones());
+
+            return actividades
+                .OrderByDescending(x => x.FechaHora)
+                .Take(5)
+                .ToList();
+        }
+
+        private List<ActividadReciente> ObtenerActividadesAudiencias()
+        {
+            List<ActividadReciente> lista = new List<ActividadReciente>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                foreach (string nombreTabla in ObtenerTablasAudiencias(conn))
+                {
+                    try
+                    {
+                        string query = $@"
+                    SELECT TOP 10
+                        FeRecibo,
+                        NUC,
+                        NoCausa,
+                        [Quien Realiza]
+                    FROM [{nombreTabla}]
+                    WHERE FeRecibo IS NOT NULL
+                    ORDER BY FeRecibo DESC";
+
+                        using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                        using (OleDbDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                lista.Add(new ActividadReciente
+                                {
+                                    FechaHora = Convert.ToDateTime(dr["FeRecibo"]),
+                                    Icono = "⚖",
+                                    TipoActividad = "Registro de audiencia",
+                                    Descripcion =
+                                        $"NUC: {dr["NUC"]} | Causa: {dr["NoCausa"]}",
+                                    Usuario = dr["Quien Realiza"].ToString()
+                                });
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Ignorar tablas que no coincidan
+                    }
+                }
+            }
+
+            return lista;
+        }
+
+        private List<ActividadReciente> ObtenerActividadesCopias()
+        {
+            return new List<ActividadReciente>();
+        }
+
+        private List<ActividadReciente> ObtenerActividadesEjecuciones()
+        {
+            return new List<ActividadReciente>();
+        }
+
+
+        private List<string> ObtenerTablasAudiencias(OleDbConnection conn)
+        {
+            List<string> tablas = new List<string>();
+
+            DataTable schema = conn.GetSchema("Tables");
+
+            foreach (DataRow row in schema.Rows)
+            {
+                string nombreTabla = row["TABLE_NAME"].ToString();
+
+                if (nombreTabla.StartsWith("MSys"))
+                    continue;
+
+                if (nombreTabla.StartsWith(
+                    "Audiencias ",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    tablas.Add(nombreTabla);
+                }
+            }
+
+            return tablas;
         }
 
 

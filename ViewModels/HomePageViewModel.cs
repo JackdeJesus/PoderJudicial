@@ -23,9 +23,17 @@ namespace PoderJudicial.ViewModels
             }
         }
 
-        public ObservableCollection<ActividadReciente>
-            Actividades
-        { get; set; }
+        private ObservableCollection<ActividadReciente> _actividades;
+
+        public ObservableCollection<ActividadReciente> Actividades
+        {
+            get => _actividades;
+            set
+            {
+                _actividades = value;
+                OnPropertyChanged();
+            }
+        }
 
 
 

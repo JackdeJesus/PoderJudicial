@@ -1,5 +1,10 @@
-﻿using System;
+﻿using PoderJudicial.Data;
+using PoderJudicial.Helpers;
+using PoderJudicial.Models;
+using PoderJudicial.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -14,9 +19,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using PoderJudicial.Data;
-using PoderJudicial.Helpers;
-using PoderJudicial.ViewModels;
 
 namespace PoderJudicial.Views
 {
@@ -90,6 +92,9 @@ namespace PoderJudicial.Views
 
             // Temporal mientras no exista la lógica de respaldos
             vm.UltimaCopiaSeguridad = "No disponible";
+
+            //vm.Actividades = new ObservableCollection<ActividadReciente>(
+           // dashboard.ObtenerActividadesRecientes());
 
         }
 
