@@ -264,7 +264,7 @@ namespace PoderJudicial.Data
 
             return actividades
                 .OrderByDescending(x => x.FechaHora)
-                .Take(5)
+                .Take(8)
                 .ToList();
         }
 
@@ -321,12 +321,110 @@ namespace PoderJudicial.Data
 
         private List<ActividadReciente> ObtenerActividadesCopias()
         {
-            return new List<ActividadReciente>();
+            List<ActividadReciente> lista = new List<ActividadReciente>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query = @"
+            SELECT TOP 10
+                FeRecibo,
+                NUC,
+                NoCausa,
+                [Quien Realiza]
+            FROM CopiasAudiencias
+            WHERE FeRecibo IS NOT NULL
+            ORDER BY FeRecibo DESC";
+
+                using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                using (OleDbDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        string nuc = dr["NUC"]?.ToString() ?? "";
+                        string causa = dr["NoCausa"]?.ToString() ?? "";
+
+                        string descripcion = "";
+
+                        if (!string.IsNullOrWhiteSpace(nuc))
+                            descripcion = $"NUC: {nuc}";
+
+                        if (!string.IsNullOrWhiteSpace(causa))
+                        {
+                            if (descripcion != "")
+                                descripcion += " | ";
+
+                            descripcion += $"Causa: {causa}";
+                        }
+
+                        lista.Add(new ActividadReciente
+                        {
+                            FechaHora = Convert.ToDateTime(dr["FeRecibo"]),
+                            Icono = "💿",
+                            TipoActividad = "Entrega de copias",
+                            Descripcion = descripcion,
+                            Usuario = dr["Quien Realiza"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return lista;
         }
 
         private List<ActividadReciente> ObtenerActividadesEjecuciones()
         {
-            return new List<ActividadReciente>();
+            List<ActividadReciente> lista = new List<ActividadReciente>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query = @"
+            SELECT TOP 10
+                FechaAudiencia,
+                Expediente,
+                Causa,
+                Observaciones
+            FROM Ejecucion
+            WHERE FechaAudiencia IS NOT NULL
+            ORDER BY FechaAudiencia DESC";
+
+                using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                using (OleDbDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        string expediente = dr["Expediente"]?.ToString() ?? "";
+                        string causa = dr["Causa"]?.ToString() ?? "";
+
+                        string descripcion = "";
+
+                        if (!string.IsNullOrWhiteSpace(expediente))
+                            descripcion = $"Expediente: {expediente}";
+
+                        if (!string.IsNullOrWhiteSpace(causa))
+                        {
+                            if (descripcion != "")
+                                descripcion += " | ";
+
+                            descripcion += $"Causa: {causa}";
+                        }
+
+                        lista.Add(new ActividadReciente
+                        {
+                            FechaHora = Convert.ToDateTime(dr["FechaAudiencia"]),
+                            Icono = "✔",
+                            TipoActividad = "Registro de ejecución",
+                            Descripcion = descripcion,
+                            Usuario = dr["Observaciones"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return lista;
         }
 
 
