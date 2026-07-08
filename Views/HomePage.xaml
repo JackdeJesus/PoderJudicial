@@ -595,57 +595,69 @@ BorderBrush="{DynamicResource BorderBrush}"
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
 
-                                            <Grid Margin="0,0,0,10">
+                                            <Border
+        Background="Transparent"
+        Cursor="Hand"
+        Padding="6"
+        CornerRadius="6"
+        MouseLeftButtonUp="Actividad_Click"
+        MouseEnter="Actividad_MouseEnter"
+        MouseLeave="Actividad_MouseLeave">
 
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="100"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="90"/>
-                                                </Grid.ColumnDefinitions>
+                                                <Grid>
 
-                                                <!-- Fecha -->
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="{Binding Fecha}"
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="100"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="90"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!-- Fecha -->
+                                                    <StackPanel Grid.Column="0">
+                                                        <TextBlock Text="{Binding Fecha}"
                            Foreground="{DynamicResource PrimaryTextBrush}"
                            FontSize="12"/>
 
-                                                    <TextBlock Text="{Binding Hora}"
+                                                        <TextBlock Text="{Binding Hora}"
                            Foreground="{DynamicResource SecondaryTextBrush}"
                            FontSize="11"/>
-                                                </StackPanel>
+                                                    </StackPanel>
 
-                                                <!-- Actividad -->
-                                                <StackPanel Grid.Column="1">
+                                                    <!-- Actividad -->
+                                                    <StackPanel Grid.Column="1">
 
-                                                    <StackPanel Orientation="Horizontal">
+                                                        <StackPanel Orientation="Horizontal">
 
-                                                        <TextBlock Text="{Binding Icono}"
+                                                            <TextBlock Text="{Binding Icono}"
                                FontSize="14"
                                Margin="0,0,6,0"/>
 
-                                                        <TextBlock Text="{Binding TipoActividad}"
+                                                            <TextBlock Text="{Binding TipoActividad}"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource PrimaryTextBrush}"
                                FontSize="12"/>
 
-                                                    </StackPanel>
+                                                        </StackPanel>
 
-                                                    <TextBlock Text="{Binding Descripcion}"
+                                                        <TextBlock Text="{Binding Descripcion}"
                            Foreground="{DynamicResource SecondaryTextBrush}"
                            FontSize="11"
                            Margin="20,2,0,0"/>
 
-                                                </StackPanel>
+                                                    </StackPanel>
 
-                                                <!-- Usuario -->
-                                                <TextBlock Grid.Column="2"
+                                                    <!-- Usuario -->
+                                                    <TextBlock Grid.Column="2"
                        Text="{Binding Usuario}"
                        Foreground="{DynamicResource SecondaryTextBrush}"
                        FontSize="12"
                        HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
                        TextAlignment="Center"/>
 
-                                            </Grid>
+                                                </Grid>
+
+                                            </Border>
 
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>

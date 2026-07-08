@@ -352,6 +352,27 @@ namespace PoderJudicial.Views
                     TableDetector.TablaActual));
         }
 
+        public void AbrirConsultarRegistros(string tabla)
+        {
+            ActivarBoton(BtnConsultar);
+
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background = Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#B8C1D1"));
+
+                _tablaSeleccionada = null;
+            }
+
+            MainFrame.Navigate(
+                new ConsultarRegistros(tabla));
+        }
+
+
+
 
         private void ModoClaro_Click(object sender, RoutedEventArgs e)
         {

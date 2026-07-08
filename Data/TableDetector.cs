@@ -84,5 +84,25 @@ namespace PoderJudicial.Data
             Match m = Regex.Match(nombreTabla, @"\d{4}-(\d{4})");
             return m.Success ? int.Parse(m.Groups[1].Value) : 0;
         }
+
+
+        public static string ObtenerTabla(string prefijo)
+        {
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                DataTable esquema = conn.GetSchema("Tables");
+
+                return esquema.AsEnumerable()
+                    .Select(r => r["TABLE_NAME"].ToString())
+                    .FirstOrDefault(t =>
+                        !t.StartsWith("MSys") &&
+                        t.StartsWith(prefijo,
+                            StringComparison.OrdinalIgnoreCase));
+            }
+        }
+
+
     }
 }

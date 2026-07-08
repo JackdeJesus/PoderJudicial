@@ -19,6 +19,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using PoderJudicial.Models;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace PoderJudicial.Views
 {
@@ -133,6 +136,42 @@ namespace PoderJudicial.Views
             ObtenerDashboard()?.AbrirConfiguracion();
         }
 
+
+        private void Actividad_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (sender is Border border)
+            {
+                border.Background = new SolidColorBrush(
+                    (Color)ColorConverter.ConvertFromString("#F8FAFC"));
+            }
+        }
+
+        private void Actividad_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (sender is Border border)
+            {
+                border.Background = Brushes.Transparent;
+            }
+        }
+
+
+        private void Actividad_Click(object sender, MouseButtonEventArgs e)
+        {
+            Border border = sender as Border;
+
+            if (border == null)
+                return;
+
+            ActividadReciente actividad =
+                border.DataContext as ActividadReciente;
+
+            if (actividad == null)
+                return;
+
+            ObtenerDashboard()?
+                .AbrirConsultarRegistros(
+                    actividad.TablaDestino);
+        }
 
 
     }

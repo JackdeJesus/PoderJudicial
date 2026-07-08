@@ -34,5 +34,16 @@ namespace PoderJudicial.Models
 
         // Usuario que realizó la acción
         public string Usuario { get; set; }
+
+
+        // NUEVO
+
+        public string Modulo { get; set; }
+
+        public int IdRegistro { get; set; }
+
+
+        public string TablaDestino { get; set; }
+
     }
 }

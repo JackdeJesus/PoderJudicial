@@ -282,6 +282,7 @@ namespace PoderJudicial.Data
                     {
                         string query = $@"
                     SELECT TOP 10
+                        Id,
                         FeRecibo,
                         NUC,
                         NoCausa,
@@ -298,11 +299,19 @@ namespace PoderJudicial.Data
                                 lista.Add(new ActividadReciente
                                 {
                                     FechaHora = Convert.ToDateTime(dr["FeRecibo"]),
+
                                     Icono = "⚖",
+
                                     TipoActividad = "Registro de audiencia",
+
                                     Descripcion =
-                                        $"NUC: {dr["NUC"]} | Causa: {dr["NoCausa"]}",
-                                    Usuario = dr["Quien Realiza"].ToString()
+        $"NUC: {dr["NUC"]} | Causa: {dr["NoCausa"]}",
+
+                                    Usuario = dr["Quien Realiza"].ToString(),
+
+                                    IdRegistro = Convert.ToInt32(dr["Id"]),
+
+                                    TablaDestino = nombreTabla,
                                 });
                             }
                         }
@@ -327,15 +336,23 @@ namespace PoderJudicial.Data
             {
                 conn.Open();
 
-                string query = @"
-            SELECT TOP 10
-                FeRecibo,
-                NUC,
-                NoCausa,
-                [Quien Realiza]
-            FROM CopiasAudiencias
-            WHERE FeRecibo IS NOT NULL
-            ORDER BY FeRecibo DESC";
+
+                string nombreTabla =
+    ObtenerNombreTablaPorColumna(
+        conn,
+        "TotDiscosEntregados");
+
+                string query = $@"
+SELECT TOP 10
+    Id,
+    FeRecibo,
+    NUC,
+    NoCausa,
+    TotDiscosEntregados,
+    [Quien Realiza]
+FROM [{nombreTabla}]
+WHERE FeRecibo IS NOT NULL
+ORDER BY FeRecibo DESC";
 
                 using (OleDbCommand cmd = new OleDbCommand(query, conn))
                 using (OleDbDataReader dr = cmd.ExecuteReader())
@@ -364,7 +381,10 @@ namespace PoderJudicial.Data
                             Icono = "💿",
                             TipoActividad = "Entrega de copias",
                             Descripcion = descripcion,
-                            Usuario = dr["Quien Realiza"].ToString()
+                            Usuario = dr["Quien Realiza"].ToString(),
+                            IdRegistro = Convert.ToInt32(dr["Id"]),
+
+                            TablaDestino = nombreTabla,
                         });
                     }
                 }
@@ -381,15 +401,21 @@ namespace PoderJudicial.Data
             {
                 conn.Open();
 
-                string query = @"
-            SELECT TOP 10
-                FechaAudiencia,
-                Expediente,
-                Causa,
-                Observaciones
-            FROM Ejecucion
-            WHERE FechaAudiencia IS NOT NULL
-            ORDER BY FechaAudiencia DESC";
+                string nombreTabla =
+    ObtenerNombreTablaPorColumna(
+        conn,
+        "Expediente");
+
+                string query = $@"
+SELECT TOP 10
+Id,
+    FechaAudiencia,
+    Expediente,
+    Causa,
+    Observaciones
+FROM [{nombreTabla}]
+WHERE FechaAudiencia IS NOT NULL
+ORDER BY FechaAudiencia DESC";
 
                 using (OleDbCommand cmd = new OleDbCommand(query, conn))
                 using (OleDbDataReader dr = cmd.ExecuteReader())
@@ -418,7 +444,9 @@ namespace PoderJudicial.Data
                             Icono = "✔",
                             TipoActividad = "Registro de ejecución",
                             Descripcion = descripcion,
-                            Usuario = dr["Observaciones"].ToString()
+                            Usuario = dr["Observaciones"].ToString(),
+                            IdRegistro = Convert.ToInt32(dr["Id"]),
+                            TablaDestino = nombreTabla,
                         });
                     }
                 }
@@ -450,6 +478,45 @@ namespace PoderJudicial.Data
             }
 
             return tablas;
+        }
+
+
+        private string ObtenerNombreTablaPorColumna(
+    OleDbConnection conn,
+    string columna)
+        {
+            DataTable schema = conn.GetSchema("Tables");
+
+            foreach (DataRow row in schema.Rows)
+            {
+                string nombreTabla = row["TABLE_NAME"].ToString();
+
+                if (nombreTabla.StartsWith("MSys"))
+                    continue;
+
+                try
+                {
+                    DataTable columnas =
+                        conn.GetOleDbSchemaTable(
+                            OleDbSchemaGuid.Columns,
+                            new object[] { null, null, nombreTabla, null });
+
+                    foreach (DataRow columnaRow in columnas.Rows)
+                    {
+                        if (columnaRow["COLUMN_NAME"].ToString()
+                            .Equals(columna,
+                                StringComparison.OrdinalIgnoreCase))
+                        {
+                            return nombreTabla;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            return "";
         }
 
 
