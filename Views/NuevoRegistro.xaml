@@ -116,7 +116,7 @@
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"/>
 
-                                    
+
                                     <!-- BOTÓN -->
                                     <ToggleButton Grid.ColumnSpan="2"
                                        Background="Transparent"
@@ -187,13 +187,13 @@
                 </Setter.Value>
             </Setter>
 
-            
 
-               
+
+
 
         </Style>
 
-        <!-- ── Estilo Item Combobox ── -->        
+        <!-- ── Estilo Item Combobox ── -->
 
         <Style TargetType="ComboBoxItem">
 
@@ -601,7 +601,7 @@
                                      Tag="Ej: 12-2024-00567"/>
                         </StackPanel>
 
-                       
+
                     </Grid>
 
                     <!-- ─── FILA 6: Tipo Audiencia | Hora Conclusión | Imputado ─── -->
@@ -673,7 +673,7 @@
                     </Grid>
                     <!-- Panel dinámico jueces extra -->
                     <StackPanel x:Name="PanelAudienciaExtra" Margin="0,8,0,0"/>
-                    
+
                     <!-- ─── FILA 6: Tipo Audiencia | Hora Conclusión | Imputado ─── -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
@@ -819,7 +819,7 @@
 
                         </StackPanel>
 
-                        
+
                     </Grid>
 
                     <!-- CAMPOS EXP -->
@@ -852,6 +852,27 @@
                         </StackPanel>
 
                     </StackPanel>
+
+                    <!-- ─── FILA 9: Modalidad de audiencia (aplica a C, CP, JO, EXP) ─── -->
+                    <Grid Margin="0,0,0,32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="¿Videoconferencia?" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox x:Name="CmbVideoconferencia"
+                                      Style="{StaticResource ComboStyle}"
+                                      SelectedIndex="0">
+                                <ComboBoxItem Content="No"/>
+                                <ComboBoxItem Content="Sí"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
 
                     <!-- ─── SEPARADOR ─── -->
                     <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,24"/>

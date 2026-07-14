@@ -77,7 +77,8 @@ namespace PoderJudicial.ViewModels
             string juzgado, string juez, string imputado,
             string delito, string agraviado, string sala,
             DateTime? horaConclusion, string noCausaJuicio,
-            int? totDiscos, string totDiscoAudiencia)
+            int? totDiscos, string totDiscoAudiencia,
+            bool esVideoconferencia = false)
         {
             return new Audiencia
             {
@@ -97,7 +98,7 @@ namespace PoderJudicial.ViewModels
                 HoraConclusion = horaConclusion,
                 NoCausaJuicio = noCausaJuicio,
                 Diferida = string.Empty,
-                QuienRealiza = SesionActual.Usuario,
+                QuienRealiza = ModalidadAudienciaHelper.ConstruirRegistro(SesionActual.Usuario, esVideoconferencia),
                 TotDiscos = totDiscos,
                 TipoDisco = "Archivo",
                 TotDiscoAudiencia = totDiscoAudiencia
@@ -111,7 +112,8 @@ namespace PoderJudicial.ViewModels
             string expedienteNumero, string causa,
             string tipoAudiencia, string horaTermino,
             string imputado, string delito,
-            string victima, string sala)
+            string victima, string sala,
+            bool esVideoconferencia = false)
         {
             return new Ejecucion
             {
@@ -127,7 +129,7 @@ namespace PoderJudicial.ViewModels
                 Delito = delito,
                 Victima = victima,
                 Sala = sala,
-                Observaciones = SesionActual.Usuario
+                Observaciones = ModalidadAudienciaHelper.ConstruirRegistro(SesionActual.Usuario, esVideoconferencia)
             };
         }
     }

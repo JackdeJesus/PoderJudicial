@@ -44,7 +44,8 @@ namespace PoderJudicial.Views
                     horaConclusion: ParsearHora(TxtHoraConclusion),
                     noCausaJuicio: UIHelper.ObtenerTexto(TxtNoCausaJuicio),
                     totDiscos: totalDiscos,
-                    totDiscoAudiencia: UIHelper.ObtenerValorComboOtro(CmbTotDiscoAudiencia, TxtTotDiscoAudienciaOtro)
+                    totDiscoAudiencia: UIHelper.ObtenerValorComboOtro(CmbTotDiscoAudiencia, TxtTotDiscoAudienciaOtro),
+                    esVideoconferencia: EsVideoconferencia()
                 );
 
                 VM.GuardarAudiencia(registro);
@@ -76,7 +77,8 @@ namespace PoderJudicial.Views
                     imputado: UIHelper.ObtenerTexto(TxtImputado),
                     delito: UIHelper.ObtenerTextosPanelDinamico(PanelDelitoExtra, TxtDelito),
                     victima: UIHelper.ObtenerTexto(TxtAgraviado),
-                    sala: UIHelper.ObtenerValorCombo(CmbSala)
+                    sala: UIHelper.ObtenerValorCombo(CmbSala),
+                    esVideoconferencia: EsVideoconferencia()
                 );
 
                 VM.GuardarEjecucion(expediente);
@@ -91,6 +93,10 @@ namespace PoderJudicial.Views
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        // ── Modalidad de audiencia (presencial / videoconferencia) ─
+        private bool EsVideoconferencia()
+            => UIHelper.ObtenerValorCombo(CmbVideoconferencia) == "Sí";
 
         // ── Parsers de fecha/hora ─────────────────────────
         private DateTime? ParsearFechaHora(TextBox txtFecha, TextBox txtHora, bool esRecibo = false)
@@ -118,6 +124,7 @@ namespace PoderJudicial.Views
             CmbSala.SelectedIndex = 1;
             CmbTipoCausa.SelectedIndex = 1;
             CmbTipoDisco.SelectedIndex = 0;
+            CmbVideoconferencia.SelectedIndex = 0;
 
             PanelJuecesExtra.Children.Clear();
             PanelDelitoExtra.Children.Clear();
