@@ -126,6 +126,10 @@ namespace PoderJudicial.Views
             CmbTipoDisco.SelectedIndex = 0;
             CmbVideoconferencia.SelectedIndex = 0;
 
+            _permitirLetrasNoCausa = false;
+            _permitirLetrasNUC = false;
+            _permitirLetrasExpediente = false;
+
             PanelJuecesExtra.Children.Clear();
             PanelDelitoExtra.Children.Clear();
             PanelAudienciaExtra.Children.Clear();
@@ -141,20 +145,61 @@ namespace PoderJudicial.Views
             if (!Validar(ValidationHelper.CampoVacio(TxtId),
                 "El campo 'Id' es obligatorio.")) return false;
 
+            // ── No. Causa / Causa ──────────────────────────
+            // Para EXP el mismo control representa "Causa" y puede
+            // quedar vacío, previa confirmación del usuario.
             string noCausa = UIHelper.ObtenerTexto(TxtNoCausa);
-            if (!Validar(!ValidationHelper.NumerosYDiagonal(noCausa),
-                "El campo 'No. Causa' solo permite números y '/'.")) return false;
+            bool causaOpcionalVacia = tipoCausa == "EXP" && string.IsNullOrWhiteSpace(noCausa);
 
-            if (!Validar(ValidationHelper.CampoVacio(TxtNoCausa),
-                "El campo 'No. Causa' es obligatorio.")) return false;
+            if (causaOpcionalVacia)
+            {
+                if (!ValidationHelper.ConfirmarCampoVacio("Causa")) return false;
+            }
+            else
+            {
+                if (!Validar(string.IsNullOrWhiteSpace(noCausa),
+                    "El campo 'No. Causa' es obligatorio.")) return false;
 
-            if (tipoCausa != "EXP" &&
-                !Validar(string.IsNullOrWhiteSpace(UIHelper.ObtenerTexto(TxtNUC)),
-                "El campo NUC es obligatorio.")) return false;
+                if (!Validar(!ValidationHelper.NumerosYDiagonalConExcepcion(noCausa, _permitirLetrasNoCausa),
+                    "El campo 'No. Causa' solo permite números y '/'.")) return false;
+            }
 
-            var juzgadoItem = CmbJuzgado.SelectedItem as ComboBoxItem;
-            if (!Validar(juzgadoItem == null || juzgadoItem.Content.ToString() == "Seleccione juzgado",
-                "El campo 'Juzgado' es obligatorio.")) return false;
+            // ── NUC (no aplica a EXP) ──────────────────────
+            if (tipoCausa != "EXP")
+            {
+                string nuc = UIHelper.ObtenerTexto(TxtNUC);
+
+                if (!Validar(string.IsNullOrWhiteSpace(nuc),
+                    "El campo NUC es obligatorio.")) return false;
+
+                if (!Validar(!ValidationHelper.NumerosYGuionConExcepcion(nuc, _permitirLetrasNUC),
+                    "El campo 'NUC' solo permite números y '-'.")) return false;
+            }
+
+            // ── Expediente (solo EXP) ───────────────────────
+            if (tipoCausa == "EXP")
+            {
+                string expediente = UIHelper.ObtenerTexto(TxtExpediente);
+
+                if (!Validar(string.IsNullOrWhiteSpace(expediente),
+                    "El campo 'Expediente' es obligatorio.")) return false;
+
+                if (!Validar(!ValidationHelper.NumerosYDiagonalConExcepcion(expediente, _permitirLetrasExpediente),
+                    "El campo 'Expediente' solo permite números y '/'.")) return false;
+            }
+
+            // ── Juzgado (no aplica a EXP: Ejecución no guarda juzgado) ─
+            if (tipoCausa != "EXP")
+            {
+                var juzgadoItem = CmbJuzgado.SelectedItem as ComboBoxItem;
+                if (!Validar(juzgadoItem == null || juzgadoItem.Content.ToString() == "Seleccione juzgado",
+                    "El campo 'Juzgado' es obligatorio.")) return false;
+            }
+
+            // ── Sala ────────────────────────────────────────
+            var salaItem = CmbSala.SelectedItem as ComboBoxItem;
+            if (!Validar(salaItem == null || salaItem.Content.ToString() == "Seleccione sala",
+                "El campo 'Sala' es obligatorio.")) return false;
 
             if (!Validar(!ValidationHelper.FechaValida(UIHelper.ObtenerTexto(TxtFechaAudiencia)),
                 "La fecha de audiencia no es válida.")) return false;

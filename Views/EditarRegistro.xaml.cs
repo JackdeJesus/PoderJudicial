@@ -1,5 +1,5 @@
-﻿
-using PoderJudicial.Data;
+﻿using PoderJudicial.Data;
+using PoderJudicial.Helpers;
 using PoderJudicial.Models;
 using System;
 using System.Globalization;
@@ -178,6 +178,8 @@ namespace PoderJudicial.Views
         // ══════════════════════════════════════════════
         private void BtnActualizar_Click(object sender, RoutedEventArgs e)
         {
+            if (!ValidarFormulario()) return;
+
             // ── Fecha Audiencia ──
             if (DateTime.TryParseExact(
                     TxtFechaAudiencia.Text.Trim() + " " + TxtHoraAudiencia.Text.Trim(),
@@ -257,6 +259,84 @@ namespace PoderJudicial.Views
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
+        }
+
+        // ══════════════════════════════════════════════
+        //  VALIDACIONES (mismas reglas que NuevoRegistro)
+        // ══════════════════════════════════════════════
+        private bool _permitirLetrasNoCausa = false;
+        private bool _permitirLetrasNUC = false;
+
+        private bool ValidarFormulario()
+        {
+            string tipoCausa = (CmbTipoCausa.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+            string noCausa = TxtNoCausa.Text.Trim();
+            if (!Validar(string.IsNullOrWhiteSpace(noCausa),
+                "El campo 'No. Causa' es obligatorio.")) return false;
+
+            if (!Validar(!ValidationHelper.NumerosYDiagonalConExcepcion(noCausa, _permitirLetrasNoCausa),
+                "El campo 'No. Causa' solo permite números y '/'.")) return false;
+
+            string nuc = TxtNUC.Text.Trim();
+            if (!Validar(string.IsNullOrWhiteSpace(nuc),
+                "El campo NUC es obligatorio.")) return false;
+
+            if (!Validar(!ValidationHelper.NumerosYGuionConExcepcion(nuc, _permitirLetrasNUC),
+                "El campo 'NUC' solo permite números y '-'.")) return false;
+
+            var juzgadoItem = CmbJuzgado.SelectedItem as ComboBoxItem;
+            if (!Validar(juzgadoItem == null || juzgadoItem.Content.ToString() == "Seleccione juzgado",
+                "El campo 'Juzgado' es obligatorio.")) return false;
+
+            if (!Validar(!ValidationHelper.FechaValida(TxtFechaAudiencia.Text.Trim()),
+                "La fecha de audiencia no es válida.")) return false;
+
+            if (!Validar(!ValidationHelper.HoraValida(TxtHoraAudiencia.Text.Trim()),
+                "La hora de audiencia no es válida.")) return false;
+
+            if (!Validar(!ValidationHelper.HoraValida(TxtHoraConclusion.Text.Trim()),
+                "La hora de conclusión no es válida.")) return false;
+
+            string juez = RecolectarValoresPanel(txtJuez.Text, PanelJuecesExtra);
+            if (!Validar(string.IsNullOrWhiteSpace(juez),
+                "Debe capturar al menos un juez.")) return false;
+
+            string audiencia = RecolectarValoresPanel(TxtTipoAudiencia.Text, PanelAudienciaExtra);
+            if (!Validar(string.IsNullOrWhiteSpace(audiencia),
+                "El tipo de audiencia es obligatorio.")) return false;
+
+            if (tipoCausa != "CP")
+            {
+                if (!Validar(string.IsNullOrWhiteSpace(TxtImputado.Text),
+                    "El imputado es obligatorio.")) return false;
+
+                string delito = RecolectarValoresPanel(TxtDelito.Text, PanelDelitoExtra);
+                if (!Validar(string.IsNullOrWhiteSpace(delito),
+                    "El delito es obligatorio.")) return false;
+
+                if (!Validar(string.IsNullOrWhiteSpace(TxtAgraviado.Text),
+                    "El agraviado es obligatorio.")) return false;
+            }
+
+            if (tipoCausa == "JO")
+            {
+                string noCausaJuicio = TxtNoCausaJuicio.Text.Trim();
+                if (!Validar(string.IsNullOrWhiteSpace(noCausaJuicio),
+                    "El No. Causa Juicio es obligatorio para JO.")) return false;
+
+                if (!Validar(!ValidationHelper.NumerosYDiagonal(noCausaJuicio),
+                    "No. Causa Juicio solo permite números y '/'.")) return false;
+            }
+
+            return true;
+        }
+
+        private static bool Validar(bool condicion, string mensaje)
+        {
+            if (!condicion) return true;
+            MessageBox.Show(mensaje, "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return false;
         }
 
         // ══════════════════════════════════════════════
@@ -458,6 +538,17 @@ namespace PoderJudicial.Views
             foreach (var item in filtro) lista.Items.Add(item);
             lista.Visibility = Visibility.Visible;
         }
+
+        // ══════════════════════════════════════════════
+        //  ENTRADA RESTRINGIDA: No. Causa / NUC (con excepción de letras)
+        // ══════════════════════════════════════════════
+        private void NoCausa_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '/',
+                ref _permitirLetrasNoCausa, "No. Causa");
+
+        private void NUC_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '-',
+                ref _permitirLetrasNUC, "NUC");
 
         // ══════════════════════════════════════════════
         //  FORMATO HORA (HH:mm auto-formato)

@@ -304,7 +304,7 @@
                                 <ComboBoxItem Content="Seleccione tipo"/>
                                 <ComboBoxItem Content="Copia Simple"/>
                                 <ComboBoxItem Content="Copia Autentica"/>
-                               
+
                             </ComboBox>
                         </StackPanel>
 
@@ -334,6 +334,7 @@
                             <TextBlock Text="NUC" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtNUC"
                                      Style="{StaticResource InputStyle}"
+                                     PreviewTextInput="NUC_PreviewTextInput"
                                      Tag="Ej: 12-2024-00567"/>
                         </StackPanel>
 

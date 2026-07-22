@@ -85,7 +85,7 @@ namespace PoderJudicial.Views
             TxtFeRecibo.Text = ahora.ToString("dd/MM/yyyy");
         }
 
-       
+
         //  PLACEHOLDERS
 
         private void RegistrarPlaceholders()
@@ -95,13 +95,13 @@ namespace PoderJudicial.Views
             PlaceholderHelper.AddPlaceholder(TxtFeRecibo, "dd/MM/yyyy");
             PlaceholderHelper.AddPlaceholder(TxtNoCausa, "Ej: 123/2024");
             PlaceholderHelper.AddPlaceholder(TxtNUC, "Ej: 12-2024-00567");
-            
+
             PlaceholderHelper.AddPlaceholder(TxtAQuienSeEntrega, "Nombre de quien recibe");
             PlaceholderHelper.AddPlaceholder(TxtObservaciones, "Escriba observaciones adicionales...");
         }
 
         //  FORMATO FECHA AUDIENCIA
-        
+
         private void TxtFeAudiencia_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox txt = (TextBox)sender;
@@ -119,9 +119,9 @@ namespace PoderJudicial.Views
             txt.CaretIndex = txt.Text.Length;
         }
 
-        
+
         //  TIPO CAUSA → visibilidad de controles
-        
+
         private void CmbTipoCausa_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // No hacer nada si la UI aún no cargó
@@ -134,15 +134,21 @@ namespace PoderJudicial.Views
         private void SoloNumeros_PreviewTextInput(object sender, TextCompositionEventArgs e)
             => e.Handled = !e.Text.All(char.IsDigit);
 
+        // ── Excepción por registro: permitir letras si el usuario lo confirma ─
+        private bool _permitirLetrasNoCausa = false;
+        private bool _permitirLetrasNUC = false;
+
         private void NoCausa_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            char c = e.Text.FirstOrDefault();
-            e.Handled = !(char.IsDigit(c) || c == '/');
-        }
+            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '/',
+                ref _permitirLetrasNoCausa, "No. Causa");
+
+        private void NUC_PreviewTextInput(object sender, TextCompositionEventArgs e)
+            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '-',
+                ref _permitirLetrasNUC, "NUC");
 
         //  GUARDAR
-        
-      
+
+
         private void BtnGuardar_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidarFormulario())
@@ -191,10 +197,10 @@ namespace PoderJudicial.Views
             int? etiquetas = null;
             string etqTexto = ObtenerValorCombo(CmbEtiquetasEntregadas);
             if (!string.IsNullOrWhiteSpace(etqTexto))
-            { 
+            {
                 string etqStr = etqTexto.Split(' ')[0];
-            if (int.TryParse(etqStr, out int etq))
-                etiquetas = etq;
+                if (int.TryParse(etqStr, out int etq))
+                    etiquetas = etq;
             }
             // ── Construir modelo ───────────────────────────
             var registro = new RegistroCopia
@@ -232,7 +238,7 @@ namespace PoderJudicial.Views
 
                 LimpiarFormulario();
                 CargarIdVisual();
-               
+
             }
             catch (Exception ex)
             {
@@ -270,7 +276,7 @@ namespace PoderJudicial.Views
                 return false;
             }
 
-           
+
 
             // No. Causa
             string noCausa = ObtenerTexto(TxtNoCausa);
@@ -279,16 +285,22 @@ namespace PoderJudicial.Views
                 Alerta("El campo 'No. Causa' es obligatorio.");
                 return false;
             }
-            if (!ValidationHelper.NumerosYDiagonal(noCausa))
+            if (!ValidationHelper.NumerosYDiagonalConExcepcion(noCausa, _permitirLetrasNoCausa))
             {
                 Alerta("El campo 'No. Causa' solo permite números y '/'.");
                 return false;
             }
 
             // NUC
-            if (string.IsNullOrWhiteSpace(ObtenerTexto(TxtNUC)))
+            string nuc = ObtenerTexto(TxtNUC);
+            if (string.IsNullOrWhiteSpace(nuc))
             {
                 Alerta("El campo 'NUC' es obligatorio.");
+                return false;
+            }
+            if (!ValidationHelper.NumerosYGuionConExcepcion(nuc, _permitirLetrasNUC))
+            {
+                Alerta("El campo 'NUC' solo permite números y '-'.");
                 return false;
             }
 
@@ -326,21 +338,24 @@ namespace PoderJudicial.Views
         {
             TxtId.Text = string.Empty;
             TxtFeAudiencia.Text = string.Empty;
-            
+
             TxtNoCausa.Text = string.Empty;
             TxtNUC.Text = string.Empty;
             TxtAQuienSeEntrega.Text = string.Empty;
             TxtObservaciones.Text = string.Empty;
             CmbTipoDisco.SelectedIndex = 0;
             CmbTotDiscosEntregados.SelectedIndex = 0;
-            
+
             CmbTipoCausa.SelectedIndex = 0;
             CmbDiscosExternos.SelectedIndex = 0;
             CmbEtiquetasEntregadas.SelectedIndex = 0;
 
+            _permitirLetrasNoCausa = false;
+            _permitirLetrasNUC = false;
+
             RegistrarPlaceholders();
 
-            
+
         }
 
         // ──────────────────────────────────────────

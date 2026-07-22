@@ -576,6 +576,7 @@
                             <TextBlock Text="No. Causa" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtNoCausa"
                                      Style="{StaticResource InputStyle}"
+                                     PreviewTextInput="NoCausa_PreviewTextInput"
                                      Tag="Ej: 123/2024"/>
                         </StackPanel>
 
@@ -583,6 +584,7 @@
                             <TextBlock Text="NUC" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtNUC"
                                      Style="{StaticResource InputStyle}"
+                                     PreviewTextInput="NUC_PreviewTextInput"
                                      Tag="Ej: 12-2024-00567"/>
                         </StackPanel>
 

@@ -598,6 +598,7 @@
                             <TextBlock Text="NUC" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtNUC"
                                      Style="{StaticResource InputStyle}"
+                                     PreviewTextInput="NUC_PreviewTextInput"
                                      Tag="Ej: 12-2024-00567"/>
                         </StackPanel>
 
@@ -791,7 +792,10 @@
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
-                            <TextBlock Text="Sala" Style="{StaticResource LabelStyle}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Sala" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text=" *" Foreground="#EF4444" FontWeight="Bold" Margin="0,0,0,6"/>
+                            </StackPanel>
                             <ComboBox x:Name="CmbSala" Style="{StaticResource ComboStyle}"
                                       SelectedIndex="0">
                                 <ComboBoxItem Content="Seleccione sala"/>
@@ -834,7 +838,8 @@
                    Style="{StaticResource LabelStyle}"/>
 
                             <TextBox x:Name="TxtExpediente"
-                 Style="{StaticResource InputStyle}"/>
+                 Style="{StaticResource InputStyle}"
+                 PreviewTextInput="Expediente_PreviewTextInput"/>
                         </StackPanel>
 
                         <!-- OBSERVACIONES -->
