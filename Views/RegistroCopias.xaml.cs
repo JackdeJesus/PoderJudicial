@@ -91,60 +91,40 @@ namespace PoderJudicial.Views
         private void RegistrarPlaceholders()
         {
             PlaceholderHelper.AddPlaceholder(TxtId);
-            PlaceholderHelper.AddPlaceholder(TxtFeAudiencia, "dd/MM/yyyy");
+            PlaceholderHelper.AddPlaceholder(TxtFeAudiencia, "Se completa según No. Causa");
             PlaceholderHelper.AddPlaceholder(TxtFeRecibo, "dd/MM/yyyy");
             PlaceholderHelper.AddPlaceholder(TxtNoCausa, "Ej: 123/2024");
-            PlaceholderHelper.AddPlaceholder(TxtNUC, "Ej: 12-2024-00567");
+            PlaceholderHelper.AddPlaceholder(TxtNUC, "Se completa según No. Causa");
+            PlaceholderHelper.AddPlaceholder(TxtTipoCausa, "Se completa según No. Causa");
 
             PlaceholderHelper.AddPlaceholder(TxtAQuienSeEntrega, "Nombre de quien recibe");
             PlaceholderHelper.AddPlaceholder(TxtObservaciones, "Escriba observaciones adicionales...");
         }
 
-        //  FORMATO FECHA AUDIENCIA
-
-        private void TxtFeAudiencia_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox txt = (TextBox)sender;
-
-            if (PlaceholderHelper.IsPlaceholder(txt))
-                return;
-
-            string numeros = new string(
-                txt.Text.Where(char.IsDigit).ToArray());
-
-            if (numeros.Length != 8)
-                return;
-
-            txt.Text = numeros.Insert(2, "/").Insert(5, "/");
-            txt.CaretIndex = txt.Text.Length;
-        }
-
-
-        //  TIPO CAUSA → visibilidad de controles
-
-        private void CmbTipoCausa_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // No hacer nada si la UI aún no cargó
-            if (!IsLoaded) return;
-        }
-
-        // ──────────────────────────────────────────
-        //  SOLO NÚMEROS
-        // ──────────────────────────────────────────
-        private void SoloNumeros_PreviewTextInput(object sender, TextCompositionEventArgs e)
-            => e.Handled = !e.Text.All(char.IsDigit);
-
         // ── Excepción por registro: permitir letras si el usuario lo confirma ─
         private bool _permitirLetrasNoCausa = false;
-        private bool _permitirLetrasNUC = false;
 
         private void NoCausa_PreviewTextInput(object sender, TextCompositionEventArgs e)
             => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '/',
                 ref _permitirLetrasNoCausa, "No. Causa");
 
-        private void NUC_PreviewTextInput(object sender, TextCompositionEventArgs e)
-            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '-',
-                ref _permitirLetrasNUC, "NUC");
+        // ── Autocomplete "A quien se entrega" (misma infraestructura que
+        //    Delito/Juez/Tipo Audiencia en Nueva Audiencia) ─────────────
+        private void TxtAQuienSeEntrega_TextChanged(object sender, TextChangedEventArgs e)
+            => AutocompleteHelper.FiltrarDesdeSender(sender, _vm.AQuienSeEntregaHistorial);
+
+        private void TxtAutocomplete_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            TextBox txt = (TextBox)sender;
+            ListBox lst = ((StackPanel)txt.Parent).Children.OfType<ListBox>().First();
+            AutocompleteHelper.ManejarTecladoTextBox(txt, lst, e);
+        }
+
+        private void lstAutocomplete_PreviewKeyDown(object sender, KeyEventArgs e)
+            => AutocompleteHelper.ManejarTecladoListBox((ListBox)sender, e);
+
+        private void lstAutocomplete_MouseClick(object sender, MouseButtonEventArgs e)
+            => AutocompleteHelper.ManejarClickMouse((ListBox)sender);
 
         //  GUARDAR
 
@@ -212,7 +192,7 @@ namespace PoderJudicial.Views
                 TipoDisco = ObtenerValorCombo(CmbTipoDisco),
                 NoCausa = ObtenerTexto(TxtNoCausa),
                 NUC = ObtenerTexto(TxtNUC),
-                TipoCausa = ObtenerValorCombo(CmbTipoCausa),
+                TipoCausa = ObtenerTexto(TxtTipoCausa),
 
                 DiscosExternos =
         ObtenerValorCombo(CmbDiscosExternos),
@@ -262,10 +242,10 @@ namespace PoderJudicial.Views
                 return false;
             }
 
-            // Fecha Audiencia
+            // Fecha Audiencia (autocompletada desde No. Causa)
             if (!ValidationHelper.FechaValida(ObtenerTexto(TxtFeAudiencia)))
             {
-                Alerta("La fecha de audiencia no es válida (dd/MM/yyyy).");
+                Alerta("La fecha de audiencia no pudo determinarse; verifique el No. Causa capturado.");
                 return false;
             }
 
@@ -291,14 +271,15 @@ namespace PoderJudicial.Views
                 return false;
             }
 
-            // NUC
+            // NUC (autocompletado desde No. Causa; validado igual que antes,
+            // pero sin excepción de letras porque el usuario ya no lo captura a mano)
             string nuc = ObtenerTexto(TxtNUC);
             if (string.IsNullOrWhiteSpace(nuc))
             {
-                Alerta("El campo 'NUC' es obligatorio.");
+                Alerta("El campo 'NUC' no pudo determinarse; verifique el No. Causa capturado.");
                 return false;
             }
-            if (!ValidationHelper.NumerosYGuionConExcepcion(nuc, _permitirLetrasNUC))
+            if (!ValidationHelper.NumerosYGuion(nuc))
             {
                 Alerta("El campo 'NUC' solo permite números y '-'.");
                 return false;
@@ -310,10 +291,10 @@ namespace PoderJudicial.Views
                 return false;
             }
 
-            // Tipo Causa
-            if (CmbTipoCausa.SelectedIndex == 0)
+            // Tipo Causa (autocompletado desde No. Causa)
+            if (string.IsNullOrWhiteSpace(ObtenerTexto(TxtTipoCausa)))
             {
-                Alerta("Debe seleccionar el tipo de causa.");
+                Alerta("El campo 'Tipo Causa' no pudo determinarse; verifique el No. Causa capturado.");
                 return false;
             }
 
@@ -341,17 +322,16 @@ namespace PoderJudicial.Views
 
             TxtNoCausa.Text = string.Empty;
             TxtNUC.Text = string.Empty;
+            TxtTipoCausa.Text = string.Empty;
             TxtAQuienSeEntrega.Text = string.Empty;
             TxtObservaciones.Text = string.Empty;
             CmbTipoDisco.SelectedIndex = 0;
             CmbTotDiscosEntregados.SelectedIndex = 0;
 
-            CmbTipoCausa.SelectedIndex = 0;
             CmbDiscosExternos.SelectedIndex = 0;
             CmbEtiquetasEntregadas.SelectedIndex = 0;
 
             _permitirLetrasNoCausa = false;
-            _permitirLetrasNUC = false;
 
             RegistrarPlaceholders();
 
@@ -372,7 +352,7 @@ namespace PoderJudicial.Views
             {
                 "dd/MM/yyyy",
                 "Ej: 123/2024",
-                "Ej: 12-2024-00567",
+                "Se completa según No. Causa",
                 "Nombre de quien recibe",
                 "Escriba observaciones adicionales..."
             };
@@ -405,14 +385,26 @@ namespace PoderJudicial.Views
 
             string nuc =
                 new AudienciaData()
-                    .ObtenerNUCPorNoCausa(causa);
+                    .ObtenerDatosPorNoCausa(causa, out string tipoCausa, out DateTime? fechaAudiencia);
+
+            var brushNormal = (Brush)Application.Current.Resources["PrimaryTextBrush"];
 
             if (!string.IsNullOrWhiteSpace(nuc))
             {
                 TxtNUC.Text = nuc;
+                TxtNUC.Foreground = brushNormal;
+            }
 
-                TxtNUC.Foreground =
-                    (Brush)Application.Current.Resources["PrimaryTextBrush"];
+            if (!string.IsNullOrWhiteSpace(tipoCausa))
+            {
+                TxtTipoCausa.Text = tipoCausa;
+                TxtTipoCausa.Foreground = brushNormal;
+            }
+
+            if (fechaAudiencia.HasValue)
+            {
+                TxtFeAudiencia.Text = fechaAudiencia.Value.ToString("dd/MM/yyyy");
+                TxtFeAudiencia.Foreground = brushNormal;
             }
         }
 

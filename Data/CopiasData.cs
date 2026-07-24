@@ -1,5 +1,6 @@
 ﻿using PoderJudicial.Models;
 using System;
+using System.Collections.Generic;
 using System.Data.OleDb;
 
 namespace PoderJudicial.Data
@@ -99,6 +100,39 @@ VALUES
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        /// <summary>
+        /// Valores distintos ya capturados en la columna "A quien se entrega"
+        /// (CopiasAudiencias), usados como fuente del autocompletado del
+        /// campo del mismo nombre — misma infraestructura que Jueces/Delito.
+        /// </summary>
+        public List<string> ObtenerValoresAQuienSeEntrega()
+        {
+            var lista = new List<string>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string sql = @"
+SELECT DISTINCT [A quien se entraga]
+FROM CopiasAudiencias
+WHERE [A quien se entraga] IS NOT NULL";
+
+                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
+                using (OleDbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string valor = reader[0]?.ToString();
+                        if (!string.IsNullOrWhiteSpace(valor))
+                            lista.Add(valor);
+                    }
+                }
+            }
+
+            return lista;
         }
     }
 }

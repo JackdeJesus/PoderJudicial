@@ -1,11 +1,20 @@
-﻿using System.ComponentModel;
+﻿using PoderJudicial.Data;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace PoderJudicial.ViewModels
 {
     public class RegistroCopiasViewModel : INotifyPropertyChanged
     {
-        
+        // ── Historial para autocomplete de "A quien se entrega" ──
+        public List<string> AQuienSeEntregaHistorial { get; private set; }
+
+        public RegistroCopiasViewModel()
+        {
+            AQuienSeEntregaHistorial = new CopiasData().ObtenerValoresAQuienSeEntrega();
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
