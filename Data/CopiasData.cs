@@ -134,5 +134,58 @@ WHERE [A quien se entraga] IS NOT NULL";
 
             return lista;
         }
+        /// <summary>
+        /// Obtiene un registro completo de "Registro de Copias" por Id,
+        /// usado por "Ver Detalle" en Consulta de Registros.
+        /// </summary>
+        public RegistroCopia ObtenerCopiaPorId(int id)
+        {
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string sql = "SELECT * FROM CopiasAudiencias WHERE Id = ?";
+
+                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("?", id);
+
+                    using (OleDbDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new RegistroCopia
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+
+                                FeAudiencia =
+                                    DateTime.TryParse(reader["FeAudiencia"]?.ToString(), out DateTime feA)
+                                        ? feA : (DateTime?)null,
+
+                                FeRecibo =
+                                    DateTime.TryParse(reader["FeRecibo"]?.ToString(), out DateTime feR)
+                                        ? feR : (DateTime?)null,
+
+                                TotDiscosEntregados =
+                                    int.TryParse(reader["TotDiscosEntregados"]?.ToString(), out int tot)
+                                        ? tot : (int?)null,
+
+                                TipoDisco = reader["TipoDisco"]?.ToString() ?? "",
+                                NoCausa = reader["NoCausa"]?.ToString() ?? "",
+                                NUC = reader["NUC"]?.ToString() ?? "",
+                                TipoCausa = reader["TipoCausa"]?.ToString() ?? "",
+                                DiscosExternos = reader["DiscosExternos"]?.ToString() ?? "",
+                                EtiquetasEntregadas = reader["Etiquetas entregadas"]?.ToString() ?? "",
+                                AQuienSeEntrega = reader["A quien se entraga"]?.ToString() ?? "",
+                                Observaciones = reader["Observaciones"]?.ToString() ?? "",
+                                QuienRegistra = reader["Quien Realiza"]?.ToString() ?? ""
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

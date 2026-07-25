@@ -73,7 +73,7 @@ VALUES
                     cmd.Parameters.AddWithValue(
                         "?", ejecucion.Sala);
 
-                    
+
 
                     cmd.Parameters.AddWithValue(
                         "?", ejecucion.Observaciones);
@@ -112,6 +112,54 @@ VALUES
         }
 
 
+
+        public Ejecucion ObtenerEjecucionPorId(int id)
+        {
+            using (OleDbConnection conn =
+                Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query =
+                    "SELECT * FROM Ejecucion WHERE Id = ?";
+
+                using (OleDbCommand cmd =
+                    new OleDbCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("?", id);
+
+                    using (OleDbDataReader reader =
+                        cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Ejecucion
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+
+                                FechaAudiencia =
+                                    DateTime.TryParse(reader["FechaAudiencia"]?.ToString(), out DateTime fecha)
+                                        ? fecha : (DateTime?)null,
+
+                                TotalDiscos = reader["TotalDiscos"]?.ToString(),
+                                Juez = reader["Juez"]?.ToString(),
+                                ExpedienteNumero = reader["Expediente"]?.ToString(),
+                                Causa = reader["Causa"]?.ToString(),
+                                TipoAudiencia = reader["TipoAudiencia"]?.ToString(),
+                                HoraTermino = reader["HoraTermino"]?.ToString(),
+                                Imputado = reader["Imputado"]?.ToString(),
+                                Delito = reader["Delito"]?.ToString(),
+                                Victima = reader["Victima"]?.ToString(),
+                                Sala = reader["Sala"]?.ToString(),
+                                Observaciones = reader["Observaciones"]?.ToString()
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
 
         public List<Ejecucion> ObtenerEjecuciones()
         {

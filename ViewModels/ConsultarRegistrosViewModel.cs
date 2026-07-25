@@ -14,7 +14,7 @@ namespace PoderJudicial.ViewModels
 {
     public class ConsultarRegistrosViewModel : BaseViewModel
     {
-        
+
         private List<Audiencia> _listaCompleta = new List<Audiencia>();
         private DispatcherTimer _reloj;
         private string _tablaActual;
@@ -82,9 +82,9 @@ namespace PoderJudicial.ViewModels
             set { _fecha = value; OnPropertyChanged(); }
         }
 
-      
+
         //  COMANDOS
-      
+
         public ICommand VerCommand { get; }
         public ICommand EditarCommand { get; }
         public ICommand EliminarCommand { get; }
@@ -128,9 +128,9 @@ namespace PoderJudicial.ViewModels
             Fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
         }
 
-        
+
         //  DATOS
-       
+
         private void CargarDatos()
         {
             try
@@ -176,7 +176,7 @@ namespace PoderJudicial.ViewModels
         private void CargarSugerencias()
         {
             Sugerencias = _listaCompleta.SelectMany(x => new[] {x.NoCausa, x.NUC, x.Imputado,x.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm")
-                }).Where(x => !string.IsNullOrWhiteSpace(x)) .Distinct().ToList();
+                }).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
         }
 
 
@@ -351,74 +351,140 @@ namespace PoderJudicial.ViewModels
 
         //  ACCIONES
 
+        // Nombres de tabla reales usados por EjecucionData/CopiasData
+        // (a diferencia de las tablas "Audiencias*", estos dos son fijos).
+        private const string TablaEjecucion = "Ejecucion";
+        private const string TablaCopias = "CopiasAudiencias";
+
         private void EjecutarVer(object param)
         {
-            if (param is Audiencia audiencia)
+            if (param is not Audiencia audiencia) return;
+
+            try
             {
-                try
+                // El tipo de registro seleccionado se determina por la tabla
+                // desde la que se cargó la consulta (_tablaActual), no por el
+                // tipo en tiempo de compilación del objeto (todas las tablas
+                // se leen hoy a través de un mismo modelo "Audiencia" con
+                // columnas tolerantes — ver AudienciaData.MapearDesdeReader).
+                if (_tablaActual == TablaEjecucion)
                 {
-                    AudienciaData data = new AudienciaData();
-                    Audiencia detalle =
-     data.ObtenerAudienciaPorId(
-         audiencia.Id,
-         _tablaActual);
-
-                    if (detalle != null)
-                    {
-                        VerDetalleRegistro ventana = new VerDetalleRegistro();
-                        ventana.CargarDatos(
-    Id: detalle.Id.ToString(),
-
-    noCausa: detalle.NoCausa,
-    nuc: detalle.NUC,
-
-    fechaAudiencia:
-        detalle.FechaAudiencia?
-        .ToString("dd/MM/yyyy HH:mm") ?? "",
-
-    fechaRecibo:
-        detalle.FechaRecibo?
-        .ToString("dd/MM/yyyy HH:mm") ?? "",
-
-    horaConclusion:
-        detalle.HoraConclusion?
-        .ToString("HH:mm") ?? "",
-
-    tipoAudiencia: detalle.TipoAudiencia,
-    tipoCausa: detalle.TipoCausa,
-    juzgado: detalle.Juzgado,
-    juez: detalle.Juez,
-    sala: detalle.Sala,
-
-    totalDiscos:
-        detalle.TotDiscos?
-        .ToString() ?? "",
-
-    tipoDisco: detalle.TipoDisco,
-
-    totalDiscoAudiencia:
-        detalle.TotDiscoAudiencia,
-
-    imputado: detalle.Imputado,
-    delito: detalle.Delito,
-    agraviado: detalle.Agraviado,
-    noCausaJuicio: detalle.NoCausaJuicio,
-    diferida: detalle.Diferida,
-    quienRealiza: detalle.QuienRealiza
-);
-                        ventana.ShowDialog();
-                    }
-                    else
-                    {
-                        MessageBox.Show("No se encontró el registro.", "Aviso",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
+                    MostrarDetalleEjecucion(audiencia.Id);
                 }
-                catch (Exception ex)
+                else if (_tablaActual == TablaCopias)
                 {
-                    MessageBox.Show("Error al cargar detalle: " + ex.Message);
+                    MostrarDetalleCopias(audiencia.Id);
+                }
+                else
+                {
+                    MostrarDetalleAudiencia(audiencia);
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar detalle: " + ex.Message);
+            }
+        }
+
+        private void MostrarDetalleAudiencia(Audiencia audiencia)
+        {
+            AudienciaData data = new AudienciaData();
+            Audiencia detalle =
+                data.ObtenerAudienciaPorId(audiencia.Id, _tablaActual);
+
+            if (detalle == null)
+            {
+                MessageBox.Show("No se encontró el registro.", "Aviso",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            VerDetalleRegistro ventana = new VerDetalleRegistro();
+            ventana.CargarDatos(
+                Id: detalle.Id.ToString(),
+                noCausa: detalle.NoCausa,
+                nuc: detalle.NUC,
+                fechaAudiencia: detalle.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm") ?? "",
+                fechaRecibo: detalle.FechaRecibo?.ToString("dd/MM/yyyy HH:mm") ?? "",
+                horaConclusion: detalle.HoraConclusion?.ToString("HH:mm") ?? "",
+                tipoAudiencia: detalle.TipoAudiencia,
+                tipoCausa: detalle.TipoCausa,
+                juzgado: detalle.Juzgado,
+                juez: detalle.Juez,
+                sala: detalle.Sala,
+                totalDiscos: detalle.TotDiscos?.ToString() ?? "",
+                tipoDisco: detalle.TipoDisco,
+                totalDiscoAudiencia: detalle.TotDiscoAudiencia,
+                imputado: detalle.Imputado,
+                delito: detalle.Delito,
+                agraviado: detalle.Agraviado,
+                noCausaJuicio: detalle.NoCausaJuicio,
+                diferida: detalle.Diferida,
+                quienRealiza: detalle.QuienRealiza
+            );
+            ventana.ShowDialog();
+        }
+
+        private void MostrarDetalleEjecucion(int id)
+        {
+            EjecucionData data = new EjecucionData();
+            Ejecucion detalle = data.ObtenerEjecucionPorId(id);
+
+            if (detalle == null)
+            {
+                MessageBox.Show("No se encontró el registro.", "Aviso",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            VerDetalleEjecucion ventana = new VerDetalleEjecucion();
+            ventana.CargarDatos(
+                id: detalle.Id.ToString(),
+                expediente: detalle.ExpedienteNumero,
+                causa: detalle.Causa,
+                fechaAudiencia: detalle.FechaAudiencia?.ToString("dd/MM/yyyy") ?? "",
+                tipoAudiencia: detalle.TipoAudiencia,
+                horaTermino: detalle.HoraTermino,
+                juez: detalle.Juez,
+                sala: detalle.Sala,
+                imputado: detalle.Imputado,
+                delito: detalle.Delito,
+                victima: detalle.Victima,
+                totalDiscos: detalle.TotalDiscos,
+                observaciones: detalle.Observaciones
+            );
+            ventana.ShowDialog();
+        }
+
+        private void MostrarDetalleCopias(int id)
+        {
+            CopiasData data = new CopiasData();
+            RegistroCopia detalle = data.ObtenerCopiaPorId(id);
+
+            if (detalle == null)
+            {
+                MessageBox.Show("No se encontró el registro.", "Aviso",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            VerDetalleCopias ventana = new VerDetalleCopias();
+            ventana.CargarDatos(
+                id: detalle.Id.ToString(),
+                noCausa: detalle.NoCausa,
+                nuc: detalle.NUC,
+                tipoCausa: detalle.TipoCausa,
+                fechaAudiencia: detalle.FeAudiencia?.ToString("dd/MM/yyyy") ?? "",
+                fechaRecibo: detalle.FeRecibo?.ToString("dd/MM/yyyy") ?? "",
+                totalDiscosEntregados: detalle.TotDiscosEntregados?.ToString() ?? "",
+                tipoDisco: detalle.TipoDisco,
+                discosExternos: detalle.DiscosExternos,
+                etiquetasEntregadas: detalle.EtiquetasEntregadas,
+                aQuienSeEntrega: detalle.AQuienSeEntrega,
+                quienRegistra: detalle.QuienRegistra,
+                observaciones: detalle.Observaciones
+            );
+            ventana.ShowDialog();
         }
 
 
