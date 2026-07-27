@@ -34,6 +34,48 @@ namespace PoderJudicial.Data
             }
         }
 
+        /// <summary>Actualiza un registro existente (modo edición).</summary>
+        public void Actualizar(RegistroCopia registro)
+        {
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string sql = @"
+UPDATE CopiasAudiencias SET
+    FeAudiencia            = ?,
+    FeRecibo               = ?,
+    TotDiscosEntregados    = ?,
+    TipoDisco              = ?,
+    NoCausa                = ?,
+    NUC                    = ?,
+    TipoCausa              = ?,
+    DiscosExternos         = ?,
+    [Etiquetas entregadas] = ?,
+    [A quien se entraga]   = ?,
+    Observaciones          = ?
+WHERE Id = ?";
+
+                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("?", registro.FeAudiencia.HasValue ? (object)registro.FeAudiencia.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", registro.FeRecibo.HasValue ? (object)registro.FeRecibo.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", registro.TotDiscosEntregados.HasValue ? (object)registro.TotDiscosEntregados.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", registro.TipoDisco ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", registro.NoCausa ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", registro.NUC ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", registro.TipoCausa ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", registro.DiscosExternos ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", registro.EtiquetasEntregadas ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", registro.AQuienSeEntrega ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", registro.Observaciones ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", registro.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void Insertar(RegistroCopia registro)
         {
             using (OleDbConnection conn =

@@ -73,7 +73,7 @@ VALUES
                     cmd.Parameters.AddWithValue(
                         "?", ejecucion.Sala);
 
-
+                    
 
                     cmd.Parameters.AddWithValue(
                         "?", ejecucion.Observaciones);
@@ -83,6 +83,49 @@ VALUES
             }
         }
 
+
+        public void Actualizar(Ejecucion ejecucion)
+        {
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query = @"
+UPDATE Ejecucion SET
+    FechaAudiencia = ?,
+    TotalDiscos    = ?,
+    Juez           = ?,
+    Expediente     = ?,
+    Causa          = ?,
+    TipoAudiencia  = ?,
+    HoraTermino    = ?,
+    Imputado       = ?,
+    Delito         = ?,
+    Victima        = ?,
+    Sala           = ?,
+    Observaciones  = ?
+WHERE Id = ?";
+
+                using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("?", ejecucion.FechaAudiencia.HasValue ? (object)ejecucion.FechaAudiencia.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", ejecucion.TotalDiscos ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Juez ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.ExpedienteNumero ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Causa ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.TipoAudiencia ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.HoraTermino ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Imputado ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Delito ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Victima ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Sala ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Observaciones ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
 
         public int ObtenerSiguienteId()
         {

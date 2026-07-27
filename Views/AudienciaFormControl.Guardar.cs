@@ -142,6 +142,15 @@ namespace PoderJudicial.Views
         // guarda en "Quien Realiza"/"Observaciones" (ver ModalidadAudienciaHelper).
         public object ConstruirModelo(int id, bool esConcentrada)
         {
+            // En modo edición el Id ya existe (el del registro original) y
+            // nunca se marca como "concentrada": es una edición puntual, no
+            // parte de una captura en lote.
+            if (_esEdicion)
+            {
+                id = _idEdicion;
+                esConcentrada = false;
+            }
+
             string tipoCausa = TipoCausaActual;
 
             if (tipoCausa == "EXP")
@@ -193,8 +202,16 @@ namespace PoderJudicial.Views
         // ── Persistencia de un modelo ya construido ────────
         public void PersistirModelo(object modelo)
         {
-            if (modelo is Ejecucion ejecucion) VM.GuardarEjecucion(ejecucion);
-            else if (modelo is Audiencia audiencia) VM.GuardarAudiencia(audiencia);
+            if (modelo is Ejecucion ejecucion)
+            {
+                if (_esEdicion) VM.ActualizarEjecucion(ejecucion);
+                else VM.GuardarEjecucion(ejecucion);
+            }
+            else if (modelo is Audiencia audiencia)
+            {
+                if (_esEdicion) VM.ActualizarAudiencia(audiencia);
+                else VM.GuardarAudiencia(audiencia);
+            }
         }
 
         // ── Modalidad de audiencia (presencial / videoconferencia) ─

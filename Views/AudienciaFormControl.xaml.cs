@@ -60,6 +60,11 @@ namespace PoderJudicial.Views
         // folios cuando hay varios formularios concentrados pendientes.
         internal void CargarIdVisual()
         {
+            // En modo edición el Id ya es el del registro real (ver
+            // CargarParaEditar) y no debe reemplazarse por el "siguiente
+            // folio disponible" cada vez que cambia el tipo de causa.
+            if (_esEdicion) return;
+
             try
             {
                 string tipoCausa = UIHelper.ObtenerValorCombo(CmbTipoCausa);
@@ -85,6 +90,13 @@ namespace PoderJudicial.Views
             CultureInfo cultura = new CultureInfo("es-MX");
             TxtHora.Text = ahora.ToString("hh:mm tt");
             TxtFecha.Text = ahora.ToString("dddd, dd MMMM yyyy", cultura);
+
+            // En modo edición, Fecha/Hora Recibo ya vienen del registro
+            // original (ver CargarParaEditar) y no deben cambiar solas con
+            // cada tick del reloj — solo se auto-rellenan con "ahora" cuando
+            // se está capturando un registro nuevo.
+            if (_esEdicion) return;
+
             TxtFechaRecibo.Text = ahora.ToString("dd/MM/yyyy");
             TxtHoraRecibo.Text = ahora.ToString("hh:mm tt");
         }
@@ -131,7 +143,13 @@ namespace PoderJudicial.Views
         // ── Tipo causa ────────────────────────────────────
         private void CmbTipoCausa_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!IsLoaded) return;
+            // Antes se usaba "if (!IsLoaded) return;", pero eso impedía que
+            // CargarParaEditar (modo edición) disparara esta misma lógica
+            // justo después de construir el control, antes de insertarlo en
+            // el árbol visual. Todos los campos ya existen apenas termina
+            // InitializeComponent, así que basta comprobar que uno de los
+            // controles referenciados más abajo ya esté asignado.
+            if (PanelJuecesExtra == null) return;
             if (CmbTipoCausa.SelectedItem is not ComboBoxItem item) return;
 
             string tipo = item.Content.ToString();

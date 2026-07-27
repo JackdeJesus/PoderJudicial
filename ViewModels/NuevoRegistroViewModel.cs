@@ -69,6 +69,18 @@ namespace PoderJudicial.ViewModels
             new EjecucionData().Insertar(expediente);
         }
 
+        // ── Actualizar Audiencia (modo edición) ───────────
+        public void ActualizarAudiencia(Audiencia registro)
+        {
+            new AudienciaData().Actualizar(registro);
+        }
+
+        // ── Actualizar Ejecucion (modo edición) ───────────
+        public void ActualizarEjecucion(Ejecucion expediente)
+        {
+            new EjecucionData().Actualizar(expediente);
+        }
+
         // ── Construir modelo Audiencia ───────────────────
         public Audiencia ConstruirAudiencia(
             int id, string noCausa, string nuc,

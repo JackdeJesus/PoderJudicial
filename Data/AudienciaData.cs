@@ -63,8 +63,8 @@ namespace PoderJudicial.Data
                 // ─────────────────────────────
                 // TOTAL DISCOS
                 // ─────────────────────────────
-
-                TotDiscos =
+                
+TotDiscos =
     ExisteColumna(reader, "TotDiscos") &&
     int.TryParse(
         reader["TotDiscos"]?.ToString(),
@@ -262,8 +262,8 @@ ExisteColumna(reader, "QuienRealiza")
         ? reader["Expediente"]?.ToString()
         : "",
 
-
-
+                
+        
 
                 DiscosExternos =
     ExisteColumna(reader, "DiscosExternos")
@@ -283,9 +283,9 @@ ExisteColumna(reader, "QuienRealiza")
 
             };
 
-            // ÍNDICE DE BÚSQUEDA OPTIMIZADO
-            a.TextoBusqueda = string.Join(" ", new[]
-                {
+        // ÍNDICE DE BÚSQUEDA OPTIMIZADO
+        a.TextoBusqueda = string.Join(" ", new[]
+            {
         a.Id.ToString(),
         a.NoCausa,
         a.NUC,
@@ -302,8 +302,8 @@ ExisteColumna(reader, "QuienRealiza")
         a.FechaAudiencia?.ToString("dd/MM/yyyy"),
         a.FechaRecibo?.ToString("dd/MM/yyyy")
     }
-                .Where(x => !string.IsNullOrWhiteSpace(x)))
-                .ToLower();
+            .Where(x => !string.IsNullOrWhiteSpace(x)))
+            .ToLower();
 
             return a;
         }
@@ -317,9 +317,9 @@ ExisteColumna(reader, "QuienRealiza")
             // CRÍTICO en OleDb: el orden debe coincidir
             // exactamente con el orden del SQL
             cmd.Parameters.AddWithValue("@Id", a.Id);
-            cmd.Parameters.AddWithValue("@FeAudiencia", a.FechaAudiencia.HasValue ? a.FechaAudiencia.Value : DBNull.Value);
-            cmd.Parameters.AddWithValue("@FeRecibo", a.FechaRecibo.HasValue ? a.FechaRecibo.Value : DBNull.Value);
-            cmd.Parameters.AddWithValue("@TotDiscos", a.TotDiscos.HasValue ? a.TotDiscos.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@FeAudiencia",a.FechaAudiencia.HasValue ? a.FechaAudiencia.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@FeRecibo",a.FechaRecibo.HasValue ? a.FechaRecibo.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@TotDiscos", a.TotDiscos.HasValue ? a.TotDiscos.Value: DBNull.Value);
             cmd.Parameters.AddWithValue("@TipoDisco", a.TipoDisco ?? string.Empty);
             cmd.Parameters.AddWithValue("@Juzgado", a.Juzgado ?? string.Empty);
             cmd.Parameters.AddWithValue("@TotDiscoAudiencia", a.TotDiscoAudiencia ?? string.Empty);
@@ -328,7 +328,7 @@ ExisteColumna(reader, "QuienRealiza")
             cmd.Parameters.AddWithValue("@NUC", a.NUC ?? string.Empty);
             cmd.Parameters.AddWithValue("@TipoCausa", a.TipoCausa ?? string.Empty);
             cmd.Parameters.AddWithValue("@TipoAudiencia", a.TipoAudiencia ?? string.Empty);
-            cmd.Parameters.AddWithValue("@HoraConclusion", a.HoraConclusion.HasValue ? a.HoraConclusion.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@HoraConclusion",a.HoraConclusion.HasValue? a.HoraConclusion.Value:DBNull.Value);
             cmd.Parameters.AddWithValue("@Imputado", a.Imputado ?? string.Empty);
             cmd.Parameters.AddWithValue("@Delito", a.Delito ?? string.Empty);
             cmd.Parameters.AddWithValue("@Agraviado", a.Agraviado ?? string.Empty);
@@ -393,7 +393,7 @@ ExisteColumna(reader, "QuienRealiza")
         }
 
 
-
+        
         // ──────────────────────────────────────────
         //  OBTENER UNO POR ID
         // ──────────────────────────────────────────
@@ -490,7 +490,7 @@ ExisteColumna(reader, "QuienRealiza")
             }
         }
 
-
+      
         //  ACTUALIZAR
         public void Actualizar(Audiencia a)
         {
@@ -746,21 +746,21 @@ ExisteColumna(reader, "QuienRealiza")
 
 
 
+        
 
-
-        public string ObtenerVersionSistema()
-        {
-            return Assembly
-                .GetExecutingAssembly()
-                .GetName()
-                .Version
-                ?.ToString() ?? "1.0.0";
-        }
-
-
-
-
-
+public string ObtenerVersionSistema()
+    {
+        return Assembly
+            .GetExecutingAssembly()
+            .GetName()
+            .Version
+            ?.ToString() ?? "1.0.0";
     }
+
+
+
+
+
+}
 
 }

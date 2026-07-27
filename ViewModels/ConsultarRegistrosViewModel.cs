@@ -14,7 +14,7 @@ namespace PoderJudicial.ViewModels
 {
     public class ConsultarRegistrosViewModel : BaseViewModel
     {
-
+        
         private List<Audiencia> _listaCompleta = new List<Audiencia>();
         private DispatcherTimer _reloj;
         private string _tablaActual;
@@ -82,9 +82,9 @@ namespace PoderJudicial.ViewModels
             set { _fecha = value; OnPropertyChanged(); }
         }
 
-
+      
         //  COMANDOS
-
+      
         public ICommand VerCommand { get; }
         public ICommand EditarCommand { get; }
         public ICommand EliminarCommand { get; }
@@ -128,9 +128,9 @@ namespace PoderJudicial.ViewModels
             Fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
         }
 
-
+        
         //  DATOS
-
+       
         private void CargarDatos()
         {
             try
@@ -176,7 +176,7 @@ namespace PoderJudicial.ViewModels
         private void CargarSugerencias()
         {
             Sugerencias = _listaCompleta.SelectMany(x => new[] {x.NoCausa, x.NUC, x.Imputado,x.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm")
-                }).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+                }).Where(x => !string.IsNullOrWhiteSpace(x)) .Distinct().ToList();
         }
 
 
@@ -490,17 +490,68 @@ namespace PoderJudicial.ViewModels
 
         private void EjecutarEditar(object param)
         {
-            if (param is Audiencia audiencia)
-            {
-                Dashboard dashboard = Application.Current.Windows
-                    .OfType<Dashboard>()
-                    .FirstOrDefault();
+            if (param is not Audiencia audiencia) return;
 
-                if (dashboard != null)
+            Dashboard dashboard = Application.Current.Windows
+                .OfType<Dashboard>()
+                .FirstOrDefault();
+
+            if (dashboard == null) return;
+
+            try
+            {
+                // El tipo de registro seleccionado se determina por la tabla
+                // desde la que se cargó la consulta (_tablaActual) — el mismo
+                // criterio que ya usa "Ver Detalle" — no por el tipo en
+                // tiempo de compilación del objeto (todas las tablas se leen
+                // hoy a través de un mismo modelo "Audiencia" con columnas
+                // tolerantes, ver AudienciaData.MapearDesdeReader).
+                if (_tablaActual == TablaEjecucion)
                 {
-                    dashboard.FramePrincipal.Navigate(
-                        new EditarRegistro(audiencia));
+                    Ejecucion ejecucion = new EjecucionData().ObtenerEjecucionPorId(audiencia.Id);
+
+                    if (ejecucion == null)
+                    {
+                        MessageBox.Show("No se encontró el registro.", "Aviso",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    // Ejecución no tiene formulario propio: reutiliza el
+                    // formulario de Audiencias configurado como tipo "EXP".
+                    dashboard.FramePrincipal.Navigate(new EditarRegistro(ejecucion));
                 }
+                else if (_tablaActual == TablaCopias)
+                {
+                    RegistroCopia copia = new CopiasData().ObtenerCopiaPorId(audiencia.Id);
+
+                    if (copia == null)
+                    {
+                        MessageBox.Show("No se encontró el registro.", "Aviso",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    dashboard.FramePrincipal.Navigate(new EditarCopias(copia));
+                }
+                else
+                {
+                    AudienciaData data = new AudienciaData();
+                    Audiencia detalle = data.ObtenerAudienciaPorId(audiencia.Id, _tablaActual);
+
+                    if (detalle == null)
+                    {
+                        MessageBox.Show("No se encontró el registro.", "Aviso",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    dashboard.FramePrincipal.Navigate(new EditarRegistro(detalle));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir el registro para editar: " + ex.Message);
             }
         }
         private async void EjecutarEliminar(object param)
