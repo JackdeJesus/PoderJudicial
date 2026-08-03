@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using PoderJudicial.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -90,11 +91,24 @@ namespace PoderJudicial.Views
         private void SoloNumeros_PreviewTextInput(object sender, TextCompositionEventArgs e)
             => e.Handled = !e.Text.All(char.IsDigit);
 
+        // ── Excepción por registro: permitir letras si el usuario lo confirma ─
+        // (ver ValidationHelper.ConfirmarPermitirLetras). El flag se reinicia
+        // en LimpiarFormulario() al guardar o cancelar el registro.
+        private bool _permitirLetrasNoCausa = false;
+        private bool _permitirLetrasNUC = false;
+        private bool _permitirLetrasExpediente = false;
+
         private void NoCausa_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            char c = e.Text.FirstOrDefault();
-            e.Handled = !(char.IsDigit(c) || c == '/');
-        }
+            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '/',
+                ref _permitirLetrasNoCausa, "No. Causa");
+
+        private void NUC_PreviewTextInput(object sender, TextCompositionEventArgs e)
+            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '-',
+                ref _permitirLetrasNUC, "NUC");
+
+        private void Expediente_PreviewTextInput(object sender, TextCompositionEventArgs e)
+            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '/',
+                ref _permitirLetrasExpediente, "Expediente");
 
         // ── Botones agregar campos dinámicos ─────────────
         private void BtnAgregarJuez_Click(object sender, RoutedEventArgs e)
