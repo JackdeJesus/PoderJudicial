@@ -84,6 +84,49 @@ VALUES
         }
 
 
+        public void Actualizar(Ejecucion ejecucion)
+        {
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query = @"
+UPDATE Ejecucion SET
+    FechaAudiencia = ?,
+    TotalDiscos    = ?,
+    Juez           = ?,
+    Expediente     = ?,
+    Causa          = ?,
+    TipoAudiencia  = ?,
+    HoraTermino    = ?,
+    Imputado       = ?,
+    Delito         = ?,
+    Victima        = ?,
+    Sala           = ?,
+    Observaciones  = ?
+WHERE Id = ?";
+
+                using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("?", ejecucion.FechaAudiencia.HasValue ? (object)ejecucion.FechaAudiencia.Value : DBNull.Value);
+                    cmd.Parameters.AddWithValue("?", ejecucion.TotalDiscos ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Juez ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.ExpedienteNumero ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Causa ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.TipoAudiencia ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.HoraTermino ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Imputado ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Delito ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Victima ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Sala ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Observaciones ?? string.Empty);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public int ObtenerSiguienteId()
         {
             using (OleDbConnection conn =
@@ -112,6 +155,54 @@ VALUES
         }
 
 
+
+        public Ejecucion ObtenerEjecucionPorId(int id)
+        {
+            using (OleDbConnection conn =
+                Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query =
+                    "SELECT * FROM Ejecucion WHERE Id = ?";
+
+                using (OleDbCommand cmd =
+                    new OleDbCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("?", id);
+
+                    using (OleDbDataReader reader =
+                        cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Ejecucion
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+
+                                FechaAudiencia =
+                                    DateTime.TryParse(reader["FechaAudiencia"]?.ToString(), out DateTime fecha)
+                                        ? fecha : (DateTime?)null,
+
+                                TotalDiscos = reader["TotalDiscos"]?.ToString(),
+                                Juez = reader["Juez"]?.ToString(),
+                                ExpedienteNumero = reader["Expediente"]?.ToString(),
+                                Causa = reader["Causa"]?.ToString(),
+                                TipoAudiencia = reader["TipoAudiencia"]?.ToString(),
+                                HoraTermino = reader["HoraTermino"]?.ToString(),
+                                Imputado = reader["Imputado"]?.ToString(),
+                                Delito = reader["Delito"]?.ToString(),
+                                Victima = reader["Victima"]?.ToString(),
+                                Sala = reader["Sala"]?.ToString(),
+                                Observaciones = reader["Observaciones"]?.ToString()
+                            };
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
 
         public List<Ejecucion> ObtenerEjecuciones()
         {

@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace PoderJudicial.Views
 {
-    public partial class NuevoRegistro : Page
+    public partial class AudienciaFormControl : UserControl
     {
         // ── Formato automático fecha ──────────────────────
         private void TxtFechaAudiencia_TextChanged(object sender, TextChangedEventArgs e)

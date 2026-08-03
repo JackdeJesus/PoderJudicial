@@ -1,26 +1,29 @@
-﻿using System;
+﻿using PoderJudicial.Models;
+using System;
 using System.Windows.Controls;
 using System.Windows;
 
 namespace PoderJudicial.Views
 {
     /// <summary>
-    /// Host de "Registro de Copias" en modo creación. Aloja una instancia
-    /// de <see cref="CopiasFormControl"/> y, tras guardar, prepara el
-    /// siguiente folio para seguir capturando sin salir de la página
-    /// (mismo comportamiento que tenía antes de extraer el formulario).
+    /// Host de "Editar Registro de Copias". Aloja una única instancia de
+    /// <see cref="CopiasFormControl"/> precargada con el registro
+    /// seleccionado (ver CopiasFormControl.CargarParaEditar) — mismo patrón
+    /// que EditarRegistro para Audiencias/Ejecución.
     /// </summary>
-    public partial class RegistroCopias : Page
+    public partial class EditarCopias : Page
     {
         private readonly CopiasFormControl _control;
 
-        public RegistroCopias()
+        public EditarCopias(RegistroCopia registro)
         {
             InitializeComponent();
 
             _control = new CopiasFormControl();
             _control.GuardarClick += Control_GuardarClick;
             PanelFormulario.Children.Add(_control);
+
+            _control.CargarParaEditar(registro);
         }
 
         private void Control_GuardarClick(object sender, EventArgs e)
@@ -36,17 +39,18 @@ namespace PoderJudicial.Views
             {
                 var registro = _control.ConstruirModelo();
                 _control.PersistirModelo(registro);
-
-                MessageBox.Show("Registro de copia guardado correctamente.", "Éxito",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-
-                _control.PrepararSiguienteRegistro();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar:\n{ex.Message}", "Error",
+                MessageBox.Show($"Error al actualizar:\n{ex.Message}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            MessageBox.Show("Registro actualizado correctamente.", "Éxito",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+
+            NavigationService?.GoBack();
         }
     }
 }

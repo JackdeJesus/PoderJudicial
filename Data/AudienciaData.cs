@@ -683,6 +683,67 @@ ExisteColumna(reader, "QuienRealiza")
             return "";
         }
 
+        /// <summary>
+        /// Igual que <see cref="ObtenerNUCPorNoCausa"/> pero además devuelve
+        /// el Tipo de Causa y la Fecha de Audiencia asociados, en una sola
+        /// consulta. Usado por el autocompletado de "Registro de Copias"
+        /// (No. Causa → Fecha de Audiencia + NUC + Tipo Causa).
+        /// Usa SELECT * (en vez de columnas fijas) porque, igual que en
+        /// <see cref="MapearDesdeReader"/>, distintas tablas de Audiencias
+        /// nombran la fecha como "FeAudiencia" o "FechaAudiencia".
+        /// </summary>
+        public string ObtenerDatosPorNoCausa(string noCausa, out string tipoCausa, out DateTime? fechaAudiencia)
+        {
+            tipoCausa = "";
+            fechaAudiencia = null;
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                DataTable schema = conn.GetSchema("Tables");
+
+                foreach (DataRow row in schema.Rows)
+                {
+                    string nombreTabla = row["TABLE_NAME"].ToString();
+
+                    if (!nombreTabla.Contains("Audiencias")) continue;
+                    if (nombreTabla.StartsWith("MSys")) continue;
+
+                    string query = $"SELECT TOP 1 * FROM [{nombreTabla}] WHERE NoCausa = ?";
+
+                    using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("?", noCausa);
+
+                        using (OleDbDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (!reader.Read()) continue;
+
+                            tipoCausa = ExisteColumna(reader, "TipoCausa")
+                                ? reader["TipoCausa"]?.ToString() ?? ""
+                                : "";
+
+                            fechaAudiencia =
+                                ExisteColumna(reader, "FeAudiencia") &&
+                                DateTime.TryParse(reader["FeAudiencia"]?.ToString(), out DateTime f1)
+                                    ? f1
+                                    : ExisteColumna(reader, "FechaAudiencia") &&
+                                      DateTime.TryParse(reader["FechaAudiencia"]?.ToString(), out DateTime f2)
+                                        ? f2
+                                        : null;
+
+                            return ExisteColumna(reader, "NUC")
+                                ? reader["NUC"]?.ToString() ?? ""
+                                : "";
+                        }
+                    }
+                }
+            }
+
+            return "";
+        }
+
 
 
         

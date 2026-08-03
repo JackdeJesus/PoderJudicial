@@ -1,0 +1,409 @@
+﻿using PoderJudicial.Data;
+using PoderJudicial.Helpers;
+using PoderJudicial.Models;
+using PoderJudicial.ViewModels;
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
+using System.Windows.Media;
+
+
+namespace PoderJudicial.Views
+{
+    /// <summary>
+    /// Formulario de "Registro de Copias". Es un UserControl (igual que
+    /// AudienciaFormControl para Audiencias/Ejecución) para que "crear" y
+    /// "editar" compartan exactamente los mismos controles, validaciones,
+    /// autocompletados y lógica de No. Causa → NUC/Tipo Causa/Fecha
+    /// Audiencia, sin duplicar código entre ambos flujos.
+    /// </summary>
+    public partial class CopiasFormControl : UserControl
+    {
+        // ──────────────────────────────────────────
+        //  CAMPOS PRIVADOS
+        // ──────────────────────────────────────────
+        internal readonly RegistroCopiasViewModel VM;
+        private DispatcherTimer _timer;
+
+        private bool _esEdicion = false;
+        private int _idEdicion;
+
+        /// <summary>Se dispara cuando el usuario presiona "Guardar Registro".</summary>
+        public event EventHandler GuardarClick;
+
+        // ──────────────────────────────────────────
+        //  CONSTRUCTOR
+        // ──────────────────────────────────────────
+        public CopiasFormControl()
+        {
+            InitializeComponent();
+
+            VM = new RegistroCopiasViewModel();
+            DataContext = VM;
+
+            CargarIdVisual();
+            IniciarReloj();
+            RegistrarPlaceholders();
+        }
+
+        // ──────────────────────────────────────────
+        //  ID VISUAL
+        // ──────────────────────────────────────────
+        private void CargarIdVisual()
+        {
+            // En modo edición el Id ya es el del registro real (ver
+            // CargarParaEditar) y no debe reemplazarse por el "siguiente
+            // folio disponible".
+            if (_esEdicion) return;
+
+            try
+            {
+                int id = new CopiasData().ObtenerSiguienteIdVisual();
+                TxtId.Text = id.ToString();
+            }
+            catch
+            {
+                TxtId.Text = "---";
+            }
+        }
+
+        // ──────────────────────────────────────────
+        //  RELOJ
+        // ──────────────────────────────────────────
+        private void IniciarReloj()
+        {
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+            ActualizarFechaHora();
+        }
+
+        private void Timer_Tick(object? sender, EventArgs e)
+            => ActualizarFechaHora();
+
+        private void ActualizarFechaHora()
+        {
+            DateTime ahora = DateTime.Now;
+            CultureInfo cultura = new CultureInfo("es-MX");
+
+            TxtHora.Text = ahora.ToString("hh:mm tt");
+            TxtFecha.Text = ahora.ToString("dddd, dd MMMM yyyy", cultura);
+
+            // Fecha recibo es automática (solo lectura) — pero solo al
+            // capturar un registro nuevo. En modo edición ya viene del
+            // registro original (ver CargarParaEditar) y no debe cambiar
+            // sola con cada tick del reloj.
+            if (_esEdicion) return;
+
+            TxtFeRecibo.Text = ahora.ToString("dd/MM/yyyy");
+        }
+
+        /// <summary>Detiene el reloj interno. El host debe llamarlo si descarta el control.</summary>
+        internal void DetenerReloj() => _timer?.Stop();
+
+       
+        //  PLACEHOLDERS
+
+        private void RegistrarPlaceholders()
+        {
+            PlaceholderHelper.AddPlaceholder(TxtId);
+            PlaceholderHelper.AddPlaceholder(TxtFeAudiencia, "Se completa según No. Causa");
+            PlaceholderHelper.AddPlaceholder(TxtFeRecibo, "dd/MM/yyyy");
+            PlaceholderHelper.AddPlaceholder(TxtNoCausa, "Ej: 123/2024");
+            PlaceholderHelper.AddPlaceholder(TxtNUC, "Se completa según No. Causa");
+            PlaceholderHelper.AddPlaceholder(TxtTipoCausa, "Se completa según No. Causa");
+
+            PlaceholderHelper.AddPlaceholder(TxtAQuienSeEntrega, "Nombre de quien recibe");
+            PlaceholderHelper.AddPlaceholder(TxtObservaciones, "Escriba observaciones adicionales...");
+        }
+
+        // ── Excepción por registro: permitir letras si el usuario lo confirma ─
+        private bool _permitirLetrasNoCausa = false;
+
+        private void NoCausa_PreviewTextInput(object sender, TextCompositionEventArgs e)
+            => e.Handled = !ValidationHelper.EvaluarCaracterConExcepcion(e.Text, c => char.IsDigit(c) || c == '/',
+                ref _permitirLetrasNoCausa, "No. Causa");
+
+        // ── Autocomplete "A quien se entrega" (misma infraestructura que
+        //    Delito/Juez/Tipo Audiencia en Nueva Audiencia) ─────────────
+        private void TxtAQuienSeEntrega_TextChanged(object sender, TextChangedEventArgs e)
+            => AutocompleteHelper.FiltrarDesdeSender(sender, VM.AQuienSeEntregaHistorial);
+
+        private void TxtAutocomplete_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            TextBox txt = (TextBox)sender;
+            ListBox lst = ((StackPanel)txt.Parent).Children.OfType<ListBox>().First();
+            AutocompleteHelper.ManejarTecladoTextBox(txt, lst, e);
+        }
+
+        private void lstAutocomplete_PreviewKeyDown(object sender, KeyEventArgs e)
+            => AutocompleteHelper.ManejarTecladoListBox((ListBox)sender, e);
+
+        private void lstAutocomplete_MouseClick(object sender, MouseButtonEventArgs e)
+            => AutocompleteHelper.ManejarClickMouse((ListBox)sender);
+
+        //  GUARDAR (el clic solo avisa al host; ver RegistroCopias.xaml.cs /
+        //  EditarCopias.xaml.cs, que llaman Validar()/ConstruirModelo()/
+        //  PersistirModelo() — así crear y editar comparten toda esta lógica)
+
+        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+            => GuardarClick?.Invoke(this, EventArgs.Empty);
+
+        // ── Validación (expuesta para el host) ─────────────
+        public bool Validar(out string mensajeError)
+        {
+            mensajeError = null;
+
+            if (string.IsNullOrWhiteSpace(TxtId.Text) || TxtId.Text == "---")
+                return Falla(out mensajeError, "El campo 'Id' es obligatorio.");
+
+            if (!ValidationHelper.FechaValida(ObtenerTexto(TxtFeAudiencia)))
+                return Falla(out mensajeError, "La fecha de audiencia no pudo determinarse; verifique el No. Causa capturado.");
+
+            if (CmbTotDiscosEntregados.SelectedIndex == 0)
+                return Falla(out mensajeError, "Debe seleccionar el total de discos entregados.");
+
+            string noCausa = ObtenerTexto(TxtNoCausa);
+            if (string.IsNullOrWhiteSpace(noCausa))
+                return Falla(out mensajeError, "El campo 'No. Causa' es obligatorio.");
+
+            if (!ValidationHelper.NumerosYDiagonalConExcepcion(noCausa, _permitirLetrasNoCausa))
+                return Falla(out mensajeError, "El campo 'No. Causa' solo permite números y '/'.");
+
+            string nuc = ObtenerTexto(TxtNUC);
+            if (string.IsNullOrWhiteSpace(nuc))
+                return Falla(out mensajeError, "El campo 'NUC' no pudo determinarse; verifique el No. Causa capturado.");
+
+            if (!ValidationHelper.NumerosYGuion(nuc))
+                return Falla(out mensajeError, "El campo 'NUC' solo permite números y '-'.");
+
+            if (CmbTipoDisco.SelectedIndex == 0)
+                return Falla(out mensajeError, "Debe seleccionar el tipo de disco.");
+
+            if (string.IsNullOrWhiteSpace(ObtenerTexto(TxtTipoCausa)))
+                return Falla(out mensajeError, "El campo 'Tipo Causa' no pudo determinarse; verifique el No. Causa capturado.");
+
+            if (string.IsNullOrWhiteSpace(ObtenerTexto(TxtAQuienSeEntrega)))
+                return Falla(out mensajeError, "El campo 'A Quien se Entrega' es obligatorio.");
+
+            return true;
+        }
+
+        private static bool Falla(out string mensajeError, string mensaje)
+        {
+            mensajeError = mensaje;
+            return false;
+        }
+
+        // ── Construcción del modelo (expuesta para el host) ─
+        public RegistroCopia ConstruirModelo()
+        {
+            DateTime? fechaAudiencia = DateTime.TryParseExact(
+                    ObtenerTexto(TxtFeAudiencia), "dd/MM/yyyy",
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime fAud)
+                ? fAud : (DateTime?)null;
+
+            DateTime? fechaRecibo = DateTime.TryParseExact(
+                    TxtFeRecibo.Text, "dd/MM/yyyy",
+                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime fRec)
+                ? fRec : (DateTime?)null;
+
+            int? totDiscos = int.TryParse(
+                ObtenerValorCombo(CmbTotDiscosEntregados).Split(' ')[0], out int discos)
+                ? discos : (int?)null;
+
+            int id = _esEdicion ? _idEdicion
+                : (int.TryParse(TxtId.Text, out int idNuevo) ? idNuevo : 0);
+
+            return new RegistroCopia
+            {
+                Id = id,
+                FeAudiencia = fechaAudiencia,
+                FeRecibo = fechaRecibo,
+                TotDiscosEntregados = totDiscos,
+                TipoDisco = ObtenerValorCombo(CmbTipoDisco),
+                NoCausa = ObtenerTexto(TxtNoCausa),
+                NUC = ObtenerTexto(TxtNUC),
+                TipoCausa = ObtenerTexto(TxtTipoCausa),
+                DiscosExternos = ObtenerValorCombo(CmbDiscosExternos),
+                EtiquetasEntregadas = ObtenerValorCombo(CmbEtiquetasEntregadas),
+                AQuienSeEntrega = ObtenerTexto(TxtAQuienSeEntrega),
+                Observaciones = ObtenerTexto(TxtObservaciones),
+                QuienRegistra = SesionActual.Usuario
+            };
+        }
+
+        // ── Persistencia (expuesta para el host): INSERT o UPDATE ──
+        public void PersistirModelo(RegistroCopia registro)
+        {
+            if (_esEdicion) new CopiasData().Actualizar(registro);
+            else new CopiasData().Insertar(registro);
+        }
+
+        /// <summary>Solo para el flujo de creación: limpia y prepara un folio nuevo.</summary>
+        public void PrepararSiguienteRegistro()
+        {
+            LimpiarFormulario();
+            CargarIdVisual();
+        }
+
+        // ──────────────────────────────────────────
+        //  VALIDACIÓN (compatibilidad interna; ya no se usa desde
+        //  BtnGuardar_Click, ver Validar() público arriba)
+        // ──────────────────────────────────────────
+
+        // ──────────────────────────────────────────
+        //  LIMPIAR FORMULARIO
+        // ──────────────────────────────────────────
+        private void LimpiarFormulario()
+        {
+            TxtId.Text = string.Empty;
+            TxtFeAudiencia.Text = string.Empty;
+            
+            TxtNoCausa.Text = string.Empty;
+            TxtNUC.Text = string.Empty;
+            TxtTipoCausa.Text = string.Empty;
+            TxtAQuienSeEntrega.Text = string.Empty;
+            TxtObservaciones.Text = string.Empty;
+            CmbTipoDisco.SelectedIndex = 0;
+            CmbTotDiscosEntregados.SelectedIndex = 0;
+            
+            CmbDiscosExternos.SelectedIndex = 0;
+            CmbEtiquetasEntregadas.SelectedIndex = 0;
+
+            _permitirLetrasNoCausa = false;
+
+            RegistrarPlaceholders();
+        }
+
+        // ──────────────────────────────────────────
+        //  HELPERS
+        // ──────────────────────────────────────────
+        private string ObtenerTexto(TextBox txt)
+        {
+            if (txt == null) return string.Empty;
+
+            if (PlaceholderHelper.IsPlaceholder(txt))
+                return string.Empty;
+
+            string[] placeholders =
+            {
+                "dd/MM/yyyy",
+                "Ej: 123/2024",
+                "Se completa según No. Causa",
+                "Nombre de quien recibe",
+                "Escriba observaciones adicionales..."
+            };
+
+            string texto = txt.Text?.Trim() ?? string.Empty;
+            return placeholders.Contains(texto) ? string.Empty : texto;
+        }
+
+        private string ObtenerValorCombo(ComboBox combo)
+        {
+            var item = combo.SelectedItem as ComboBoxItem;
+            if (item == null) return string.Empty;
+
+            string content = item.Content?.ToString() ?? string.Empty;
+            return content.StartsWith("Seleccione") || content == "Ninguno" || content == "Ninguna"
+                ? string.Empty
+                : content;
+        }
+
+
+        private void TxtNoCausa_LostFocus(
+    object sender,
+    RoutedEventArgs e)
+        {
+            string causa =
+                ObtenerTexto(TxtNoCausa);
+
+            if (string.IsNullOrWhiteSpace(causa))
+                return;
+
+            string nuc =
+                new AudienciaData()
+                    .ObtenerDatosPorNoCausa(causa, out string tipoCausa, out DateTime? fechaAudiencia);
+
+            var brushNormal = (Brush)Application.Current.Resources["PrimaryTextBrush"];
+
+            if (!string.IsNullOrWhiteSpace(nuc))
+            {
+                TxtNUC.Text = nuc;
+                TxtNUC.Foreground = brushNormal;
+            }
+
+            if (!string.IsNullOrWhiteSpace(tipoCausa))
+            {
+                TxtTipoCausa.Text = tipoCausa;
+                TxtTipoCausa.Foreground = brushNormal;
+            }
+
+            if (fechaAudiencia.HasValue)
+            {
+                TxtFeAudiencia.Text = fechaAudiencia.Value.ToString("dd/MM/yyyy");
+                TxtFeAudiencia.Foreground = brushNormal;
+            }
+        }
+
+        // ══════════════════════════════════════════════
+        //  MODO EDICIÓN
+        // ══════════════════════════════════════════════
+        public void CargarParaEditar(RegistroCopia registro)
+        {
+            _esEdicion = true;
+            _idEdicion = registro.Id;
+
+            var brushNormal = (Brush)Application.Current.Resources["PrimaryTextBrush"];
+
+            TxtId.Text = registro.Id.ToString();
+
+            EstablecerTexto(TxtNoCausa, registro.NoCausa, brushNormal);
+            EstablecerTexto(TxtNUC, registro.NUC, brushNormal);
+            EstablecerTexto(TxtTipoCausa, registro.TipoCausa, brushNormal);
+
+            if (registro.FeAudiencia.HasValue)
+                EstablecerTexto(TxtFeAudiencia, registro.FeAudiencia.Value.ToString("dd/MM/yyyy"), brushNormal);
+
+            if (registro.FeRecibo.HasValue)
+                TxtFeRecibo.Text = registro.FeRecibo.Value.ToString("dd/MM/yyyy");
+
+            SeleccionarComboPorTexto(CmbTotDiscosEntregados,
+                registro.TotDiscosEntregados.HasValue ? $"{registro.TotDiscosEntregados} disco{(registro.TotDiscosEntregados == 1 ? "" : "s")}" : null);
+            SeleccionarComboPorTexto(CmbTipoDisco, registro.TipoDisco);
+            SeleccionarComboPorTexto(CmbDiscosExternos, registro.DiscosExternos);
+            SeleccionarComboPorTexto(CmbEtiquetasEntregadas, registro.EtiquetasEntregadas);
+
+            EstablecerTexto(TxtAQuienSeEntrega, registro.AQuienSeEntrega, brushNormal);
+            EstablecerTexto(TxtObservaciones, registro.Observaciones, brushNormal);
+
+            BtnGuardar.Content = "Guardar Cambios";
+        }
+
+        private static void EstablecerTexto(TextBox txt, string valor, Brush brushNormal)
+        {
+            txt.Text = valor ?? string.Empty;
+            txt.Foreground = brushNormal;
+        }
+
+        private static void SeleccionarComboPorTexto(ComboBox combo, string valor)
+        {
+            if (string.IsNullOrWhiteSpace(valor)) return;
+
+            foreach (ComboBoxItem item in combo.Items)
+            {
+                if (string.Equals(item.Content?.ToString(), valor, StringComparison.OrdinalIgnoreCase))
+                {
+                    combo.SelectedItem = item;
+                    return;
+                }
+            }
+        }
+    }
+}
