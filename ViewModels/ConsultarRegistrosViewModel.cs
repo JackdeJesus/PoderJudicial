@@ -14,10 +14,16 @@ namespace PoderJudicial.ViewModels
 {
     public class ConsultarRegistrosViewModel : BaseViewModel
     {
-        
+
         private List<Audiencia> _listaCompleta = new List<Audiencia>();
         private DispatcherTimer _reloj;
         private string _tablaActual;
+
+        // Caché de listados completos (Id + total de discos real de cada
+        // tabla), usados solo para los indicadores — se piden una vez por
+        // página, no en cada tecla que el usuario escribe al buscar.
+        private List<Ejecucion> _cacheEjecuciones;
+        private List<RegistroCopia> _cacheCopias;
 
 
         //  PROPIEDADES
@@ -82,9 +88,9 @@ namespace PoderJudicial.ViewModels
             set { _fecha = value; OnPropertyChanged(); }
         }
 
-      
+
         //  COMANDOS
-      
+
         public ICommand VerCommand { get; }
         public ICommand EditarCommand { get; }
         public ICommand EliminarCommand { get; }
@@ -128,9 +134,9 @@ namespace PoderJudicial.ViewModels
             Fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
         }
 
-        
+
         //  DATOS
-       
+
         private void CargarDatos()
         {
             try
@@ -145,25 +151,9 @@ namespace PoderJudicial.ViewModels
                     _listaCompleta.Take(10)
                 );
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
-                int totalDiscosGeneral = _listaCompleta.Sum(a =>
-                {
-                    if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
-                        return 0;
-
-                    string numeros = new string(
-                        a.TotDiscoAudiencia
-                        .Where(char.IsDigit)
-                        .ToArray()
-                    );
-
-                    if (int.TryParse(numeros, out int valor))
-                        return valor;
-
-                    return 0;
-                });
 
                 TotalDiscosBusqueda =
-                    $"Total discos audiencia: {totalDiscosGeneral}";
+                    $"Total discos audiencia: {CalcularTotalDiscos(_listaCompleta)}";
 
                 CargarSugerencias();
             }
@@ -173,10 +163,58 @@ namespace PoderJudicial.ViewModels
             }
         }
 
+        /// <summary>
+        /// Suma el total de discos del conjunto de registros que se está
+        /// mostrando (respeta el filtro de búsqueda activo, ya que recibe
+        /// la lista ya filtrada). La columna real de donde sale el dato
+        /// cambia según la tabla:
+        ///   - Audiencias (C, CP, JO): TotDiscoAudiencia (texto, ej. "3 discos")
+        ///   - Ejecucion:              TotalDiscos (texto)
+        ///   - CopiasAudiencias:       TotDiscosEntregados (numérico)
+        /// _listaCompleta/filtrados siempre llegan mapeados como Audiencia
+        /// (ver AudienciaData.ObtenerAudiencias), así que para Ejecución y
+        /// Copias se cruza por Id contra un listado con las columnas reales
+        /// de esa tabla, en vez de leer el campo equivocado.
+        /// </summary>
+        private int CalcularTotalDiscos(List<Audiencia> conjuntoVisible)
+        {
+            if (_tablaActual == TablaEjecucion)
+            {
+                var ids = conjuntoVisible.Select(a => a.Id).ToHashSet();
+                _cacheEjecuciones ??= new EjecucionData().ObtenerTodas();
+
+                return _cacheEjecuciones
+                    .Where(e => ids.Contains(e.Id))
+                    .Sum(e => ExtraerNumero(e.TotalDiscos));
+            }
+
+            if (_tablaActual == TablaCopias)
+            {
+                var ids = conjuntoVisible.Select(a => a.Id).ToHashSet();
+                _cacheCopias ??= new CopiasData().ObtenerTodas();
+
+                return _cacheCopias
+                    .Where(c => ids.Contains(c.Id))
+                    .Sum(c => c.TotDiscosEntregados ?? 0);
+            }
+
+            // Audiencias (C, CP, JO): comportamiento original, sin cambios.
+            return conjuntoVisible.Sum(a => ExtraerNumero(a.TotDiscoAudiencia));
+        }
+
+        /// <summary>Extrae los dígitos de un texto tipo "3 discos" y los convierte a número; 0 si no hay.</summary>
+        private static int ExtraerNumero(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto)) return 0;
+
+            string numeros = new string(texto.Where(char.IsDigit).ToArray());
+            return int.TryParse(numeros, out int valor) ? valor : 0;
+        }
+
         private void CargarSugerencias()
         {
             Sugerencias = _listaCompleta.SelectMany(x => new[] {x.NoCausa, x.NUC, x.Imputado,x.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm")
-                }).Where(x => !string.IsNullOrWhiteSpace(x)) .Distinct().ToList();
+                }).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
         }
 
 
@@ -194,25 +232,8 @@ namespace PoderJudicial.ViewModels
 
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
 
-                int totalDiscosGeneral = _listaCompleta.Sum(a =>
-                {
-                    if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
-                        return 0;
-
-                    string numeros = new string(
-                        a.TotDiscoAudiencia
-                        .Where(char.IsDigit)
-                        .ToArray()
-                    );
-
-                    if (int.TryParse(numeros, out int valor))
-                        return valor;
-
-                    return 0;
-                });
-
                 TotalDiscosBusqueda =
-                    $"Total discos audiencia: {totalDiscosGeneral}";
+                    $"Total discos audiencia: {CalcularTotalDiscos(_listaCompleta)}";
 
                 return;
             }
@@ -284,27 +305,8 @@ namespace PoderJudicial.ViewModels
 
             TotalRegistros = $"{filtrados.Count} registro(s) encontrado(s)";
 
-            int totalDiscosAudiencia = filtrados.Sum(a =>
-            {
-                if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
-                    return 0;
-
-                string numeros = new string(
-                    a.TotDiscoAudiencia
-                    .Where(char.IsDigit)
-                    .ToArray()
-                );
-
-                if (int.TryParse(numeros, out int valor))
-                    return valor;
-
-                return 0;
-            });
-
             TotalDiscosBusqueda =
-                $"Total discos audiencia: {totalDiscosAudiencia}";
-
-
+                $"Total discos audiencia: {CalcularTotalDiscos(filtrados)}";
         }
 
         private void ActualizarSugerencias()

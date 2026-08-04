@@ -73,7 +73,7 @@ VALUES
                     cmd.Parameters.AddWithValue(
                         "?", ejecucion.Sala);
 
-                    
+
 
                     cmd.Parameters.AddWithValue(
                         "?", ejecucion.Observaciones);
@@ -202,6 +202,40 @@ WHERE Id = ?";
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Listado completo (con Id y TotalDiscos incluidos) usado por los
+        /// indicadores "Total de registros" / "Total Discos Audiencia" en
+        /// Consultar Registros. No confundir con <see cref="ObtenerEjecuciones"/>,
+        /// que solo trae Delito/TipoAudiencia para el autocompletado de
+        /// Nuevo Registro y no debe tocarse.
+        /// </summary>
+        public List<Ejecucion> ObtenerTodas()
+        {
+            List<Ejecucion> lista = new();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                string query = "SELECT Id, TotalDiscos FROM Ejecucion";
+
+                using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                using (OleDbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        lista.Add(new Ejecucion
+                        {
+                            Id = reader["Id"] != DBNull.Value ? Convert.ToInt32(reader["Id"]) : 0,
+                            TotalDiscos = reader["TotalDiscos"]?.ToString()
+                        });
+                    }
+                }
+            }
+
+            return lista;
         }
 
         public List<Ejecucion> ObtenerEjecuciones()
