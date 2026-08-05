@@ -232,16 +232,19 @@
                                      Style="{StaticResource InputStyleReadOnly}"/>
                         </StackPanel>
 
-                        <!-- Fecha Audiencia (autocompletada desde No. Causa, solo lectura) -->
+                        <!-- No. Causa -->
                         <StackPanel Grid.Column="2">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Fecha Audiencia" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text="No. Causa" Style="{StaticResource LabelStyle}"/>
                                 <TextBlock Text=" *" Foreground="#EF4444" FontWeight="Bold" Margin="0,0,0,6"/>
                             </StackPanel>
-                            <TextBox x:Name="TxtFeAudiencia"
-                                     Style="{StaticResource InputStyleReadOnly}"
-                                     Tag="Se completa según No. Causa"/>
+                            <TextBox x:Name="TxtNoCausa"
+             Style="{StaticResource InputStyle}"
+             Tag="Ej: 123/2024"
+             PreviewTextInput="NoCausa_PreviewTextInput"
+             LostFocus="TxtNoCausa_LostFocus"/>
                         </StackPanel>
+
 
                         <!-- Fecha Recibo -->
                         <StackPanel Grid.Column="4">
@@ -267,14 +270,15 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- No. Causa -->
+                        <!-- Fecha Audiencia (autocompletada desde No. Causa, solo lectura) -->
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="No. Causa" Style="{StaticResource LabelStyle}"/>
-                            <TextBox x:Name="TxtNoCausa"
-                                     Style="{StaticResource InputStyle}"
-                                     Tag="Ej: 123/2024"
-                                     PreviewTextInput="NoCausa_PreviewTextInput"
-                                     LostFocus="TxtNoCausa_LostFocus"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Fecha Audiencia" Style="{StaticResource LabelStyle}"/>
+                                <TextBlock Text=" *" Foreground="#EF4444" FontWeight="Bold" Margin="0,0,0,6"/>
+                            </StackPanel>
+                            <TextBox x:Name="TxtFeAudiencia"
+             Style="{StaticResource InputStyleReadOnly}"
+             Tag="Se completa según No. Causa"/>
                         </StackPanel>
 
                         <!-- NUC (autocompletado desde No. Causa, solo lectura) -->
