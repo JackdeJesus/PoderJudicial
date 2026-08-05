@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using PoderJudicial.Data;
+using PoderJudicial.Helpers;
 using PoderJudicial.Models;
 using PoderJudicial.Views;
 
@@ -88,6 +89,139 @@ namespace PoderJudicial.ViewModels
             set { _fecha = value; OnPropertyChanged(); }
         }
 
+        // ══════════════════════════════════════════════
+        //  FILTROS AVANZADOS
+        // ══════════════════════════════════════════════
+        private readonly FiltroConsulta _filtroActivo = new FiltroConsulta();
+
+        private string _filtroNUC;
+        public string FiltroNUC
+        {
+            get => _filtroNUC;
+            set { _filtroNUC = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroNoCausa;
+        public string FiltroNoCausa
+        {
+            get => _filtroNoCausa;
+            set { _filtroNoCausa = value; OnPropertyChanged(); }
+        }
+
+        private DateTime? _filtroFechaDesde;
+        public DateTime? FiltroFechaDesde
+        {
+            get => _filtroFechaDesde;
+            set { _filtroFechaDesde = value; OnPropertyChanged(); }
+        }
+
+        private DateTime? _filtroFechaHasta;
+        public DateTime? FiltroFechaHasta
+        {
+            get => _filtroFechaHasta;
+            set { _filtroFechaHasta = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroTipoCausa;
+        public string FiltroTipoCausa
+        {
+            get => _filtroTipoCausa;
+            set { _filtroTipoCausa = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroJuzgado;
+        public string FiltroJuzgado
+        {
+            get => _filtroJuzgado;
+            set { _filtroJuzgado = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroSala;
+        public string FiltroSala
+        {
+            get => _filtroSala;
+            set { _filtroSala = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroImputado;
+        public string FiltroImputado
+        {
+            get => _filtroImputado;
+            set { _filtroImputado = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroDelito;
+        public string FiltroDelito
+        {
+            get => _filtroDelito;
+            set { _filtroDelito = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroJuez;
+        public string FiltroJuez
+        {
+            get => _filtroJuez;
+            set { _filtroJuez = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroExpediente;
+        public string FiltroExpediente
+        {
+            get => _filtroExpediente;
+            set { _filtroExpediente = value; OnPropertyChanged(); }
+        }
+
+        private string _filtroAQuienEntrega;
+        public string FiltroAQuienEntrega
+        {
+            get => _filtroAQuienEntrega;
+            set { _filtroAQuienEntrega = value; OnPropertyChanged(); }
+        }
+
+        // Fuentes fijas para los combos de filtro (mismas opciones que
+        // ya usa Nuevo Registro, para no inventar valores nuevos).
+        public List<string> TiposCausaDisponibles { get; } =
+            new List<string> { "C", "CP", "JO", "EXP" };
+
+        public List<string> JuzgadosDisponibles { get; } =
+            new List<string> { "Control", "Centro" };
+
+        public List<string> SalasDisponibles { get; } =
+            new List<string> { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "CJPM" };
+
+        public ICommand BuscarAvanzadoCommand { get; }
+        public ICommand LimpiarFiltrosCommand { get; }
+
+        private void EjecutarBuscarAvanzado(object param)
+        {
+            _filtroActivo.NUC = FiltroNUC;
+            _filtroActivo.NoCausa = FiltroNoCausa;
+            _filtroActivo.FechaDesde = FiltroFechaDesde;
+            _filtroActivo.FechaHasta = FiltroFechaHasta;
+            _filtroActivo.TipoCausa = FiltroTipoCausa;
+            _filtroActivo.Juzgado = FiltroJuzgado;
+            _filtroActivo.Sala = FiltroSala;
+            _filtroActivo.Imputado = FiltroImputado;
+            _filtroActivo.Delito = FiltroDelito;
+            _filtroActivo.Juez = FiltroJuez;
+            _filtroActivo.Expediente = FiltroExpediente;
+            _filtroActivo.AQuienEntrega = FiltroAQuienEntrega;
+
+            Filtrar();
+        }
+
+        private void EjecutarLimpiarFiltros(object param)
+        {
+            _filtroActivo.Limpiar();
+
+            FiltroNUC = FiltroNoCausa = FiltroTipoCausa = FiltroJuzgado =
+                FiltroSala = FiltroImputado = FiltroDelito = FiltroJuez =
+                FiltroExpediente = FiltroAQuienEntrega = null;
+            FiltroFechaDesde = FiltroFechaHasta = null;
+
+            Filtrar();
+        }
+
 
         //  COMANDOS
 
@@ -111,6 +245,12 @@ namespace PoderJudicial.ViewModels
 
             EliminarCommand =
                 new RelayCommand(EjecutarEliminar);
+
+            BuscarAvanzadoCommand =
+                new RelayCommand(EjecutarBuscarAvanzado);
+
+            LimpiarFiltrosCommand =
+                new RelayCommand(EjecutarLimpiarFiltros);
 
             IniciarReloj();
 
@@ -223,9 +363,11 @@ namespace PoderJudicial.ViewModels
         private void Filtrar()
         {
             string texto = _textoBusqueda.Trim().ToLower();
+            bool hayFiltrosAvanzados = _filtroActivo.TieneAlgunCriterio;
 
-            if (string.IsNullOrWhiteSpace(texto))
+            if (string.IsNullOrWhiteSpace(texto) && !hayFiltrosAvanzados)
             {
+                // Nada activo: comportamiento original (primeros 10, sin filtrar).
                 Audiencias = new ObservableCollection<Audiencia>(
                     _listaCompleta.Take(10)
                 );
@@ -238,68 +380,15 @@ namespace PoderJudicial.ViewModels
                 return;
             }
 
-            // Intentar convertir a fecha
-            DateTime fechaBuscada;
-            bool esFecha = DateTime.TryParse(texto, out fechaBuscada);
+            IEnumerable<Audiencia> resultado = _listaCompleta;
 
-            var filtrados = _listaCompleta.Where(a =>
+            if (!string.IsNullOrWhiteSpace(texto))
+                resultado = FiltrarPorTextoRapido(resultado, texto);
 
-                // =========================
-                // No. Causa EXACTO
-                // =========================
-                (!string.IsNullOrWhiteSpace(a.NoCausa) &&
-                 a.NoCausa.Trim().ToLower() == texto)
+            if (hayFiltrosAvanzados)
+                resultado = BuscadorRegistros.AplicarFiltro(resultado, _filtroActivo);
 
-                ||
-
-                // =========================
-                // NUC EXACTO
-                // =========================
-                (!string.IsNullOrWhiteSpace(a.NUC) &&
-                 a.NUC.Trim().ToLower() == texto)
-
-                ||
-
-                // =========================
-                // FECHA EXACTA
-                // =========================
-                (esFecha &&
-                 a.FechaAudiencia.HasValue &&
-                 a.FechaAudiencia.Value.Date == fechaBuscada.Date)
-
-                ||
-
-               // =========================
-               // TIPO CAUSA
-               // =========================
-               (!string.IsNullOrWhiteSpace(a.TipoCausa) &&
-                 a.TipoCausa.Trim().ToLower() == texto)
-
-                ||
-
-                // =========================
-                // TIPO AUDIENCIA / JUICIO
-                // =========================
-                (!string.IsNullOrWhiteSpace(a.TipoAudiencia) &&
-                 a.TipoAudiencia.ToLower().Contains(texto))
-
-                ||
-
-                // =========================
-                // IMPUTADO
-                // =========================
-                (!string.IsNullOrWhiteSpace(a.Imputado) &&
-                 a.Imputado.ToLower().Contains(texto))
-
-                ||
-
-                // =========================
-                // AGRAVIADO / VICTIMA
-                // =========================
-                (!string.IsNullOrWhiteSpace(a.Agraviado) &&
-                 a.Agraviado.ToLower().Contains(texto))
-
-            ).ToList();
+            var filtrados = resultado.ToList();
 
             Audiencias = new ObservableCollection<Audiencia>(filtrados);
 
@@ -307,6 +396,54 @@ namespace PoderJudicial.ViewModels
 
             TotalDiscosBusqueda =
                 $"Total discos audiencia: {CalcularTotalDiscos(filtrados)}";
+        }
+
+        /// <summary>
+        /// Búsqueda rápida (cuadro de texto libre): igual que antes, un OR
+        /// entre varios campos. Se combina con AND respecto a los filtros
+        /// avanzados cuando ambos están activos.
+        /// </summary>
+        private static IEnumerable<Audiencia> FiltrarPorTextoRapido(IEnumerable<Audiencia> origen, string texto)
+        {
+            DateTime fechaBuscada;
+            bool esFecha = DateTime.TryParse(texto, out fechaBuscada);
+
+            return origen.Where(a =>
+
+                (!string.IsNullOrWhiteSpace(a.NoCausa) &&
+                 a.NoCausa.Trim().ToLower() == texto)
+
+                ||
+
+                (!string.IsNullOrWhiteSpace(a.NUC) &&
+                 a.NUC.Trim().ToLower() == texto)
+
+                ||
+
+                (esFecha &&
+                 a.FechaAudiencia.HasValue &&
+                 a.FechaAudiencia.Value.Date == fechaBuscada.Date)
+
+                ||
+
+                (!string.IsNullOrWhiteSpace(a.TipoCausa) &&
+                 a.TipoCausa.Trim().ToLower() == texto)
+
+                ||
+
+                (!string.IsNullOrWhiteSpace(a.TipoAudiencia) &&
+                 a.TipoAudiencia.ToLower().Contains(texto))
+
+                ||
+
+                (!string.IsNullOrWhiteSpace(a.Imputado) &&
+                 a.Imputado.ToLower().Contains(texto))
+
+                ||
+
+                (!string.IsNullOrWhiteSpace(a.Agraviado) &&
+                 a.Agraviado.ToLower().Contains(texto))
+            );
         }
 
         private void ActualizarSugerencias()

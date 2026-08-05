@@ -76,7 +76,58 @@ namespace PoderJudicial.Views
     RoutedEventArgs e)
         {
             ConfigurarColumnas();
+            ConfigurarFiltrosVisibles();
         }
+
+        // ── Mostrar/ocultar el panel de filtros avanzados ──
+        private void BtnFiltrosAvanzados_Click(object sender, RoutedEventArgs e)
+        {
+            bool mostrar = PanelFiltrosAvanzados.Visibility != Visibility.Visible;
+            PanelFiltrosAvanzados.Visibility = mostrar ? Visibility.Visible : Visibility.Collapsed;
+            BtnFiltrosAvanzados.Content = mostrar ? "Filtros avanzados ▴" : "Filtros avanzados ▾";
+        }
+
+        /// <summary>
+        /// Oculta, dentro del panel de filtros avanzados, los campos que no
+        /// aplican a la tabla que se está consultando — mismo criterio y
+        /// mismo patrón (StartsWith sobre TablaActualSeleccionada) que ya
+        /// usa ConfigurarColumnas() para las columnas de la grilla.
+        /// </summary>
+        private void ConfigurarFiltrosVisibles()
+        {
+            string tabla = TablaActualSeleccionada ?? "";
+
+            bool esAudiencias = tabla.StartsWith("Audiencias ", StringComparison.OrdinalIgnoreCase);
+            bool esEjecucion = tabla.StartsWith("Ejecucion", StringComparison.OrdinalIgnoreCase);
+            bool esCopias = tabla.StartsWith("CopiasAudiencias", StringComparison.OrdinalIgnoreCase);
+
+            // NUC: no existe en Ejecución.
+            PanelFiltroNUC.Visibility = Vis(esAudiencias || esCopias);
+
+            // No. Causa y Tipo Causa y Fecha: existen en las 3 tablas.
+            PanelFiltroNoCausa.Visibility = Visibility.Visible;
+            PanelFiltroTipoCausa.Visibility = Visibility.Visible;
+            PanelFiltroFechaDesde.Visibility = Visibility.Visible;
+            PanelFiltroFechaHasta.Visibility = Visibility.Visible;
+
+            // Juzgado: solo Audiencias.
+            PanelFiltroJuzgado.Visibility = Vis(esAudiencias);
+
+            // Sala, Juez, Imputado, Delito: Audiencias y Ejecución.
+            PanelFiltroSala.Visibility = Vis(esAudiencias || esEjecucion);
+            PanelFiltroJuez.Visibility = Vis(esAudiencias || esEjecucion);
+            PanelFiltroImputado.Visibility = Vis(esAudiencias || esEjecucion);
+            PanelFiltroDelito.Visibility = Vis(esAudiencias || esEjecucion);
+
+            // Expediente: solo Ejecución.
+            PanelFiltroExpediente.Visibility = Vis(esEjecucion);
+
+            // A Quien se Entrega: solo Copias.
+            PanelFiltroAQuienEntrega.Visibility = Vis(esCopias);
+        }
+
+        private static Visibility Vis(bool mostrar)
+            => mostrar ? Visibility.Visible : Visibility.Collapsed;
 
         // Placeholder
         private void txtBuscar_GotFocus(object sender, RoutedEventArgs e)
@@ -173,8 +224,8 @@ namespace PoderJudicial.Views
                     Visibility.Collapsed;
             }
 
-            
-        
+
+
 
             // =========================
             // AUDIENCIAS

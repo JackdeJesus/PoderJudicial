@@ -810,7 +810,7 @@
                                 <ComboBoxItem Content="VII"/>
                                 <ComboBoxItem Content="VIII"/>
                                 <ComboBoxItem Content="IX"/>
-                                <ComboBoxItem Content="CJMP"/>
+                                <ComboBoxItem Content="CJPM"/>
                             </ComboBox>
                         </StackPanel>
                         <StackPanel x:Name="PanelNoCausaJuicio"
