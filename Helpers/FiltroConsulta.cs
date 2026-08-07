@@ -17,6 +17,15 @@ namespace PoderJudicial.Helpers
         public string NoCausa { get; set; }
         public DateTime? FechaDesde { get; set; }
         public DateTime? FechaHasta { get; set; }
+
+        // Rango de Fecha de Recibo — distinto de FechaDesde/FechaHasta
+        // (que filtran por Fecha de Audiencia). Se usa específicamente para
+        // "Registro de Copias", donde lo relevante para saber cuándo se
+        // entregó una copia es su Fecha de Recibo, no la Fecha de Audiencia
+        // del disco original (pueden ser fechas muy distintas).
+        public DateTime? FechaReciboDesde { get; set; }
+        public DateTime? FechaReciboHasta { get; set; }
+
         public string TipoCausa { get; set; }
         public string Juzgado { get; set; }
         public string Sala { get; set; }
@@ -32,6 +41,8 @@ namespace PoderJudicial.Helpers
             !string.IsNullOrWhiteSpace(NoCausa) ||
             FechaDesde.HasValue ||
             FechaHasta.HasValue ||
+            FechaReciboDesde.HasValue ||
+            FechaReciboHasta.HasValue ||
             !string.IsNullOrWhiteSpace(TipoCausa) ||
             !string.IsNullOrWhiteSpace(Juzgado) ||
             !string.IsNullOrWhiteSpace(Sala) ||
@@ -45,7 +56,7 @@ namespace PoderJudicial.Helpers
         {
             NUC = NoCausa = TipoCausa = Juzgado = Sala =
                 Imputado = Delito = Juez = Expediente = AQuienEntrega = null;
-            FechaDesde = FechaHasta = null;
+            FechaDesde = FechaHasta = FechaReciboDesde = FechaReciboHasta = null;
         }
     }
 }

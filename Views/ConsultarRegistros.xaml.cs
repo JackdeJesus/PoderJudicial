@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using PoderJudicial.Data;
+using PoderJudicial.Helpers;
 using PoderJudicial.Models;
 using PoderJudicial.ViewModels;
 namespace PoderJudicial.Views
@@ -20,7 +21,7 @@ namespace PoderJudicial.Views
 
 
         public ConsultarRegistros(
-     string tabla)
+     string tabla, FiltroConsulta filtroInicial = null)
         {
             InitializeComponent();
 
@@ -36,6 +37,16 @@ namespace PoderJudicial.Views
             DataContext = _vm;
 
             Loaded += ConsultarRegistros_Loaded;
+
+            if (filtroInicial != null)
+            {
+                // Viene de un acceso directo (ej. tarjetas del Home): se
+                // aplica de una vez y se deja el panel visible para que el
+                // usuario vea con qué quedó filtrado.
+                _vm.AplicarFiltroInicial(filtroInicial);
+                PanelFiltrosAvanzados.Visibility = Visibility.Visible;
+                BtnFiltrosAvanzados.Content = "Filtros avanzados ▴";
+            }
 
             txtBuscar.Text = Placeholder;
 
@@ -109,6 +120,11 @@ namespace PoderJudicial.Views
             PanelFiltroTipoCausa.Visibility = Visibility.Visible;
             PanelFiltroFechaDesde.Visibility = Visibility.Visible;
             PanelFiltroFechaHasta.Visibility = Visibility.Visible;
+
+            // Fecha de Recibo: solo tiene sentido como filtro en Registro de
+            // Copias (ahí es lo que indica cuándo se entregó la copia).
+            PanelFiltroFechaReciboDesde.Visibility = Vis(esCopias);
+            PanelFiltroFechaReciboHasta.Visibility = Vis(esCopias);
 
             // Juzgado: solo Audiencias.
             PanelFiltroJuzgado.Visibility = Vis(esAudiencias);

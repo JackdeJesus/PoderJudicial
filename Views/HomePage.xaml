@@ -424,7 +424,9 @@ Padding="32,18"
                             <UniformGrid Rows="1" Columns="4" Margin="0,0,0,16">
 
                                 <!-- Audiencias -->
-                                <Border Style="{StaticResource StatCardStyle}">
+                                <Border Style="{StaticResource StatCardStyle}"
+                                        Cursor="Hand"
+                                        MouseLeftButtonUp="CardAudienciasMes_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Border Width="50" Height="50" CornerRadius="12"
                                                 Background="#2563EB" Margin="0,0,12,0">
@@ -443,7 +445,9 @@ Padding="32,18"
                                 </Border>
 
                                 <!-- Ejecuciones -->
-                                <Border Style="{StaticResource StatCardStyle}">
+                                <Border Style="{StaticResource StatCardStyle}"
+                                        Cursor="Hand"
+                                        MouseLeftButtonUp="CardEjecucionesMes_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Border Width="50" Height="50" CornerRadius="12"
                                                 Background="#16A34A" Margin="0,0,12,0">
@@ -463,7 +467,9 @@ Padding="32,18"
                                 </Border>
 
                                 <!-- Copias -->
-                                <Border Style="{StaticResource StatCardStyle}">
+                                <Border Style="{StaticResource StatCardStyle}"
+                                        Cursor="Hand"
+                                        MouseLeftButtonUp="CardCopiasMes_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Border Width="50" Height="50" CornerRadius="12"
                                                 Background="#7C3AED" Margin="0,0,12,0">
@@ -484,7 +490,9 @@ Padding="32,18"
                                 </Border>
 
                                 <!-- Audiencias hoy -->
-                                <Border Style="{StaticResource StatCardStyle}" Margin="0">
+                                <Border Style="{StaticResource StatCardStyle}" Margin="0"
+                                        Cursor="Hand"
+                                        MouseLeftButtonUp="CardAudienciasHoy_Click">
                                     <StackPanel Orientation="Horizontal">
                                         <Border Width="50" Height="50" CornerRadius="12"
                                                 Background="#E3A04A" Margin="0,0,12,0">
@@ -586,7 +594,7 @@ BorderBrush="{DynamicResource BorderBrush}"
                                     <TextBlock Grid.Column="2" Text="Usuario"
                                                Foreground="{DynamicResource PrimaryTextBrush}" FontSize="11" FontWeight="SemiBold"  HorizontalAlignment="Center"
            TextAlignment="Center"/>
-                             
+
                                 </Grid>
                                 <Border Height="1" Background="#F1F5F9" Margin="0,0,0,6"/>
 

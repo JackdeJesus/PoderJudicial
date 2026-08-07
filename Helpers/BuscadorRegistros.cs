@@ -38,6 +38,14 @@ namespace PoderJudicial.Helpers
                 resultado = resultado.Where(a =>
                     a.FechaAudiencia.HasValue && a.FechaAudiencia.Value.Date <= f.FechaHasta.Value.Date);
 
+            if (f.FechaReciboDesde.HasValue)
+                resultado = resultado.Where(a =>
+                    a.FechaRecibo.HasValue && a.FechaRecibo.Value.Date >= f.FechaReciboDesde.Value.Date);
+
+            if (f.FechaReciboHasta.HasValue)
+                resultado = resultado.Where(a =>
+                    a.FechaRecibo.HasValue && a.FechaRecibo.Value.Date <= f.FechaReciboHasta.Value.Date);
+
             if (!string.IsNullOrWhiteSpace(f.TipoCausa))
                 resultado = resultado.Where(a => Igual(a.TipoCausa, f.TipoCausa));
 

@@ -36,7 +36,7 @@ namespace PoderJudicial.Views
         private DispatcherTimer timer;
         public HomePage()
         {
-            
+
             InitializeComponent();
 
             vm = new HomePageViewModel();
@@ -44,7 +44,7 @@ namespace PoderJudicial.Views
 
             IniciarReloj();
             CargarDashboard();
-            
+
         }
 
         private Dashboard ObtenerDashboard()
@@ -58,7 +58,7 @@ namespace PoderJudicial.Views
             CultureInfo cultura = new CultureInfo("es-MX");
             TxtHora.Text = ahora.ToString("hh:mm tt");
             TxtFecha.Text = ahora.ToString("dddd, dd MMMM yyyy", cultura);
-            
+
         }
 
         private void IniciarReloj()
@@ -134,6 +134,54 @@ namespace PoderJudicial.Views
     RoutedEventArgs e)
         {
             ObtenerDashboard()?.AbrirConfiguracion();
+        }
+
+        // ══════════════════════════════════════════════
+        //  TARJETAS DE ESTADÍSTICAS → accesos directos a
+        //  Consultar Registros, ya filtrados.
+        // ══════════════════════════════════════════════
+        private void CardAudienciasMes_Click(object sender, RoutedEventArgs e)
+        {
+            var (desde, hasta) = RangoMesActual();
+
+            ObtenerDashboard()?.AbrirConsultarRegistros(
+                TableDetector.TablaActual,
+                new FiltroConsulta { FechaDesde = desde, FechaHasta = hasta });
+        }
+
+        private void CardEjecucionesMes_Click(object sender, RoutedEventArgs e)
+        {
+            var (desde, hasta) = RangoMesActual();
+
+            ObtenerDashboard()?.AbrirConsultarRegistros(
+                "Ejecucion",
+                new FiltroConsulta { FechaDesde = desde, FechaHasta = hasta });
+        }
+
+        private void CardCopiasMes_Click(object sender, RoutedEventArgs e)
+        {
+            var (desde, hasta) = RangoMesActual();
+
+            // Copias: lo que importa es cuándo se ENTREGÓ la copia
+            // (Fecha de Recibo), no la fecha de la audiencia original.
+            ObtenerDashboard()?.AbrirConsultarRegistros(
+                "CopiasAudiencias",
+                new FiltroConsulta { FechaReciboDesde = desde, FechaReciboHasta = hasta });
+        }
+
+        private void CardAudienciasHoy_Click(object sender, RoutedEventArgs e)
+        {
+            ObtenerDashboard()?.AbrirConsultarRegistros(
+                TableDetector.TablaActual,
+                new FiltroConsulta { FechaDesde = DateTime.Today, FechaHasta = DateTime.Today });
+        }
+
+        private static (DateTime desde, DateTime hasta) RangoMesActual()
+        {
+            DateTime hoy = DateTime.Now;
+            DateTime primerDia = new DateTime(hoy.Year, hoy.Month, 1);
+            DateTime ultimoDia = primerDia.AddMonths(1).AddDays(-1);
+            return (primerDia, ultimoDia);
         }
 
 

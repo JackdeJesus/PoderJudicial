@@ -122,6 +122,20 @@ namespace PoderJudicial.ViewModels
             set { _filtroFechaHasta = value; OnPropertyChanged(); }
         }
 
+        private DateTime? _filtroFechaReciboDesde;
+        public DateTime? FiltroFechaReciboDesde
+        {
+            get => _filtroFechaReciboDesde;
+            set { _filtroFechaReciboDesde = value; OnPropertyChanged(); }
+        }
+
+        private DateTime? _filtroFechaReciboHasta;
+        public DateTime? FiltroFechaReciboHasta
+        {
+            get => _filtroFechaReciboHasta;
+            set { _filtroFechaReciboHasta = value; OnPropertyChanged(); }
+        }
+
         private string _filtroTipoCausa;
         public string FiltroTipoCausa
         {
@@ -187,7 +201,7 @@ namespace PoderJudicial.ViewModels
             new List<string> { "Control", "Centro" };
 
         public List<string> SalasDisponibles { get; } =
-            new List<string> { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "CJPM" };
+            new List<string> { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "CJMP" };
 
         public ICommand BuscarAvanzadoCommand { get; }
         public ICommand LimpiarFiltrosCommand { get; }
@@ -198,6 +212,8 @@ namespace PoderJudicial.ViewModels
             _filtroActivo.NoCausa = FiltroNoCausa;
             _filtroActivo.FechaDesde = FiltroFechaDesde;
             _filtroActivo.FechaHasta = FiltroFechaHasta;
+            _filtroActivo.FechaReciboDesde = FiltroFechaReciboDesde;
+            _filtroActivo.FechaReciboHasta = FiltroFechaReciboHasta;
             _filtroActivo.TipoCausa = FiltroTipoCausa;
             _filtroActivo.Juzgado = FiltroJuzgado;
             _filtroActivo.Sala = FiltroSala;
@@ -217,9 +233,39 @@ namespace PoderJudicial.ViewModels
             FiltroNUC = FiltroNoCausa = FiltroTipoCausa = FiltroJuzgado =
                 FiltroSala = FiltroImputado = FiltroDelito = FiltroJuez =
                 FiltroExpediente = FiltroAQuienEntrega = null;
-            FiltroFechaDesde = FiltroFechaHasta = null;
+            FiltroFechaDesde = FiltroFechaHasta =
+                FiltroFechaReciboDesde = FiltroFechaReciboHasta = null;
 
             Filtrar();
+        }
+
+        /// <summary>
+        /// Aplica de entrada un filtro ya armado (ej. desde las tarjetas del
+        /// Home: "Audiencias este mes", "Copias entregadas este mes", etc.)
+        /// — refleja los valores en las propiedades bindeables (para que el
+        /// panel de filtros avanzados los muestre) y ejecuta la búsqueda de
+        /// una vez, sin esperar a que el usuario presione "Buscar".
+        /// </summary>
+        public void AplicarFiltroInicial(FiltroConsulta filtro)
+        {
+            if (filtro == null) return;
+
+            FiltroNUC = filtro.NUC;
+            FiltroNoCausa = filtro.NoCausa;
+            FiltroFechaDesde = filtro.FechaDesde;
+            FiltroFechaHasta = filtro.FechaHasta;
+            FiltroFechaReciboDesde = filtro.FechaReciboDesde;
+            FiltroFechaReciboHasta = filtro.FechaReciboHasta;
+            FiltroTipoCausa = filtro.TipoCausa;
+            FiltroJuzgado = filtro.Juzgado;
+            FiltroSala = filtro.Sala;
+            FiltroImputado = filtro.Imputado;
+            FiltroDelito = filtro.Delito;
+            FiltroJuez = filtro.Juez;
+            FiltroExpediente = filtro.Expediente;
+            FiltroAQuienEntrega = filtro.AQuienEntrega;
+
+            EjecutarBuscarAvanzado(null);
         }
 
 

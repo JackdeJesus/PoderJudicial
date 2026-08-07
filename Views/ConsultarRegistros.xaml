@@ -9,13 +9,16 @@
 
     <Page.Resources>
 
-        <!-- TextBlock -->
+        <!-- Label -->
+        
         <Style x:Key="LabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
+
+
 
         <!-- badge -->
         <Style x:Key="BadgeStyle" TargetType="Border">
@@ -255,9 +258,6 @@
         </Style>
 
 
-
-
-
     </Page.Resources>
 
     <Grid Background="{DynamicResource BackgroundBrush}">
@@ -405,7 +405,7 @@
                         Content="Filtros avanzados ▾"
                         Grid.Column="1"
                         Height="42"
-                        Width="150"
+                        Width="160"
                         Padding="14,0"
                         Margin="10,0"
                         Cursor="Hand"
@@ -517,17 +517,32 @@
                         </StackPanel>
 
                         <!-- Fecha desde -->
-                        <StackPanel x:Name="PanelFiltroFechaDesde" Width="150" Margin="0,0,30,12">
-                            <TextBlock Text="Fecha audiencia — desde" Style="{StaticResource LabelStyle}"/>
+                        <StackPanel x:Name="PanelFiltroFechaDesde" Width="150" Margin="0,0,14,12">
+                            <TextBlock Text="Fecha audiencia — desde" Style="{StaticResource FiltroLabelStyle}"/>
                             <DatePicker Style="{StaticResource FiltroDateStyle}"
                                         SelectedDate="{Binding FiltroFechaDesde}"/>
                         </StackPanel>
 
                         <!-- Fecha hasta -->
-                        <StackPanel x:Name="PanelFiltroFechaHasta" Width="150" Margin="0,0,30,12">
-                            <TextBlock Text="Fecha audiencia — hasta" Style="{StaticResource LabelStyle}"/>
+                        <StackPanel x:Name="PanelFiltroFechaHasta" Width="150" Margin="0,0,14,12">
+                            <TextBlock Text="Fecha audiencia — hasta" Style="{StaticResource FiltroLabelStyle}"/>
                             <DatePicker Style="{StaticResource FiltroDateStyle}"
                                         SelectedDate="{Binding FiltroFechaHasta}"/>
+                        </StackPanel>
+
+                        <!-- Fecha Recibo (solo Registro de Copias: ahí es lo
+                             que realmente indica cuándo se entregó la copia,
+                             a diferencia de Fecha Audiencia) -->
+                        <StackPanel x:Name="PanelFiltroFechaReciboDesde" Width="150" Margin="0,0,14,12">
+                            <TextBlock Text="Fecha recibo — desde" Style="{StaticResource FiltroLabelStyle}"/>
+                            <DatePicker Style="{StaticResource FiltroDateStyle}"
+                                        SelectedDate="{Binding FiltroFechaReciboDesde}"/>
+                        </StackPanel>
+
+                        <StackPanel x:Name="PanelFiltroFechaReciboHasta" Width="150" Margin="0,0,14,12">
+                            <TextBlock Text="Fecha recibo — hasta" Style="{StaticResource FiltroLabelStyle}"/>
+                            <DatePicker Style="{StaticResource FiltroDateStyle}"
+                                        SelectedDate="{Binding FiltroFechaReciboHasta}"/>
                         </StackPanel>
 
                         <!-- Juzgado -->
@@ -589,7 +604,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
                         <Button Content="Limpiar filtros"
                                 Command="{Binding LimpiarFiltrosCommand}"
-                                Height="34" Padding="14,0" Margin="0,0,10,0" Width="90"
+                                Height="34" Padding="14,0" Margin="0,0,10,0"
                                 Cursor="Hand" FontSize="12.5"
                                 Foreground="{DynamicResource PrimaryTextBrush}">
                             <Button.Template>

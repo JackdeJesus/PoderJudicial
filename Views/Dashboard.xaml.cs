@@ -1,4 +1,4 @@
-﻿ using PoderJudicial.Data;
+﻿using PoderJudicial.Data;
 using PoderJudicial.Helpers;
 using PoderJudicial.Views;
 using System;
@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 namespace PoderJudicial.Views
 {
     public partial class Dashboard : Window
-       {
+    {
 
         private bool _submenuConsultasVisible = false;
         private Button _tablaSeleccionada = null;
@@ -235,12 +235,12 @@ namespace PoderJudicial.Views
             Login login = new Login();
             login.Show();
 
-            
+
             this.Close();
         }
 
 
-// Config
+        // Config
 
         private void BtnConfig_Click(
     object sender,
@@ -371,6 +371,31 @@ namespace PoderJudicial.Views
                 new ConsultarRegistros(tabla));
         }
 
+        /// <summary>
+        /// Igual que <see cref="AbrirConsultarRegistros(string)"/> pero
+        /// además precarga un filtro (rango de fechas, etc.) — usado por los
+        /// accesos directos de las tarjetas del Home ("Audiencias este mes",
+        /// "Copias entregadas este mes", etc.).
+        /// </summary>
+        public void AbrirConsultarRegistros(string tabla, FiltroConsulta filtroInicial)
+        {
+            ActivarBoton(BtnConsultar);
+
+            if (_tablaSeleccionada != null)
+            {
+                _tablaSeleccionada.Background = Brushes.Transparent;
+
+                _tablaSeleccionada.Foreground =
+                    new SolidColorBrush(
+                        (Color)ColorConverter.ConvertFromString("#B8C1D1"));
+
+                _tablaSeleccionada = null;
+            }
+
+            MainFrame.Navigate(
+                new ConsultarRegistros(tabla, filtroInicial));
+        }
+
 
 
 
@@ -389,6 +414,6 @@ namespace PoderJudicial.Views
             ThemeManager.CambiarTema("EyeCare");
         }
 
-       
+
     }
 }
