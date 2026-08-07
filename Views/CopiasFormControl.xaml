@@ -234,16 +234,14 @@
 
                         <!-- No. Causa -->
                         <StackPanel Grid.Column="2">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="No. Causa" Style="{StaticResource LabelStyle}"/>
-                                <TextBlock Text=" *" Foreground="#EF4444" FontWeight="Bold" Margin="0,0,0,6"/>
-                            </StackPanel>
+                            <TextBlock Text="No. Causa" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="TxtNoCausa"
              Style="{StaticResource InputStyle}"
              Tag="Ej: 123/2024"
              PreviewTextInput="NoCausa_PreviewTextInput"
              LostFocus="TxtNoCausa_LostFocus"/>
                         </StackPanel>
+
 
 
                         <!-- Fecha Recibo -->
@@ -270,7 +268,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Fecha Audiencia (autocompletada desde No. Causa, solo lectura) -->
+
                         <StackPanel Grid.Column="0">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Fecha Audiencia" Style="{StaticResource LabelStyle}"/>
@@ -279,7 +277,22 @@
                             <TextBox x:Name="TxtFeAudiencia"
              Style="{StaticResource InputStyleReadOnly}"
              Tag="Se completa según No. Causa"/>
+                            <!--
+        Se muestra en vez del TextBox de arriba solo
+        cuando el No. Causa tiene más de una audiencia
+        registrada (varios discos originales posibles):
+        el usuario elige a cuál corresponde la copia.
+        Al seleccionar, se refleja en TxtFeAudiencia
+        (ver CmbFeAudienciaOpciones_SelectionChanged),
+        así que el resto de la lógica de guardado no
+        necesita saber que esto existe.
+    -->
+                            <ComboBox x:Name="CmbFeAudienciaOpciones"
+              Style="{StaticResource ComboStyle}"
+              Visibility="Collapsed"
+              SelectionChanged="CmbFeAudienciaOpciones_SelectionChanged"/>
                         </StackPanel>
+
 
                         <!-- NUC (autocompletado desde No. Causa, solo lectura) -->
                         <StackPanel Grid.Column="2">
@@ -346,7 +359,7 @@
                                 <ComboBoxItem Content="Seleccione tipo"/>
                                 <ComboBoxItem Content="Copia Simple"/>
                                 <ComboBoxItem Content="Copia Autentica"/>
-                               
+
                             </ComboBox>
                         </StackPanel>
 

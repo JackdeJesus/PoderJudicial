@@ -107,7 +107,7 @@ namespace PoderJudicial.Views
         /// <summary>Detiene el reloj interno. El host debe llamarlo si descarta el control.</summary>
         internal void DetenerReloj() => _timer?.Stop();
 
-       
+
         //  PLACEHOLDERS
 
         private void RegistrarPlaceholders()
@@ -265,7 +265,7 @@ namespace PoderJudicial.Views
         {
             TxtId.Text = string.Empty;
             TxtFeAudiencia.Text = string.Empty;
-            
+
             TxtNoCausa.Text = string.Empty;
             TxtNUC.Text = string.Empty;
             TxtTipoCausa.Text = string.Empty;
@@ -273,9 +273,11 @@ namespace PoderJudicial.Views
             TxtObservaciones.Text = string.Empty;
             CmbTipoDisco.SelectedIndex = 0;
             CmbTotDiscosEntregados.SelectedIndex = 0;
-            
+
             CmbDiscosExternos.SelectedIndex = 0;
             CmbEtiquetasEntregadas.SelectedIndex = 0;
+
+            OcultarComboFechas();
 
             _permitirLetrasNoCausa = false;
 
@@ -327,9 +329,11 @@ namespace PoderJudicial.Views
             if (string.IsNullOrWhiteSpace(causa))
                 return;
 
+            // NUC y Tipo Causa: no cambian entre audiencias de la misma
+            // causa, así que basta con la primera coincidencia (sin tocar).
             string nuc =
                 new AudienciaData()
-                    .ObtenerDatosPorNoCausa(causa, out string tipoCausa, out DateTime? fechaAudiencia);
+                    .ObtenerDatosPorNoCausa(causa, out string tipoCausa, out _);
 
             var brushNormal = (Brush)Application.Current.Resources["PrimaryTextBrush"];
 
@@ -345,11 +349,63 @@ namespace PoderJudicial.Views
                 TxtTipoCausa.Foreground = brushNormal;
             }
 
-            if (fechaAudiencia.HasValue)
+            // Fecha Audiencia: un mismo No. Causa puede tener varias
+            // audiencias (varios discos originales) en fechas distintas —
+            // hay que revisarlas TODAS, no solo la primera que aparezca.
+            List<DateTime> fechas =
+                new AudienciaData().ObtenerFechasAudienciaPorNoCausa(causa);
+
+            if (fechas.Count == 0)
             {
-                TxtFeAudiencia.Text = fechaAudiencia.Value.ToString("dd/MM/yyyy");
-                TxtFeAudiencia.Foreground = brushNormal;
+                // No hay ninguna audiencia asociada: se limpia y se avisa,
+                // en vez de dejar una fecha incorrecta o de una búsqueda anterior.
+                TxtFeAudiencia.Text = string.Empty;
+                OcultarComboFechas();
+
+                MessageBox.Show(
+                    "No se encontraron audiencias registradas para este No. Causa.",
+                    "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
             }
+            else if (fechas.Count == 1)
+            {
+                // Único disco original posible: se autocompleta como antes.
+                TxtFeAudiencia.Text = fechas[0].ToString("dd/MM/yyyy");
+                TxtFeAudiencia.Foreground = brushNormal;
+                OcultarComboFechas();
+            }
+            else
+            {
+                // Varios discos originales posibles: el usuario elige a cuál
+                // corresponde la copia. Se deja sin selección para forzar
+                // una elección explícita (la validación ya exige que
+                // Fecha Audiencia no quede vacía al guardar).
+                CmbFeAudienciaOpciones.ItemsSource =
+                    fechas.Select(f => f.ToString("dd/MM/yyyy")).ToList();
+                CmbFeAudienciaOpciones.SelectedIndex = -1;
+
+                TxtFeAudiencia.Text = string.Empty;
+                TxtFeAudiencia.Visibility = Visibility.Collapsed;
+                CmbFeAudienciaOpciones.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void CmbFeAudienciaOpciones_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // El ComboBox solo decide cuál fecha usar; el resto del formulario
+            // (validación, ConstruirModelo, etc.) sigue leyendo TxtFeAudiencia
+            // sin cambios, así no se duplica esa lógica.
+            if (CmbFeAudienciaOpciones.SelectedItem is string fechaTexto)
+            {
+                TxtFeAudiencia.Text = fechaTexto;
+                TxtFeAudiencia.Foreground = (Brush)Application.Current.Resources["PrimaryTextBrush"];
+            }
+        }
+
+        private void OcultarComboFechas()
+        {
+            CmbFeAudienciaOpciones.Visibility = Visibility.Collapsed;
+            CmbFeAudienciaOpciones.ItemsSource = null;
+            TxtFeAudiencia.Visibility = Visibility.Visible;
         }
 
         // ══════════════════════════════════════════════
@@ -370,6 +426,10 @@ namespace PoderJudicial.Views
 
             if (registro.FeAudiencia.HasValue)
                 EstablecerTexto(TxtFeAudiencia, registro.FeAudiencia.Value.ToString("dd/MM/yyyy"), brushNormal);
+
+            // Al editar ya se conoce la fecha exacta que se usó para esta
+            // copia — no hace falta volver a preguntar entre varias.
+            OcultarComboFechas();
 
             if (registro.FeRecibo.HasValue)
                 TxtFeRecibo.Text = registro.FeRecibo.Value.ToString("dd/MM/yyyy");

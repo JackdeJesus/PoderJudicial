@@ -63,8 +63,8 @@ namespace PoderJudicial.Data
                 // ─────────────────────────────
                 // TOTAL DISCOS
                 // ─────────────────────────────
-                
-TotDiscos =
+
+                TotDiscos =
     ExisteColumna(reader, "TotDiscos") &&
     int.TryParse(
         reader["TotDiscos"]?.ToString(),
@@ -262,8 +262,8 @@ ExisteColumna(reader, "QuienRealiza")
         ? reader["Expediente"]?.ToString()
         : "",
 
-                
-        
+
+
 
                 DiscosExternos =
     ExisteColumna(reader, "DiscosExternos")
@@ -283,9 +283,9 @@ ExisteColumna(reader, "QuienRealiza")
 
             };
 
-        // ÍNDICE DE BÚSQUEDA OPTIMIZADO
-        a.TextoBusqueda = string.Join(" ", new[]
-            {
+            // ÍNDICE DE BÚSQUEDA OPTIMIZADO
+            a.TextoBusqueda = string.Join(" ", new[]
+                {
         a.Id.ToString(),
         a.NoCausa,
         a.NUC,
@@ -302,8 +302,8 @@ ExisteColumna(reader, "QuienRealiza")
         a.FechaAudiencia?.ToString("dd/MM/yyyy"),
         a.FechaRecibo?.ToString("dd/MM/yyyy")
     }
-            .Where(x => !string.IsNullOrWhiteSpace(x)))
-            .ToLower();
+                .Where(x => !string.IsNullOrWhiteSpace(x)))
+                .ToLower();
 
             return a;
         }
@@ -317,9 +317,9 @@ ExisteColumna(reader, "QuienRealiza")
             // CRÍTICO en OleDb: el orden debe coincidir
             // exactamente con el orden del SQL
             cmd.Parameters.AddWithValue("@Id", a.Id);
-            cmd.Parameters.AddWithValue("@FeAudiencia",a.FechaAudiencia.HasValue ? a.FechaAudiencia.Value : DBNull.Value);
-            cmd.Parameters.AddWithValue("@FeRecibo",a.FechaRecibo.HasValue ? a.FechaRecibo.Value : DBNull.Value);
-            cmd.Parameters.AddWithValue("@TotDiscos", a.TotDiscos.HasValue ? a.TotDiscos.Value: DBNull.Value);
+            cmd.Parameters.AddWithValue("@FeAudiencia", a.FechaAudiencia.HasValue ? a.FechaAudiencia.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@FeRecibo", a.FechaRecibo.HasValue ? a.FechaRecibo.Value : DBNull.Value);
+            cmd.Parameters.AddWithValue("@TotDiscos", a.TotDiscos.HasValue ? a.TotDiscos.Value : DBNull.Value);
             cmd.Parameters.AddWithValue("@TipoDisco", a.TipoDisco ?? string.Empty);
             cmd.Parameters.AddWithValue("@Juzgado", a.Juzgado ?? string.Empty);
             cmd.Parameters.AddWithValue("@TotDiscoAudiencia", a.TotDiscoAudiencia ?? string.Empty);
@@ -328,7 +328,7 @@ ExisteColumna(reader, "QuienRealiza")
             cmd.Parameters.AddWithValue("@NUC", a.NUC ?? string.Empty);
             cmd.Parameters.AddWithValue("@TipoCausa", a.TipoCausa ?? string.Empty);
             cmd.Parameters.AddWithValue("@TipoAudiencia", a.TipoAudiencia ?? string.Empty);
-            cmd.Parameters.AddWithValue("@HoraConclusion",a.HoraConclusion.HasValue? a.HoraConclusion.Value:DBNull.Value);
+            cmd.Parameters.AddWithValue("@HoraConclusion", a.HoraConclusion.HasValue ? a.HoraConclusion.Value : DBNull.Value);
             cmd.Parameters.AddWithValue("@Imputado", a.Imputado ?? string.Empty);
             cmd.Parameters.AddWithValue("@Delito", a.Delito ?? string.Empty);
             cmd.Parameters.AddWithValue("@Agraviado", a.Agraviado ?? string.Empty);
@@ -393,7 +393,7 @@ ExisteColumna(reader, "QuienRealiza")
         }
 
 
-        
+
         // ──────────────────────────────────────────
         //  OBTENER UNO POR ID
         // ──────────────────────────────────────────
@@ -490,7 +490,7 @@ ExisteColumna(reader, "QuienRealiza")
             }
         }
 
-      
+
         //  ACTUALIZAR
         public void Actualizar(Audiencia a)
         {
@@ -744,23 +744,82 @@ ExisteColumna(reader, "QuienRealiza")
             return "";
         }
 
+        /// <summary>
+        /// Devuelve TODAS las fechas de audiencia (sin duplicados, ordenadas)
+        /// asociadas a un No. Causa. A diferencia de
+        /// <see cref="ObtenerDatosPorNoCausa"/> —que se detiene en la
+        /// primera coincidencia, porque NUC/TipoCausa no cambian entre
+        /// audiencias de la misma causa—, aquí es indispensable recorrer
+        /// TODAS las filas y TODAS las tablas "Audiencias*" que coincidan,
+        /// porque un mismo No. Causa puede tener varias audiencias (y por lo
+        /// tanto varios discos originales) en fechas distintas.
+        /// Usado por "Registro de Copias" para que el usuario elija a cuál
+        /// disco original corresponde la copia que se está registrando.
+        /// </summary>
+        public List<DateTime> ObtenerFechasAudienciaPorNoCausa(string noCausa)
+        {
+            var fechas = new List<DateTime>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                DataTable schema = conn.GetSchema("Tables");
+
+                foreach (DataRow row in schema.Rows)
+                {
+                    string nombreTabla = row["TABLE_NAME"].ToString();
+
+                    if (!nombreTabla.Contains("Audiencias")) continue;
+                    if (nombreTabla.StartsWith("MSys")) continue;
+
+                    string query = $"SELECT * FROM [{nombreTabla}] WHERE NoCausa = ?";
+
+                    using (OleDbCommand cmd = new OleDbCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("?", noCausa);
+
+                        using (OleDbDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                DateTime? fecha =
+                                    ExisteColumna(reader, "FeAudiencia") &&
+                                    DateTime.TryParse(reader["FeAudiencia"]?.ToString(), out DateTime f1)
+                                        ? f1
+                                        : ExisteColumna(reader, "FechaAudiencia") &&
+                                          DateTime.TryParse(reader["FechaAudiencia"]?.ToString(), out DateTime f2)
+                                            ? f2
+                                            : (DateTime?)null;
+
+                                if (fecha.HasValue)
+                                    fechas.Add(fecha.Value.Date);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return fechas.Distinct().OrderBy(f => f).ToList();
+        }
 
 
-        
 
-public string ObtenerVersionSistema()
-    {
-        return Assembly
-            .GetExecutingAssembly()
-            .GetName()
-            .Version
-            ?.ToString() ?? "1.0.0";
+
+
+        public string ObtenerVersionSistema()
+        {
+            return Assembly
+                .GetExecutingAssembly()
+                .GetName()
+                .Version
+                ?.ToString() ?? "1.0.0";
+        }
+
+
+
+
+
     }
-
-
-
-
-
-}
 
 }
