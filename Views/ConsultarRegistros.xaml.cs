@@ -19,7 +19,11 @@ namespace PoderJudicial.Views
         private const string Placeholder = "Buscar por causa, NUC, imputado o fecha...";
         private string TablaActualSeleccionada = "";
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tabla"></param>
+        /// <param name="filtroInicial"></param>
         public ConsultarRegistros(
      string tabla, FiltroConsulta filtroInicial = null)
         {
