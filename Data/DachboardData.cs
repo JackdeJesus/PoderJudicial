@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using PoderJudicial.Helpers;
 
 namespace PoderJudicial.Data
 {
@@ -103,8 +104,8 @@ namespace PoderJudicial.Data
                         "?",
                         inicioSiguienteMes);
 
-                     object resultado =
-                        cmd.ExecuteScalar();
+                    object resultado =
+                       cmd.ExecuteScalar();
 
                     if (resultado != null &&
                         resultado != DBNull.Value)
@@ -180,11 +181,11 @@ namespace PoderJudicial.Data
             {
                 conn.Open();
 
-               
+
 
                 foreach (string nombreTabla in ObtenerTablasAudiencias(conn))
                 {
-                    
+
                     try
                     {
                         string query = @"
@@ -281,12 +282,7 @@ namespace PoderJudicial.Data
                     try
                     {
                         string query = $@"
-                    SELECT TOP 10
-                        Id,
-                        FeRecibo,
-                        NUC,
-                        NoCausa,
-                        [Quien Realiza]
+                    SELECT TOP 10 *
                     FROM [{nombreTabla}]
                     WHERE FeRecibo IS NOT NULL
                     ORDER BY FeRecibo DESC";
@@ -312,6 +308,16 @@ namespace PoderJudicial.Data
                                     IdRegistro = Convert.ToInt32(dr["Id"]),
 
                                     TablaDestino = nombreTabla,
+
+                                    Sala = TieneColumna(dr, "Sala")
+                                        ? dr["Sala"]?.ToString() ?? ""
+                                        : "",
+
+                                    TotalDiscos = BuscadorRegistros
+                                        .ExtraerNumero(TieneColumna(dr, "TotDiscoAudiencia")
+                                            ? dr["TotDiscoAudiencia"]?.ToString()
+                                            : "")
+                                        .ToString(),
                                 });
                             }
                         }
@@ -343,13 +349,7 @@ namespace PoderJudicial.Data
         "TotDiscosEntregados");
 
                 string query = $@"
-SELECT TOP 10
-    Id,
-    FeRecibo,
-    NUC,
-    NoCausa,
-    TotDiscosEntregados,
-    [Quien Realiza]
+SELECT TOP 10 *
 FROM [{nombreTabla}]
 WHERE FeRecibo IS NOT NULL
 ORDER BY FeRecibo DESC";
@@ -385,6 +385,17 @@ ORDER BY FeRecibo DESC";
                             IdRegistro = Convert.ToInt32(dr["Id"]),
 
                             TablaDestino = nombreTabla,
+
+                            // Registro de Copias no tiene columna Sala —
+                            // queda vacía, tal como lo pidió el usuario para
+                            // cuando el campo no exista en ese tipo de registro.
+                            Sala = TieneColumna(dr, "Sala")
+                                ? dr["Sala"]?.ToString() ?? ""
+                                : "",
+
+                            TotalDiscos = BuscadorRegistros
+                                .ExtraerNumero(dr["TotDiscosEntregados"]?.ToString())
+                                .ToString(),
                         });
                     }
                 }
@@ -407,12 +418,7 @@ ORDER BY FeRecibo DESC";
         "Expediente");
 
                 string query = $@"
-SELECT TOP 10
-Id,
-    FechaAudiencia,
-    Expediente,
-    Causa,
-    Observaciones
+SELECT TOP 10 *
 FROM [{nombreTabla}]
 WHERE FechaAudiencia IS NOT NULL
 ORDER BY FechaAudiencia DESC";
@@ -447,6 +453,16 @@ ORDER BY FechaAudiencia DESC";
                             Usuario = dr["Observaciones"].ToString(),
                             IdRegistro = Convert.ToInt32(dr["Id"]),
                             TablaDestino = nombreTabla,
+
+                            Sala = TieneColumna(dr, "Sala")
+                                ? dr["Sala"]?.ToString() ?? ""
+                                : "",
+
+                            TotalDiscos = BuscadorRegistros
+                                .ExtraerNumero(TieneColumna(dr, "TotalDiscos")
+                                    ? dr["TotalDiscos"]?.ToString()
+                                    : "")
+                                .ToString(),
                         });
                     }
                 }
@@ -455,6 +471,23 @@ ORDER BY FechaAudiencia DESC";
             return lista;
         }
 
+
+        /// <summary>
+        /// Igual que AudienciaData.ExisteColumna: comprueba si la fila
+        /// actual trae una columna con ese nombre, para leer campos que no
+        /// existen en todas las tablas (ej. Sala en tablas de Audiencias
+        /// archivadas muy antiguas, o en Registro de Copias) sin que la
+        /// consulta truene.
+        /// </summary>
+        private static bool TieneColumna(OleDbDataReader dr, string nombre)
+        {
+            for (int i = 0; i < dr.FieldCount; i++)
+            {
+                if (dr.GetName(i).Equals(nombre, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
+        }
 
         private List<string> ObtenerTablasAudiencias(OleDbConnection conn)
         {

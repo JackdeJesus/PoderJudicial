@@ -14,6 +14,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -276,6 +277,30 @@ namespace PoderJudicial.Views
             Navegar(
                 new HomePage(),
                 BtnHome);
+        }
+
+        // El logo funciona como acceso directo a Home. La navegación vive
+        // aquí, separada del recurso visual (hoy un emoji dentro del Border
+        // "LOGO" en el XAML) — para reemplazarlo después por una imagen/logo
+        // personalizado no hace falta tocar este método.
+        private void Logo_Click(
+    object sender,
+    RoutedEventArgs e)
+        {
+            BtnHome_Click(sender, e);
+        }
+
+        // ══════════════════════════════════════════════
+        //  SIDEBAR CONTRAÍBLE (expande al pasar el mouse)
+        // ══════════════════════════════════════════════
+        private void SidebarBorder_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ((Storyboard)Resources["SidebarExpandStoryboard"]).Begin(this);
+        }
+
+        private void SidebarBorder_MouseLeave(object sender, MouseEventArgs e)
+        {
+            ((Storyboard)Resources["SidebarCollapseStoryboard"]).Begin(this);
         }
 
 

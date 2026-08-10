@@ -371,7 +371,7 @@ namespace PoderJudicial.ViewModels
 
                 return _cacheEjecuciones
                     .Where(e => ids.Contains(e.Id))
-                    .Sum(e => ExtraerNumero(e.TotalDiscos));
+                    .Sum(e => BuscadorRegistros.ExtraerNumero(e.TotalDiscos));
             }
 
             if (_tablaActual == TablaCopias)
@@ -385,17 +385,9 @@ namespace PoderJudicial.ViewModels
             }
 
             // Audiencias (C, CP, JO): comportamiento original, sin cambios.
-            return conjuntoVisible.Sum(a => ExtraerNumero(a.TotDiscoAudiencia));
+            return conjuntoVisible.Sum(a => BuscadorRegistros.ExtraerNumero(a.TotDiscoAudiencia));
         }
 
-        /// <summary>Extrae los dígitos de un texto tipo "3 discos" y los convierte a número; 0 si no hay.</summary>
-        private static int ExtraerNumero(string texto)
-        {
-            if (string.IsNullOrWhiteSpace(texto)) return 0;
-
-            string numeros = new string(texto.Where(char.IsDigit).ToArray());
-            return int.TryParse(numeros, out int valor) ? valor : 0;
-        }
 
         private void CargarSugerencias()
         {
@@ -540,6 +532,22 @@ namespace PoderJudicial.ViewModels
         // (a diferencia de las tablas "Audiencias*", estos dos son fijos).
         private const string TablaEjecucion = "Ejecucion";
         private const string TablaCopias = "CopiasAudiencias";
+
+        /// <summary>
+        /// Nombre amigable de la tabla que se está consultando ahora mismo,
+        /// para el encabezado de "Consultar Registros" — así el usuario
+        /// siempre sabe en qué módulo está, sin depender de fijarse en el
+        /// Sidebar.
+        /// </summary>
+        public string TituloTabla
+        {
+            get
+            {
+                if (_tablaActual == TablaEjecucion) return "Ejecución";
+                if (_tablaActual == TablaCopias) return "Registro de Copias";
+                return "Audiencias";
+            }
+        }
 
         private void EjecutarVer(object param)
         {

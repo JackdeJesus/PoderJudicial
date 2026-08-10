@@ -14,8 +14,8 @@
 
     <!-- RECURSOS -->
     <Window.Resources>
-        
-      
+
+
 
         <!-- COLORES -->
         <SolidColorBrush x:Key="SidebarBg" Color="#1A1F2E"/>
@@ -85,19 +85,89 @@
 
         </Style>
 
+        <!-- SIDEBAR EXPANDIR / CONTRAER -->
+        <Storyboard x:Key="SidebarExpandStoryboard">
+            <DoubleAnimation Storyboard.TargetName="SidebarBorder"
+                              Storyboard.TargetProperty="Width"
+                              To="260" Duration="0:0:0.18"
+                              DecelerationRatio="0.6"/>
+
+            <DoubleAnimation Storyboard.TargetName="TxtLogoTitulo" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtLogoSubtitulo" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtMenuPrincipal" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtHomeLabel" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtConsultarLabel" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtFlechaConsultar" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtNuevoLabel" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtCopiasLabel" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtReportesLabel" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtConfigLabel" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="txtNombreUsuario" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+            <DoubleAnimation Storyboard.TargetName="TxtRolUsuario" Storyboard.TargetProperty="Opacity"
+                              To="1" Duration="0:0:0.18" BeginTime="0:0:0.05"/>
+        </Storyboard>
+
+        <Storyboard x:Key="SidebarCollapseStoryboard">
+            <DoubleAnimation Storyboard.TargetName="SidebarBorder"
+                              Storyboard.TargetProperty="Width"
+                              To="72" Duration="0:0:0.15"
+                              AccelerationRatio="0.6"/>
+
+            <DoubleAnimation Storyboard.TargetName="TxtLogoTitulo" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtLogoSubtitulo" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtMenuPrincipal" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtHomeLabel" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtConsultarLabel" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtFlechaConsultar" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtNuevoLabel" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtCopiasLabel" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtReportesLabel" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtConfigLabel" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="txtNombreUsuario" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+            <DoubleAnimation Storyboard.TargetName="TxtRolUsuario" Storyboard.TargetProperty="Opacity"
+                              To="0" Duration="0:0:0.08"/>
+        </Storyboard>
+
     </Window.Resources>
 
     <!-- CONTENIDO -->
     <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- SIDEBAR -->
-        <Border Grid.Column="0"
-            Background="{StaticResource SidebarBg}">
+        <Border x:Name="SidebarBorder"
+            Grid.Column="0"
+            Width="72"
+            Background="{StaticResource SidebarBg}"
+            MouseEnter="SidebarBorder_MouseEnter"
+            MouseLeave="SidebarBorder_MouseLeave"
+            ClipToBounds="True">
 
             <Grid>
 
@@ -108,9 +178,15 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- LOGO -->
+                <!-- LOGO — funciona como acceso directo a Home. La acción de
+                     navegación vive en Logo_Click, no en el recurso gráfico
+                     de adentro (hoy un emoji, mañana podría ser una imagen/
+                     logo personalizado sin tocar esta lógica). -->
                 <Border Grid.Row="0"
-                    Padding="20,24,20,20">
+                    Padding="20,24,20,20"
+                    Background="Transparent"
+                    Cursor="Hand"
+                    MouseLeftButtonUp="Logo_Click">
 
                     <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center">
@@ -130,12 +206,14 @@
 
                         <StackPanel Margin="12,0,0,0">
 
-                            <TextBlock Text="Sistema Judicial"
+                            <TextBlock x:Name="TxtLogoTitulo"
+                                   Text="Sistema Judicial"
                                    Foreground="White"
                                    FontSize="14"
                                    FontWeight="SemiBold"/>
 
-                            <TextBlock Text="Audiencias"
+                            <TextBlock x:Name="TxtLogoSubtitulo"
+                                   Text="Audiencias"
                                    Foreground="{StaticResource TextSecondary}"
                                    FontSize="11"/>
 
@@ -155,7 +233,8 @@
                 <StackPanel Grid.Row="2"
                         Margin="0,16,0,0">
 
-                    <TextBlock Text="MENÚ PRINCIPAL"
+                    <TextBlock x:Name="TxtMenuPrincipal"
+                           Text="MENÚ PRINCIPAL"
                            Foreground="#4A5168"
                            FontSize="10"
                            FontWeight="Bold"
@@ -185,7 +264,8 @@
                Margin="0,0,10,0"
                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
-                                <TextBlock Text="Home"
+                                <TextBlock x:Name="TxtHomeLabel"
+                                       Text="Home"
                FontSize="13"
                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
@@ -225,7 +305,8 @@
                            Foreground="{Binding Foreground,
                                        RelativeSource={RelativeSource AncestorType=Button}}"/>
 
-                                    <TextBlock Text="Consultar Registros"
+                                    <TextBlock x:Name="TxtConsultarLabel"
+                                           Text="Consultar Registros"
                            FontSize="13"
                            Foreground="{Binding Foreground,
                                        RelativeSource={RelativeSource AncestorType=Button}}"/>
@@ -352,7 +433,8 @@
                                    Margin="0,0,10,0"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
-                            <TextBlock Text="Nueva Audiencia"
+                            <TextBlock x:Name="TxtNuevoLabel"
+                                   Text="Nueva Audiencia"
                                    FontSize="13"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
@@ -379,7 +461,8 @@
                   Margin="0,0,10,0"
                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
-                            <TextBlock Text="Registro de Copias"
+                            <TextBlock x:Name="TxtCopiasLabel"
+                                   Text="Registro de Copias"
                   FontSize="13"
                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
@@ -406,7 +489,8 @@
                                    Margin="0,0,10,0"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
-                            <TextBlock Text="Reportes"
+                            <TextBlock x:Name="TxtReportesLabel"
+                                   Text="Reportes"
                                    FontSize="13"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
@@ -459,7 +543,8 @@
                                    Margin="0,0,10,0"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
-                            <TextBlock Text="Configuración"
+                            <TextBlock x:Name="TxtConfigLabel"
+                                   Text="Configuración"
                                    FontSize="13"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
@@ -506,7 +591,8 @@
        FontSize="12"
        FontWeight="SemiBold"/>
 
-                            <TextBlock Text="Admin"
+                            <TextBlock x:Name="TxtRolUsuario"
+                                   Text="Admin"
                                    Foreground="{StaticResource TextSecondary}"
                                    FontSize="11"/>
 

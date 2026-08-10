@@ -42,8 +42,15 @@ namespace PoderJudicial.Models
 
         public int IdRegistro { get; set; }
 
-
         public string TablaDestino { get; set; }
+
+        // Mismos campos que ya usa el total de discos de "Consultar
+        // Registros" (ver Helpers.BuscadorRegistros.ExtraerNumero), y Sala
+        // — cuando el tipo de registro no la tenga (Registro de Copias),
+        // simplemente queda vacía.
+        public string TotalDiscos { get; set; }
+
+        public string Sala { get; set; }
 
     }
 }
