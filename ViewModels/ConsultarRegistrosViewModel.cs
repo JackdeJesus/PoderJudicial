@@ -20,7 +20,7 @@ namespace PoderJudicial.ViewModels
         private string _tablaActual;
 
 
-        //  PROPIEDADES
+        //  PROPIEDADEs///
 
         private ObservableCollection<Audiencia> _audiencias;
         public ObservableCollection<Audiencia> Audiencias
