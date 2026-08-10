@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using PoderJudicial.Data;
-using PoderJudicial.Helpers;
 using PoderJudicial.Models;
 using PoderJudicial.Views;
 
@@ -15,16 +14,10 @@ namespace PoderJudicial.ViewModels
 {
     public class ConsultarRegistrosViewModel : BaseViewModel
     {
-
+        
         private List<Audiencia> _listaCompleta = new List<Audiencia>();
         private DispatcherTimer _reloj;
         private string _tablaActual;
-
-        // Caché de listados completos (Id + total de discos real de cada
-        // tabla), usados solo para los indicadores — se piden una vez por
-        // página, no en cada tecla que el usuario escribe al buscar.
-        private List<Ejecucion> _cacheEjecuciones;
-        private List<RegistroCopia> _cacheCopias;
 
 
         //  PROPIEDADES
@@ -89,188 +82,9 @@ namespace PoderJudicial.ViewModels
             set { _fecha = value; OnPropertyChanged(); }
         }
 
-        // ══════════════════════════════════════════════
-        //  FILTROS AVANZADOS
-        // ══════════════════════════════════════════════
-        private readonly FiltroConsulta _filtroActivo = new FiltroConsulta();
-
-        private string _filtroNUC;
-        public string FiltroNUC
-        {
-            get => _filtroNUC;
-            set { _filtroNUC = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroNoCausa;
-        public string FiltroNoCausa
-        {
-            get => _filtroNoCausa;
-            set { _filtroNoCausa = value; OnPropertyChanged(); }
-        }
-
-        private DateTime? _filtroFechaDesde;
-        public DateTime? FiltroFechaDesde
-        {
-            get => _filtroFechaDesde;
-            set { _filtroFechaDesde = value; OnPropertyChanged(); }
-        }
-
-        private DateTime? _filtroFechaHasta;
-        public DateTime? FiltroFechaHasta
-        {
-            get => _filtroFechaHasta;
-            set { _filtroFechaHasta = value; OnPropertyChanged(); }
-        }
-
-        private DateTime? _filtroFechaReciboDesde;
-        public DateTime? FiltroFechaReciboDesde
-        {
-            get => _filtroFechaReciboDesde;
-            set { _filtroFechaReciboDesde = value; OnPropertyChanged(); }
-        }
-
-        private DateTime? _filtroFechaReciboHasta;
-        public DateTime? FiltroFechaReciboHasta
-        {
-            get => _filtroFechaReciboHasta;
-            set { _filtroFechaReciboHasta = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroTipoCausa;
-        public string FiltroTipoCausa
-        {
-            get => _filtroTipoCausa;
-            set { _filtroTipoCausa = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroJuzgado;
-        public string FiltroJuzgado
-        {
-            get => _filtroJuzgado;
-            set { _filtroJuzgado = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroSala;
-        public string FiltroSala
-        {
-            get => _filtroSala;
-            set { _filtroSala = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroImputado;
-        public string FiltroImputado
-        {
-            get => _filtroImputado;
-            set { _filtroImputado = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroDelito;
-        public string FiltroDelito
-        {
-            get => _filtroDelito;
-            set { _filtroDelito = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroJuez;
-        public string FiltroJuez
-        {
-            get => _filtroJuez;
-            set { _filtroJuez = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroExpediente;
-        public string FiltroExpediente
-        {
-            get => _filtroExpediente;
-            set { _filtroExpediente = value; OnPropertyChanged(); }
-        }
-
-        private string _filtroAQuienEntrega;
-        public string FiltroAQuienEntrega
-        {
-            get => _filtroAQuienEntrega;
-            set { _filtroAQuienEntrega = value; OnPropertyChanged(); }
-        }
-
-        // Fuentes fijas para los combos de filtro (mismas opciones que
-        // ya usa Nuevo Registro, para no inventar valores nuevos).
-        public List<string> TiposCausaDisponibles { get; } =
-            new List<string> { "C", "CP", "JO", "EXP" };
-
-        public List<string> JuzgadosDisponibles { get; } =
-            new List<string> { "Control", "Centro" };
-
-        public List<string> SalasDisponibles { get; } =
-            new List<string> { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "CJMP" };
-
-        public ICommand BuscarAvanzadoCommand { get; }
-        public ICommand LimpiarFiltrosCommand { get; }
-
-        private void EjecutarBuscarAvanzado(object param)
-        {
-            _filtroActivo.NUC = FiltroNUC;
-            _filtroActivo.NoCausa = FiltroNoCausa;
-            _filtroActivo.FechaDesde = FiltroFechaDesde;
-            _filtroActivo.FechaHasta = FiltroFechaHasta;
-            _filtroActivo.FechaReciboDesde = FiltroFechaReciboDesde;
-            _filtroActivo.FechaReciboHasta = FiltroFechaReciboHasta;
-            _filtroActivo.TipoCausa = FiltroTipoCausa;
-            _filtroActivo.Juzgado = FiltroJuzgado;
-            _filtroActivo.Sala = FiltroSala;
-            _filtroActivo.Imputado = FiltroImputado;
-            _filtroActivo.Delito = FiltroDelito;
-            _filtroActivo.Juez = FiltroJuez;
-            _filtroActivo.Expediente = FiltroExpediente;
-            _filtroActivo.AQuienEntrega = FiltroAQuienEntrega;
-
-            Filtrar();
-        }
-
-        private void EjecutarLimpiarFiltros(object param)
-        {
-            _filtroActivo.Limpiar();
-
-            FiltroNUC = FiltroNoCausa = FiltroTipoCausa = FiltroJuzgado =
-                FiltroSala = FiltroImputado = FiltroDelito = FiltroJuez =
-                FiltroExpediente = FiltroAQuienEntrega = null;
-            FiltroFechaDesde = FiltroFechaHasta =
-                FiltroFechaReciboDesde = FiltroFechaReciboHasta = null;
-
-            Filtrar();
-        }
-
-        /// <summary>
-        /// Aplica de entrada un filtro ya armado (ej. desde las tarjetas del
-        /// Home: "Audiencias este mes", "Copias entregadas este mes", etc.)
-        /// — refleja los valores en las propiedades bindeables (para que el
-        /// panel de filtros avanzados los muestre) y ejecuta la búsqueda de
-        /// una vez, sin esperar a que el usuario presione "Buscar".
-        /// </summary>
-        public void AplicarFiltroInicial(FiltroConsulta filtro)
-        {
-            if (filtro == null) return;
-
-            FiltroNUC = filtro.NUC;
-            FiltroNoCausa = filtro.NoCausa;
-            FiltroFechaDesde = filtro.FechaDesde;
-            FiltroFechaHasta = filtro.FechaHasta;
-            FiltroFechaReciboDesde = filtro.FechaReciboDesde;
-            FiltroFechaReciboHasta = filtro.FechaReciboHasta;
-            FiltroTipoCausa = filtro.TipoCausa;
-            FiltroJuzgado = filtro.Juzgado;
-            FiltroSala = filtro.Sala;
-            FiltroImputado = filtro.Imputado;
-            FiltroDelito = filtro.Delito;
-            FiltroJuez = filtro.Juez;
-            FiltroExpediente = filtro.Expediente;
-            FiltroAQuienEntrega = filtro.AQuienEntrega;
-
-            EjecutarBuscarAvanzado(null);
-        }
-
-
+      
         //  COMANDOS
-
+      
         public ICommand VerCommand { get; }
         public ICommand EditarCommand { get; }
         public ICommand EliminarCommand { get; }
@@ -291,12 +105,6 @@ namespace PoderJudicial.ViewModels
 
             EliminarCommand =
                 new RelayCommand(EjecutarEliminar);
-
-            BuscarAvanzadoCommand =
-                new RelayCommand(EjecutarBuscarAvanzado);
-
-            LimpiarFiltrosCommand =
-                new RelayCommand(EjecutarLimpiarFiltros);
 
             IniciarReloj();
 
@@ -320,9 +128,9 @@ namespace PoderJudicial.ViewModels
             Fecha = DateTime.Now.ToString("dddd, dd MMMM yyyy");
         }
 
-
+        
         //  DATOS
-
+       
         private void CargarDatos()
         {
             try
@@ -337,9 +145,25 @@ namespace PoderJudicial.ViewModels
                     _listaCompleta.Take(10)
                 );
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
+                int totalDiscosGeneral = _listaCompleta.Sum(a =>
+                {
+                    if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
+                        return 0;
+
+                    string numeros = new string(
+                        a.TotDiscoAudiencia
+                        .Where(char.IsDigit)
+                        .ToArray()
+                    );
+
+                    if (int.TryParse(numeros, out int valor))
+                        return valor;
+
+                    return 0;
+                });
 
                 TotalDiscosBusqueda =
-                    $"Total discos audiencia: {CalcularTotalDiscos(_listaCompleta)}";
+                    $"Total discos audiencia: {totalDiscosGeneral}";
 
                 CargarSugerencias();
             }
@@ -349,50 +173,10 @@ namespace PoderJudicial.ViewModels
             }
         }
 
-        /// <summary>
-        /// Suma el total de discos del conjunto de registros que se está
-        /// mostrando (respeta el filtro de búsqueda activo, ya que recibe
-        /// la lista ya filtrada). La columna real de donde sale el dato
-        /// cambia según la tabla:
-        ///   - Audiencias (C, CP, JO): TotDiscoAudiencia (texto, ej. "3 discos")
-        ///   - Ejecucion:              TotalDiscos (texto)
-        ///   - CopiasAudiencias:       TotDiscosEntregados (numérico)
-        /// _listaCompleta/filtrados siempre llegan mapeados como Audiencia
-        /// (ver AudienciaData.ObtenerAudiencias), así que para Ejecución y
-        /// Copias se cruza por Id contra un listado con las columnas reales
-        /// de esa tabla, en vez de leer el campo equivocado.
-        /// </summary>
-        private int CalcularTotalDiscos(List<Audiencia> conjuntoVisible)
-        {
-            if (_tablaActual == TablaEjecucion)
-            {
-                var ids = conjuntoVisible.Select(a => a.Id).ToHashSet();
-                _cacheEjecuciones ??= new EjecucionData().ObtenerTodas();
-
-                return _cacheEjecuciones
-                    .Where(e => ids.Contains(e.Id))
-                    .Sum(e => BuscadorRegistros.ExtraerNumero(e.TotalDiscos));
-            }
-
-            if (_tablaActual == TablaCopias)
-            {
-                var ids = conjuntoVisible.Select(a => a.Id).ToHashSet();
-                _cacheCopias ??= new CopiasData().ObtenerTodas();
-
-                return _cacheCopias
-                    .Where(c => ids.Contains(c.Id))
-                    .Sum(c => c.TotDiscosEntregados ?? 0);
-            }
-
-            // Audiencias (C, CP, JO): comportamiento original, sin cambios.
-            return conjuntoVisible.Sum(a => BuscadorRegistros.ExtraerNumero(a.TotDiscoAudiencia));
-        }
-
-
         private void CargarSugerencias()
         {
             Sugerencias = _listaCompleta.SelectMany(x => new[] {x.NoCausa, x.NUC, x.Imputado,x.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm")
-                }).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+                }).Where(x => !string.IsNullOrWhiteSpace(x)) .Distinct().ToList();
         }
 
 
@@ -401,87 +185,126 @@ namespace PoderJudicial.ViewModels
         private void Filtrar()
         {
             string texto = _textoBusqueda.Trim().ToLower();
-            bool hayFiltrosAvanzados = _filtroActivo.TieneAlgunCriterio;
 
-            if (string.IsNullOrWhiteSpace(texto) && !hayFiltrosAvanzados)
+            if (string.IsNullOrWhiteSpace(texto))
             {
-                // Nada activo: comportamiento original (primeros 10, sin filtrar).
                 Audiencias = new ObservableCollection<Audiencia>(
                     _listaCompleta.Take(10)
                 );
 
                 TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
 
+                int totalDiscosGeneral = _listaCompleta.Sum(a =>
+                {
+                    if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
+                        return 0;
+
+                    string numeros = new string(
+                        a.TotDiscoAudiencia
+                        .Where(char.IsDigit)
+                        .ToArray()
+                    );
+
+                    if (int.TryParse(numeros, out int valor))
+                        return valor;
+
+                    return 0;
+                });
+
                 TotalDiscosBusqueda =
-                    $"Total discos audiencia: {CalcularTotalDiscos(_listaCompleta)}";
+                    $"Total discos audiencia: {totalDiscosGeneral}";
 
                 return;
             }
 
-            IEnumerable<Audiencia> resultado = _listaCompleta;
-
-            if (!string.IsNullOrWhiteSpace(texto))
-                resultado = FiltrarPorTextoRapido(resultado, texto);
-
-            if (hayFiltrosAvanzados)
-                resultado = BuscadorRegistros.AplicarFiltro(resultado, _filtroActivo);
-
-            var filtrados = resultado.ToList();
-
-            Audiencias = new ObservableCollection<Audiencia>(filtrados);
-
-            TotalRegistros = $"{filtrados.Count} registro(s) encontrado(s)";
-
-            TotalDiscosBusqueda =
-                $"Total discos audiencia: {CalcularTotalDiscos(filtrados)}";
-        }
-
-        /// <summary>
-        /// Búsqueda rápida (cuadro de texto libre): igual que antes, un OR
-        /// entre varios campos. Se combina con AND respecto a los filtros
-        /// avanzados cuando ambos están activos.
-        /// </summary>
-        private static IEnumerable<Audiencia> FiltrarPorTextoRapido(IEnumerable<Audiencia> origen, string texto)
-        {
+            // Intentar convertir a fecha
             DateTime fechaBuscada;
             bool esFecha = DateTime.TryParse(texto, out fechaBuscada);
 
-            return origen.Where(a =>
+            var filtrados = _listaCompleta.Where(a =>
 
+                // =========================
+                // No. Causa EXACTO
+                // =========================
                 (!string.IsNullOrWhiteSpace(a.NoCausa) &&
                  a.NoCausa.Trim().ToLower() == texto)
 
                 ||
 
+                // =========================
+                // NUC EXACTO
+                // =========================
                 (!string.IsNullOrWhiteSpace(a.NUC) &&
                  a.NUC.Trim().ToLower() == texto)
 
                 ||
 
+                // =========================
+                // FECHA EXACTA
+                // =========================
                 (esFecha &&
                  a.FechaAudiencia.HasValue &&
                  a.FechaAudiencia.Value.Date == fechaBuscada.Date)
 
                 ||
 
-                (!string.IsNullOrWhiteSpace(a.TipoCausa) &&
+               // =========================
+               // TIPO CAUSA
+               // =========================
+               (!string.IsNullOrWhiteSpace(a.TipoCausa) &&
                  a.TipoCausa.Trim().ToLower() == texto)
 
                 ||
 
+                // =========================
+                // TIPO AUDIENCIA / JUICIO
+                // =========================
                 (!string.IsNullOrWhiteSpace(a.TipoAudiencia) &&
                  a.TipoAudiencia.ToLower().Contains(texto))
 
                 ||
 
+                // =========================
+                // IMPUTADO
+                // =========================
                 (!string.IsNullOrWhiteSpace(a.Imputado) &&
                  a.Imputado.ToLower().Contains(texto))
 
                 ||
 
+                // =========================
+                // AGRAVIADO / VICTIMA
+                // =========================
                 (!string.IsNullOrWhiteSpace(a.Agraviado) &&
                  a.Agraviado.ToLower().Contains(texto))
-            );
+
+            ).ToList();
+
+            Audiencias = new ObservableCollection<Audiencia>(filtrados);
+
+            TotalRegistros = $"{filtrados.Count} registro(s) encontrado(s)";
+
+            int totalDiscosAudiencia = filtrados.Sum(a =>
+            {
+                if (string.IsNullOrWhiteSpace(a.TotDiscoAudiencia))
+                    return 0;
+
+                string numeros = new string(
+                    a.TotDiscoAudiencia
+                    .Where(char.IsDigit)
+                    .ToArray()
+                );
+
+                if (int.TryParse(numeros, out int valor))
+                    return valor;
+
+                return 0;
+            });
+
+            TotalDiscosBusqueda =
+                $"Total discos audiencia: {totalDiscosAudiencia}";
+
+
         }
 
         private void ActualizarSugerencias()
@@ -532,22 +355,6 @@ namespace PoderJudicial.ViewModels
         // (a diferencia de las tablas "Audiencias*", estos dos son fijos).
         private const string TablaEjecucion = "Ejecucion";
         private const string TablaCopias = "CopiasAudiencias";
-
-        /// <summary>
-        /// Nombre amigable de la tabla que se está consultando ahora mismo,
-        /// para el encabezado de "Consultar Registros" — así el usuario
-        /// siempre sabe en qué módulo está, sin depender de fijarse en el
-        /// Sidebar.
-        /// </summary>
-        public string TituloTabla
-        {
-            get
-            {
-                if (_tablaActual == TablaEjecucion) return "Ejecución";
-                if (_tablaActual == TablaCopias) return "Registro de Copias";
-                return "Audiencias";
-            }
-        }
 
         private void EjecutarVer(object param)
         {

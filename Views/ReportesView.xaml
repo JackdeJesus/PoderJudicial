@@ -6,13 +6,11 @@
       mc:Ignorable="d"
       Background="{DynamicResource BackgroundBrush}">
 
-<Page.Resources>
-    <SolidColorBrush x:Key="ContentBg"
-                 Color="Transparent"/>
+    <Page.Resources>
+        <SolidColorBrush x:Key="ContentBg" Color="Transparent"/>
 
-    <!-- ComboBox  -->
+        <!-- ComboBox (sin cambios respecto a tu original) -->
         <Style x:Key="FiltroCombo" TargetType="ComboBox">
-
             <Setter Property="Height" Value="42"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FontSize" Value="13"/>
@@ -22,53 +20,38 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="12,0"/>
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-
             <Setter Property="Template">
                 <Setter.Value>
-
                     <ControlTemplate TargetType="ComboBox">
-
                         <Grid>
-
-                            <!-- BOTÓN PRINCIPAL -->
                             <Border x:Name="Border"
-                Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                CornerRadius="8">
-
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
                                 <Grid>
-
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="40"/>
                                     </Grid.ColumnDefinitions>
-
-                                    <!-- TEXTO -->
                                     <TextBlock Text="{TemplateBinding SelectionBoxItem}"
-                             Margin="12,0,0,0"
-                             VerticalAlignment="Center"
-                             HorizontalAlignment="Left"
-                             Foreground="{DynamicResource PrimaryTextBrush}"/>
-
-                                    <!-- FLECHA -->
+                                           Margin="12,0,0,0"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Left"
+                                           Foreground="{DynamicResource PrimaryTextBrush}"/>
                                     <TextBlock Grid.Column="1"
-                           Text="▼"
-                           FontSize="10"
-                           Foreground="{DynamicResource PrimaryTextBrush}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
-
-
-                                    <!-- BOTÓN -->
+                                           Text="▼"
+                                           FontSize="10"
+                                           Foreground="{DynamicResource PrimaryTextBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
                                     <ToggleButton Grid.ColumnSpan="2"
-                           Background="Transparent"
-                           BorderThickness="0"
-                           Focusable="False"
-                           IsChecked="{Binding IsDropDownOpen,
-                           RelativeSource={RelativeSource TemplatedParent},
-                           Mode=TwoWay}">
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              Focusable="False"
+                                              IsChecked="{Binding IsDropDownOpen,
+                                              RelativeSource={RelativeSource TemplatedParent},
+                                              Mode=TwoWay}">
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Border Background="Transparent"/>
@@ -76,261 +59,338 @@
                                         </ToggleButton.Template>
                                     </ToggleButton>
                                 </Grid>
-
                             </Border>
 
-                            <!-- POPUP -->
                             <Popup x:Name="Popup"
-               Placement="Bottom"
-               AllowsTransparency="True"
-               Focusable="False"
-               IsOpen="{TemplateBinding IsDropDownOpen}"
-               PopupAnimation="Slide">
-
+                               Placement="Bottom"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               PopupAnimation="Slide">
                                 <Border Background="{DynamicResource CardBrush}"
-                    BorderBrush="{DynamicResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Margin="0,4,0,0">
-
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8"
+                                    Margin="0,4,0,0">
                                     <ScrollViewer MaxHeight="250">
-
                                         <StackPanel IsItemsHost="True"/>
-
                                     </ScrollViewer>
-
                                 </Border>
-
                             </Popup>
-
                         </Grid>
 
                         <ControlTemplate.Triggers>
-
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush"
-Value="{DynamicResource BorderBrush}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                             </Trigger>
-
-
                             <Trigger Property="IsFocused" Value="True">
-                                <Setter TargetName="Border"
-                    Property="BorderBrush"
-                    Value="#2ECC8F"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#2ECC8F"/>
                             </Trigger>
-
                             <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                                <Setter Property="BorderBrush"
-Value="{DynamicResource BorderBrush}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                             </Trigger>
-
                         </ControlTemplate.Triggers>
-
                     </ControlTemplate>
-
                 </Setter.Value>
             </Setter>
-
         </Style>
-
-        <!-- ── Estilo Item Combobox ── -->
 
         <Style TargetType="ComboBoxItem">
-
-            <Setter Property="Foreground"
-     Value="{DynamicResource PrimaryTextBrush}"/>
-
-            <Setter Property="Background"
-     Value="{DynamicResource CardBrush}"/>
-
-            <Setter Property="Padding"
-     Value="10,6"/>
-
-            <Setter Property="FontSize"
-     Value="13"/>
-
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="FontSize" Value="13"/>
             <Style.Triggers>
-
                 <Trigger Property="IsHighlighted" Value="True">
-                    <Setter Property="Background"
-             Value="{DynamicResource HoverBrush}"/>
+                    <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
                 </Trigger>
-
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background"
-             Value="#2ECC8F"/>
-
-                    <Setter Property="Foreground"
-             Value="White"/>
+                    <Setter Property="Background" Value="#2ECC8F"/>
+                    <Setter Property="Foreground" Value="White"/>
                 </Trigger>
-
             </Style.Triggers>
-
         </Style>
 
-
-
-        <!-- Estilo del filtro -->
         <Style x:Key="FiltroLabel" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground"
-            Value="{DynamicResource SecondaryTextBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
 
-        <!-- Botón exportar Excel -->
-    <Style x:Key="BtnExcel" TargetType="Button">
-        <Setter Property="Height"          Value="40"/>
-        <Setter Property="Padding"         Value="18,0"/>
-        <Setter Property="FontSize"        Value="13"/>
-        <Setter Property="FontWeight"      Value="SemiBold"/>
-        <Setter Property="Foreground"      Value="White"/>
-        <Setter Property="Background"      Value="#2ECC8F"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Cursor"          Value="Hand"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="bd"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="9"
-                                Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="bd" Property="Background" Value="#27B57D"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="bd" Property="Background" Value="#1F9E6C"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+        <!-- ── Título de sección (Filtros / Resumen / Generar informes) ── -->
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
 
-    <!-- Botón exportar PDF -->
-    <Style x:Key="BtnPdf" TargetType="Button">
-        <Setter Property="Height"          Value="40"/>
-        <Setter Property="Padding"         Value="18,0"/>
-        <Setter Property="FontSize"        Value="13"/>
-            <Setter Property="FontWeight"      Value="SemiBold"/>
+        <!-- ── Tarjeta de resumen (Registros / Discos / Copias simples / Copias auténticas) ── -->
+        <Style x:Key="ResumenCard" TargetType="Border">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="18,16"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground"
-        Value="{DynamicResource PrimaryTextBrush}"/>
+        </Style>
 
-            <Setter Property="Background"
-        Value="{DynamicResource CardBrush}"/>
+        <Style x:Key="ResumenIconBox" TargetType="Border">
+            <Setter Property="Width" Value="38"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="CornerRadius" Value="9"/>
+            <Setter Property="Margin" Value="0,0,0,14"/>
+        </Style>
 
-            <Setter Property="BorderBrush"
-        Value="{DynamicResource BorderBrush}"/>
-            <Setter Property="Cursor"          Value="Hand"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="9"
-                                Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource HoverBrush}"/>
+        <Style x:Key="ResumenLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+
+        <Style x:Key="ResumenValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="26"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+
+        <Style x:Key="ResumenSubLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
+        </Style>
+
+        <!-- ── Tarjeta "Generar informes" ── -->
+        <Style x:Key="InformeCard" TargetType="Border">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        </Style>
+
+        <Style x:Key="InformeIconBox" TargetType="Border">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Margin" Value="0,0,0,14"/>
+        </Style>
+
+        <Style x:Key="InformeTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,3"/>
+        </Style>
+
+        <Style x:Key="InformeDesc" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,16"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!-- Botón base con flecha a la derecha, usado por Word/Excel/PDF -->
+        <Style x:Key="InformeButtonBase" TargetType="Button">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="9">
+                            <Grid Margin="16,0">
+                                <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <TextBlock Text="›" FontSize="16" FontWeight="Bold"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.9"/>
                             </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-</Page.Resources>
+        <Style x:Key="BtnWord" TargetType="Button" BasedOn="{StaticResource InformeButtonBase}">
+            <Setter Property="Background" Value="#2563EB"/>
+        </Style>
 
-<Grid Background="{StaticResource ContentBg}">
-    <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
+        <Style x:Key="BtnExcel" TargetType="Button" BasedOn="{StaticResource InformeButtonBase}">
+            <Setter Property="Background" Value="#1F9E5C"/>
+        </Style>
 
-    <!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
-    <Border Grid.Row="0"
-                Background="{DynamicResource CardBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="0,0,0,1"                
-                Padding="32,18">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+        <Style x:Key="BtnPdf" TargetType="Button" BasedOn="{StaticResource InformeButtonBase}">
+            <Setter Property="Background" Value="#DC2626"/>
+        </Style>
 
-            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+
+
+        <!-- Combo editable para seleccionar o escribir personas -->
+        <Style x:Key="PersonaCombo" TargetType="ComboBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground"
+            Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Background"
+            Value="{DynamicResource InputBrush}"/>
+            <Setter Property="BorderBrush"
+            Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="IsEditable" Value="True"/>
+            <Setter Property="IsTextSearchEnabled" Value="True"/>
+            <Setter Property="StaysOpenOnEdit" Value="True"/>
+        </Style>
+
+        <!-- Botón pequeño para agregar una persona -->
+        <Style x:Key="BtnAgregarPersona" TargetType="Button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="MinWidth" Value="92"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="8">
+                            <ContentPresenter
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd"
+                                Property="Opacity"
+                                Value="0.88"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd"
+                                Property="Opacity"
+                                Value="0.75"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Botón para quitar una persona -->
+        <Style x:Key="BtnQuitarPersona" TargetType="Button">
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Background" Value="#FEE2E2"/>
+            <Setter Property="Foreground" Value="#DC2626"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Content" Value="×"/>
+        </Style>
+
+        <!-- Contenedor para la lista de personas -->
+        <Style x:Key="ListaPersonas" TargetType="ListBox">
+            <Setter Property="MinHeight" Value="42"/>
+            <Setter Property="MaxHeight" Value="110"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Background"
+            Value="{DynamicResource InputBrush}"/>
+            <Setter Property="BorderBrush"
+            Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+            Value="Auto"/>
+        </Style>
+
+        <!-- Estado de cada informe -->
+        <Style x:Key="EstadoInforme" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+        </Style>
+
+        <!-- Botón para auténticas -->
+        <Style x:Key="BtnAutenticas"
+       TargetType="Button"
+       BasedOn="{StaticResource InformeButtonBase}">
+            <Setter Property="Background" Value="#7C3AED"/>
+        </Style>
+
+        <!-- Botón para consolidar -->
+        <Style x:Key="BtnConsolidar"
+       TargetType="Button"
+       BasedOn="{StaticResource InformeButtonBase}">
+            <Setter Property="Background" Value="#2563EB"/>
+        </Style>
+
+        <!-- Botón para informe anual -->
+        <Style x:Key="BtnAnual"
+       TargetType="Button"
+       BasedOn="{StaticResource InformeButtonBase}">
+            <Setter Property="Background" Value="#159447"/>
+        </Style>
+
+    </Page.Resources>
+
+    <Grid Background="{StaticResource ContentBg}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+        <Border Grid.Row="0"
+            Background="{DynamicResource CardBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,0,0,1"
+            Padding="32,18">
+            <StackPanel>
                 <TextBlock Text="Reportes"
-                               FontSize="22" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
-                <TextBlock Text="Filtra y exporta registros de audiencias."
-                               FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,3,0,0"/>
+                       FontSize="22" FontWeight="Bold" Foreground="{DynamicResource PrimaryTextBrush}"/>
+                <TextBlock Text="Genera informes de audiencias y administra los informes diarios de copias."
+           FontSize="12"
+           Foreground="{DynamicResource SecondaryTextBrush}"
+           Margin="0,3,0,0"/>
+                
             </StackPanel>
+        </Border>
 
-            <!-- Botones exportar -->
-            <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            VerticalAlignment="Center">
+        <!-- CONTENIDO -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="32,24,32,32">
 
-                <Button x:Name="BtnExportarExcel"
-                            Style="{StaticResource BtnExcel}"
-                            Margin="0,0,10,0"
-                            Click="BtnExportarExcel_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="⬇ " FontSize="13"/>
-                        <TextBlock Text="Exportar Excel" FontSize="13" FontWeight="SemiBold"/>
-                    </StackPanel>
-                </Button>
-
-                <Button x:Name="BtnExportarPdf"
-                            Style="{StaticResource BtnPdf}"
-                            Click="BtnExportarPdf_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="📄 " FontSize="13"/>
-                        <TextBlock Text="Exportar PDF" FontSize="13"/>
-                    </StackPanel>
-                </Button>
-
-            </StackPanel>
-        </Grid>
-    </Border>
-
-    <!-- CONTENIDO -->
-    <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="32,24,32,32">
-
-            <!-- ── FILTROS ── -->
+                <!-- ══════════════ FILTROS ══════════════ -->
                 <Border Background="{DynamicResource CardBrush}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="14"
-                        Padding="28,22"
-                        Margin="0,0,0,20">
-                <StackPanel>
-
-                    <!-- Título filtros -->
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Padding="28,22"
+                    Margin="0,0,0,20">
+                    <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                            <TextBlock Text="⧗ " FontSize="15" Foreground="#2ECC8F"
-                                       VerticalAlignment="Center"/>
-                            <TextBlock Text="Filtros"
-                                       FontSize="15" FontWeight="Bold"
-                                       Foreground="{DynamicResource PrimaryTextBrush}"
-                                       VerticalAlignment="Center"/>
+                            <TextBlock Text="⧩ " FontSize="15" Foreground="#2ECC8F" VerticalAlignment="Center"/>
+                            <TextBlock Text="Filtros" Style="{StaticResource SectionTitle}"/>
                         </StackPanel>
 
-                        <!-- FILA DE FILTROS: Mes / Año / Juzgado / Tipo Causa / Sala -->
-                        <!-- FILA DE FILTROS: Tipo Causa / Mes / Año / Juzgado / Sala -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -344,13 +404,10 @@ Value="{DynamicResource BorderBrush}"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- TIPO CAUSA -->
                             <StackPanel Grid.Column="0">
-                                <TextBlock Text="Tipo Causa" Style="{StaticResource FiltroLabel}"/>
-                                <ComboBox x:Name="CmbTipoCausa"
-                  Style="{StaticResource FiltroCombo}"
-                  SelectionChanged="Filtro_Changed">
-                                    <ComboBoxItem Content="Todos" IsSelected="True"/>
+                                <TextBlock Text="Tipo de causa" Style="{StaticResource FiltroLabel}"/>
+                                <ComboBox x:Name="CmbTipoCausa" Style="{StaticResource FiltroCombo}" SelectionChanged="Filtro_Changed">
+                                    <ComboBoxItem Content="Todas" IsSelected="True"/>
                                     <ComboBoxItem Content="C"/>
                                     <ComboBoxItem Content="CP"/>
                                     <ComboBoxItem Content="JO"/>
@@ -358,12 +415,9 @@ Value="{DynamicResource BorderBrush}"/>
                                 </ComboBox>
                             </StackPanel>
 
-                            <!-- MES -->
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Mes" Style="{StaticResource FiltroLabel}"/>
-                                <ComboBox x:Name="CmbMes"
-                  Style="{StaticResource FiltroCombo}"
-                  SelectionChanged="Filtro_Changed">
+                                <ComboBox x:Name="CmbMes" Style="{StaticResource FiltroCombo}" SelectionChanged="Filtro_Changed">
                                     <ComboBoxItem Content="Todos" IsSelected="True"/>
                                     <ComboBoxItem Content="Enero"/>
                                     <ComboBoxItem Content="Febrero"/>
@@ -380,20 +434,14 @@ Value="{DynamicResource BorderBrush}"/>
                                 </ComboBox>
                             </StackPanel>
 
-                            <!-- AÑO -->
                             <StackPanel Grid.Column="4">
                                 <TextBlock Text="Año" Style="{StaticResource FiltroLabel}"/>
-                                <ComboBox x:Name="CmbAnio"
-                  Style="{StaticResource FiltroCombo}"
-                  SelectionChanged="Filtro_Changed"/>
+                                <ComboBox x:Name="CmbAnio" Style="{StaticResource FiltroCombo}" SelectionChanged="Filtro_Changed"/>
                             </StackPanel>
 
-                            <!-- JUZGADO -->
                             <StackPanel Grid.Column="6">
                                 <TextBlock Text="Juzgado" Style="{StaticResource FiltroLabel}"/>
-                                <ComboBox x:Name="CmbJuzgado"
-                  Style="{StaticResource FiltroCombo}"
-                  SelectionChanged="Filtro_Changed">
+                                <ComboBox x:Name="CmbJuzgado" Style="{StaticResource FiltroCombo}" SelectionChanged="Filtro_Changed">
                                     <ComboBoxItem Content="Todos" IsSelected="True"/>
                                     <ComboBoxItem Content="Control"/>
                                     <ComboBoxItem Content="Centro"/>
@@ -401,12 +449,9 @@ Value="{DynamicResource BorderBrush}"/>
                                 </ComboBox>
                             </StackPanel>
 
-                            <!-- SALA -->
                             <StackPanel Grid.Column="8">
                                 <TextBlock Text="Sala" Style="{StaticResource FiltroLabel}"/>
-                                <ComboBox x:Name="CmbSala"
-                  Style="{StaticResource FiltroCombo}"
-                  SelectionChanged="Filtro_Changed">
+                                <ComboBox x:Name="CmbSala" Style="{StaticResource FiltroCombo}" SelectionChanged="Filtro_Changed">
                                     <ComboBoxItem Content="Todas" IsSelected="True"/>
                                     <ComboBoxItem Content="I"/>
                                     <ComboBoxItem Content="II"/>
@@ -414,162 +459,648 @@ Value="{DynamicResource BorderBrush}"/>
                                     <ComboBoxItem Content="IV"/>
                                 </ComboBox>
                             </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
 
+                <!-- ══════════════ RESUMEN DE RESULTADOS ══════════════ -->
+                <Border Background="{DynamicResource CardBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Padding="28,22"
+                    Margin="0,0,0,20">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                            <TextBlock Text="▤ " FontSize="15" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
+                            <TextBlock Text="Resumen de resultados" Style="{StaticResource SectionTitle}"/>
+                        </StackPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Registros encontrados (azul) -->
+                            <Border Grid.Column="0" Style="{StaticResource ResumenCard}"
+                                Background="#EFF6FF" BorderBrush="#DBEAFE">
+                                <StackPanel>
+                                    <Border Style="{StaticResource ResumenIconBox}" Background="#DBEAFE">
+                                        <TextBlock Text="📄" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="Registros encontrados" Style="{StaticResource ResumenLabel}"/>
+                                    <TextBlock x:Name="TxtTotalRegistros" Text="0"
+                                           Style="{StaticResource ResumenValue}" Foreground="#2563EB"/>
+                                    <TextBlock Text="Total de audiencias" Style="{StaticResource ResumenSubLabel}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Total de discos (verde) -->
+                            <Border Grid.Column="2" Style="{StaticResource ResumenCard}"
+                                Background="#ECFDF5" BorderBrush="#D1FAE5">
+                                <StackPanel>
+                                    <Border Style="{StaticResource ResumenIconBox}" Background="#D1FAE5">
+                                        <TextBlock Text="◎" FontSize="16" Foreground="#2ECC8F"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="Total de discos" Style="{StaticResource ResumenLabel}"/>
+                                    <TextBlock x:Name="TxtTotalDiscos" Text="0"
+                                           Style="{StaticResource ResumenValue}" Foreground="#2ECC8F"/>
+                                    <TextBlock Text="DVD entregados" Style="{StaticResource ResumenSubLabel}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Copias simples (naranja) -->
+                            <Border Grid.Column="4" Style="{StaticResource ResumenCard}"
+                                Background="#FFFBEB" BorderBrush="#FEF3C7">
+                                <StackPanel>
+                                    <Border Style="{StaticResource ResumenIconBox}" Background="#FEF3C7">
+                                        <TextBlock Text="📁" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="Copias simples" Style="{StaticResource ResumenLabel}"/>
+                                    <TextBlock x:Name="TxtCopiasSimples" Text="0"
+                                           Style="{StaticResource ResumenValue}" Foreground="#D97706"/>
+                                    <TextBlock Text="Registros" Style="{StaticResource ResumenSubLabel}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Copias auténticas (morado) -->
+                            <Border Grid.Column="6" Style="{StaticResource ResumenCard}"
+                                Background="#F5F3FF" BorderBrush="#EDE9FE">
+                                <StackPanel>
+                                    <Border Style="{StaticResource ResumenIconBox}" Background="#EDE9FE">
+                                        <TextBlock Text="★" FontSize="16" Foreground="#7C3AED"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="Copias auténticas" Style="{StaticResource ResumenLabel}"/>
+                                    <TextBlock x:Name="TxtCopiasAutenticas" Text="0"
+                                           Style="{StaticResource ResumenValue}" Foreground="#7C3AED"/>
+                                    <TextBlock Text="Registros" Style="{StaticResource ResumenSubLabel}"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <!-- ══════════════ INFORMES DE AUDIENCIAS ══════════════ -->
+                <Border Background="{DynamicResource CardBrush}"
+        BorderBrush="{DynamicResource BorderBrush}"
+        BorderThickness="1"
+        CornerRadius="14"
+        Padding="28,22"
+        Margin="0,0,0,20">
+
+                    <StackPanel>
+
+                        <StackPanel Orientation="Horizontal"
+                    Margin="0,0,0,20">
+
+                            <TextBlock Text="▤ "
+                       FontSize="16"
+                       Foreground="#2563EB"
+                       VerticalAlignment="Center"/>
+
+                            <StackPanel>
+                                <TextBlock Text="Generar informes de audiencias"
+                           Style="{StaticResource SectionTitle}"/>
+
+                                <TextBlock
+                    Text="Los filtros superiores se aplican solamente a estos informes."
+                    FontSize="11"
+                    Foreground="{DynamicResource SecondaryTextBrush}"
+                    Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Excel -->
+                            <Border Grid.Column="0"
+                    Style="{StaticResource InformeCard}"
+                    Background="#ECFDF5"
+                    BorderBrush="#D1FAE5">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="58"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0"
+                            Width="44"
+                            Height="44"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Background="#D1FAE5"
+                            CornerRadius="10">
+
+                                        <TextBlock Text="X"
+                                   FontWeight="Bold"
+                                   FontSize="17"
+                                   Foreground="#159447"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Exportar Excel"
+                                   Style="{StaticResource InformeTitle}"/>
+
+                                        <TextBlock
+                            Text="Genera el informe de audiencias en formato Excel."
+                            Style="{StaticResource InformeDesc}"/>
+
+                                        <Button x:Name="BtnExportarExcel"
+                                Style="{StaticResource BtnExcel}"
+                                Content="Exportar a Excel"
+                                Click="BtnExportarExcel_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- PDF -->
+                            <Border Grid.Column="2"
+                    Style="{StaticResource InformeCard}"
+                    Background="#FEF2F2"
+                    BorderBrush="#FEE2E2">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="58"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0"
+                            Width="44"
+                            Height="44"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Background="#FEE2E2"
+                            CornerRadius="10">
+
+                                        <TextBlock Text="PDF"
+                                   FontSize="11"
+                                   FontWeight="Bold"
+                                   Foreground="#DC2626"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="Exportar PDF"
+                                   Style="{StaticResource InformeTitle}"/>
+
+                                        <TextBlock
+                            Text="Genera el informe de audiencias en formato PDF."
+                            Style="{StaticResource InformeDesc}"/>
+
+                                        <Button x:Name="BtnExportarPdf"
+                                Style="{StaticResource BtnPdf}"
+                                Content="Exportar a PDF"
+                                Click="BtnExportarPdf_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+
+                <!-- ══════════════ INFORMES DE COPIAS ══════════════ -->
+                <Border Background="{DynamicResource CardBrush}"
+        BorderBrush="{DynamicResource BorderBrush}"
+        BorderThickness="1"
+        CornerRadius="14"
+        Padding="28,22"
+        Margin="0,0,0,20">
+
+                    <StackPanel>
+
+                        <!-- Encabezado de copias -->
+                        <Grid Margin="0,0,0,22">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal">
+
+                                <TextBlock Text="▣ "
+                           FontSize="17"
+                           Foreground="#2563EB"
+                           VerticalAlignment="Top"
+                           Margin="0,2,4,0"/>
+
+                                <StackPanel>
+                                    <TextBlock Text="Informes de copias"
+                               Style="{StaticResource SectionTitle}"/>
+
+                                    <TextBlock
+                        Text="Genera cada entrega por separado y consolida ambos informes al final del día."
+                        FontSize="11"
+                        Foreground="{DynamicResource SecondaryTextBrush}"
+                        Margin="0,3,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Border Grid.Column="1"
+                    Background="#EFF6FF"
+                    BorderBrush="#DBEAFE"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="12,7"
+                    VerticalAlignment="Center">
+
+                                <TextBlock x:Name="TxtFechaInformeCopias"
+                           Text="Informe del día"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           Foreground="#2563EB"/>
+                            </Border>
                         </Grid>
 
 
-                    </StackPanel>
-            </Border>
+                        <!-- ══════════════ TARJETAS SIMPLES Y AUTÉNTICAS ══════════════ -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-            <!-- ── RESUMEN ── -->
-                <Border Background="{DynamicResource CardBrush}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="14"
-                        Padding="28,18"
-                        Margin="0,0,0,20">
-                <StackPanel Orientation="Horizontal">
 
-                    <!-- Registros encontrados -->
-                    <StackPanel Margin="0,0,40,0">
-                        <TextBlock Text="Registros encontrados"
-                                       FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                        <TextBlock x:Name="TxtTotalRegistros"
-                                       Text="0"
-                                       FontSize="28" FontWeight="Bold"
-                                       Foreground="{DynamicResource PrimaryTextBrush}"/>
-                    </StackPanel>
+                            <!-- ══════════════ COPIAS SIMPLES ══════════════ -->
+                            <Border Grid.Column="0"
+                    Background="#FFFBEB"
+                    BorderBrush="#FDE68A"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="20">
 
-                    <!-- Separador vertical -->
-                    <Border Width="1" Background="#E5E7EB" Margin="0,4,40,4"/>
+                                <StackPanel>
 
-                    <!-- Total discos -->
-                    <StackPanel>
-                        <TextBlock Text="Total de Discos"
-                                       FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}"/>
-                        <StackPanel Orientation="Horizontal">
-                            <Ellipse Width="12" Height="12"
-                                         Fill="#2ECC8F"
-                                         VerticalAlignment="Center"
-                                         Margin="0,0,8,0"/>
-                            <TextBlock x:Name="TxtTotalDiscos"
-                                           Text="0"
-                                           FontSize="28" FontWeight="Bold"
-                                           Foreground="{DynamicResource PrimaryTextBrush}"/>
+                                    <!-- Título -->
+                                    <StackPanel Orientation="Horizontal"
+                                Margin="0,0,0,18">
+
+                                        <Border Width="42"
+                                Height="42"
+                                Background="#FEF3C7"
+                                CornerRadius="10"
+                                Margin="0,0,12,0">
+
+                                            <TextBlock Text="S"
+                                       FontSize="17"
+                                       FontWeight="Bold"
+                                       Foreground="#D97706"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Informe de copias simples"
+                                       Style="{StaticResource InformeTitle}"/>
+
+                                            <TextBlock
+                                Text="Información exclusiva para esta entrega."
+                                FontSize="11"
+                                Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+
+                                    <!-- Entregó -->
+                                    <TextBlock Text="Entregó"
+                               Style="{StaticResource FiltroLabel}"/>
+
+                                    <ComboBox x:Name="CmbEntregoSimples"
+                              Style="{StaticResource PersonaCombo}"
+                              Margin="0,0,0,14"/>
+
+
+                                    <!-- Agregar persona que recibió -->
+                                    <TextBlock Text="Persona que recibió"
+                               Style="{StaticResource FiltroLabel}"/>
+
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ComboBox x:Name="CmbRecibioSimples"
+                                  Grid.Column="0"
+                                  Style="{StaticResource PersonaCombo}"/>
+
+                                        <Button x:Name="BtnAgregarRecibioSimples"
+                                Grid.Column="2"
+                                Style="{StaticResource BtnAgregarPersona}"
+                                Content="+ Agregar"
+                                Click="BtnAgregarRecibioSimples_Click"/>
+                                    </Grid>
+
+
+                                    <!-- Lista de personas -->
+                                    <TextBlock Text="Personas que recibieron"
+                               Style="{StaticResource FiltroLabel}"/>
+
+                                    <ListBox x:Name="LstRecibieronSimples"
+                             Style="{StaticResource ListaPersonas}"
+                             Margin="0,0,0,16">
+
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="4,3">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding}"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
+
+                                                    <Button Grid.Column="1"
+                                            Style="{StaticResource BtnQuitarPersona}"
+                                            CommandParameter="{Binding}"
+                                            Click="BtnQuitarRecibioSimples_Click"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+
+
+                                    <!-- Generar -->
+                                    <Button x:Name="BtnGenerarCopiasSimples"
+                            Style="{StaticResource InformeButtonBase}"
+                            Background="#F59E0B"
+                            Content="Generar informe de Copias Simples"
+                            Click="BtnGenerarCopiasSimples_Click"/>
+
+                                    <TextBlock x:Name="TxtEstadoSimples"
+                               Text="Estado: No generado"
+                               Style="{StaticResource EstadoInforme}"/>
+                                </StackPanel>
+                            </Border>
+
+
+                            <!-- ══════════════ COPIAS AUTÉNTICAS ══════════════ -->
+                            <Border Grid.Column="2"
+                    Background="#F5F3FF"
+                    BorderBrush="#DDD6FE"
+                    BorderThickness="1"
+                    CornerRadius="12"
+                    Padding="20">
+
+                                <StackPanel>
+
+                                    <!-- Título -->
+                                    <StackPanel Orientation="Horizontal"
+                                Margin="0,0,0,18">
+
+                                        <Border Width="42"
+                                Height="42"
+                                Background="#EDE9FE"
+                                CornerRadius="10"
+                                Margin="0,0,12,0">
+
+                                            <TextBlock Text="A"
+                                       FontSize="17"
+                                       FontWeight="Bold"
+                                       Foreground="#7C3AED"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Informe de copias auténticas"
+                                       Style="{StaticResource InformeTitle}"/>
+
+                                            <TextBlock
+                                Text="Información exclusiva para esta entrega."
+                                FontSize="11"
+                                Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+
+                                    <!-- Entregó -->
+                                    <TextBlock Text="Entregó"
+                               Style="{StaticResource FiltroLabel}"/>
+
+                                    <ComboBox x:Name="CmbEntregoAutenticas"
+                              Style="{StaticResource PersonaCombo}"
+                              Margin="0,0,0,14"/>
+
+
+                                    <!-- Agregar persona que recibió -->
+                                    <TextBlock Text="Persona que recibió"
+                               Style="{StaticResource FiltroLabel}"/>
+
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <ComboBox x:Name="CmbRecibioAutenticas"
+                                  Grid.Column="0"
+                                  Style="{StaticResource PersonaCombo}"/>
+
+                                        <Button x:Name="BtnAgregarRecibioAutenticas"
+                                Grid.Column="2"
+                                Style="{StaticResource BtnAgregarPersona}"
+                                Background="#7C3AED"
+                                Content="+ Agregar"
+                                Click="BtnAgregarRecibioAutenticas_Click"/>
+                                    </Grid>
+
+
+                                    <!-- Lista de personas -->
+                                    <TextBlock Text="Personas que recibieron"
+                               Style="{StaticResource FiltroLabel}"/>
+
+                                    <ListBox x:Name="LstRecibieronAutenticas"
+                             Style="{StaticResource ListaPersonas}"
+                             Margin="0,0,0,16">
+
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="4,3">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding}"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource PrimaryTextBrush}"
+                                               VerticalAlignment="Center"/>
+
+                                                    <Button Grid.Column="1"
+                                            Style="{StaticResource BtnQuitarPersona}"
+                                            CommandParameter="{Binding}"
+                                            Click="BtnQuitarRecibioAutenticas_Click"/>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+
+
+                                    <!-- Generar -->
+                                    <Button x:Name="BtnGenerarCopiasAutenticas"
+                            Style="{StaticResource BtnAutenticas}"
+                            Content="Generar informe de Copias Auténticas"
+                            Click="BtnGenerarCopiasAutenticas_Click"/>
+
+                                    <TextBlock x:Name="TxtEstadoAutenticas"
+                               Text="Estado: No generado"
+                               Style="{StaticResource EstadoInforme}"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+
+                        <!-- Información -->
+                        <Border Background="#EFF6FF"
+                BorderBrush="#DBEAFE"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12,9"
+                Margin="0,18,0,18">
+
+                            <TextBlock
+                Text="Los nombres escritos se guardarán como sugerencias para futuras entregas."
+                FontSize="11"
+                Foreground="#2563EB"/>
+                        </Border>
+
+
+                        <!-- ══════════════ CONSOLIDACIÓN ══════════════ -->
+                        <StackPanel>
+
+                            <StackPanel Orientation="Horizontal"
+                        Margin="0,0,0,12">
+
+                                <TextBlock Text="▣ "
+                           FontSize="15"
+                           Foreground="#2563EB"
+                           VerticalAlignment="Center"/>
+
+                                <TextBlock Text="Consolidar e informe anual"
+                           Style="{StaticResource SectionTitle}"/>
+                            </StackPanel>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="20"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Consolidar -->
+                                <Border Grid.Column="0"
+                        Style="{StaticResource InformeCard}"
+                        Background="#EFF6FF"
+                        BorderBrush="#DBEAFE">
+
+                                    <StackPanel>
+                                        <TextBlock Text="1. Consolidar informes del día"
+                                   Style="{StaticResource InformeTitle}"/>
+
+                                        <TextBlock
+                            Text="Une el informe de copias simples y el de copias auténticas."
+                            Style="{StaticResource InformeDesc}"/>
+
+                                        <Button x:Name="BtnConsolidarInformeDiario"
+                                Style="{StaticResource BtnConsolidar}"
+                                Content="Consolidar informes del día"
+                                IsEnabled="False"
+                                Click="BtnConsolidarInformeDiario_Click"/>
+
+                                        <TextBlock x:Name="TxtEstadoConsolidado"
+                                   Text="Pendiente de ambos informes"
+                                   Style="{StaticResource EstadoInforme}"/>
+                                    </StackPanel>
+                                </Border>
+
+
+                                <!-- Agregar al anual -->
+                                <Border Grid.Column="2"
+                        Style="{StaticResource InformeCard}"
+                        Background="#ECFDF5"
+                        BorderBrush="#D1FAE5">
+
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtTituloInformeAnual"
+                                   Text="2. Agregar al informe anual"
+                                   Style="{StaticResource InformeTitle}"/>
+
+                                        <TextBlock
+                            Text="Añade el informe consolidado al documento del año actual."
+                            Style="{StaticResource InformeDesc}"/>
+
+                                        <Button x:Name="BtnAgregarInformeAnual"
+                                Style="{StaticResource BtnAnual}"
+                                Content="Agregar al informe anual"
+                                IsEnabled="False"
+                                Click="BtnAgregarInformeAnual_Click"/>
+
+                                        <TextBlock x:Name="TxtEstadoInformeAnual"
+                                   Text="Estado: Sin agregar"
+                                   Style="{StaticResource EstadoInforme}"/>
+                                    </StackPanel>
+                                </Border>
+
+
+                                <!-- Estado anual -->
+                                <Border Grid.Column="4"
+                        Style="{StaticResource InformeCard}">
+
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtEncabezadoEstadoAnual"
+                                   Text="Estado del informe anual"
+                                   Style="{StaticResource InformeTitle}"/>
+
+                                        <TextBlock x:Name="TxtNombreArchivoAnual"
+                                   Text="El documento todavía no se ha creado."
+                                   FontSize="12"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,5,0,8"/>
+
+                                        <TextBlock x:Name="TxtUltimaActualizacionAnual"
+                                   Text="Última actualización: Sin información"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
                         </StackPanel>
                     </StackPanel>
+                </Border>
 
-                </StackPanel>
-            </Border>
-
-            <!-- ── TABLA RESULTADOS ── -->
-                <Border Background="{DynamicResource CardBrush}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="14"
-                        ClipToBounds="True"
-                        Padding="0,0,0,0">
-                <StackPanel>
-
-                    <TextBlock Text="Resultados"
-                                   FontSize="15" FontWeight="Bold"
-                                   Foreground="{DynamicResource PrimaryTextBrush}"
-                                   Margin="24,20,24,16"/>
-
-                    <DataGrid x:Name="DgResultados"
-                                  AutoGenerateColumns="False"
-                                  HeadersVisibility="Column"
-                                  GridLinesVisibility="None"
-                                  BorderThickness="0"
-                                  Background="{DynamicResource CardBrush}"
-                                  RowBackground="{DynamicResource CardBrush}"
-                                  AlternatingRowBackground="{DynamicResource AltRowBrush}"
-                                  CanUserAddRows="False"
-                                  CanUserDeleteRows="False"
-                                  CanUserResizeRows="False"
-                                  CanUserSortColumns="True"
-                                  IsReadOnly="True"
-                                  SelectionMode="Single"
-                                  SelectionUnit="FullRow"
-                                  RowHeight="52"
-                                  ColumnHeaderHeight="46"
-                                  FontSize="12"
-                                  HorizontalScrollBarVisibility="Auto"
-                                  VerticalScrollBarVisibility="Auto"
-                                  MaxHeight="420">
-
-                        <DataGrid.ColumnHeaderStyle>
-                            <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="{DynamicResource HeaderBrush}"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-                                <Setter Property="FontWeight"      Value="SemiBold"/>
-                                <Setter Property="FontSize"        Value="12"/>
-                                <Setter Property="Padding"         Value="12,0"/>
-                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                <Setter Property="FlowDirection"   Value="LeftToRight"/>
-                            </Style>
-                        </DataGrid.ColumnHeaderStyle>
-
-                        <DataGrid.RowStyle>
-                            <Style TargetType="DataGridRow">
-                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="{DynamicResource HoverBrush}"/>
-                                        </Trigger>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.RowStyle>
-
-                        <DataGrid.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="BorderThickness"  Value="0"/>
-                                <Setter Property="Padding"          Value="12,0"/>
-                                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-                                    <Setter Property="Background"       Value="Transparent"/>
-                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="FlowDirection"    Value="LeftToRight"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
-                                        </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.CellStyle>
-
-                        <DataGrid.Columns>
-
-                            <DataGridTextColumn Header="Fecha Audiencia"      Width="150" Binding="{Binding FechaAudiencia}"/>
-                            <DataGridTextColumn Header="Juzgado"              Width="120" Binding="{Binding Juzgado}"/>
-                            <DataGridTextColumn Header="Juez"                 Width="180" Binding="{Binding Juez}"/>
-                            <DataGridTextColumn Header="No. Causa"            Width="130" Binding="{Binding NoCausa}"/>
-                            <DataGridTextColumn Header="NUC"                  Width="160" Binding="{Binding NUC}"/>
-                            <DataGridTextColumn Header="Tipo Audiencia"       Width="160" Binding="{Binding TipoAudiencia}"/>
-                            <DataGridTextColumn Header="Tipo Causa"           Width="120" Binding="{Binding TipoCausa}"/>
-                            <DataGridTextColumn Header="Sala"                 Width="80"  Binding="{Binding Sala}"/>
-                            <DataGridTextColumn Header="Imputado"             Width="200" Binding="{Binding Imputado}"/>
-                            <DataGridTextColumn Header="Agraviado"            Width="200" Binding="{Binding Agraviado}"/>
-                            <DataGridTextColumn Header="Delito"               Width="200" Binding="{Binding Delito}"/>
-                            <DataGridTextColumn Header="No. Causa Juicio"     Width="150" Binding="{Binding NoCausaJuicio}"/>
-
-                        </DataGrid.Columns>
-
-                    </DataGrid>
-
-                </StackPanel>
-            </Border>
-
-        </StackPanel>
-    </ScrollViewer>
-
-</Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 
 </Page>

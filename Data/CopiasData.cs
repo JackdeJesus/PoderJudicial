@@ -177,40 +177,6 @@ WHERE [A quien se entraga] IS NOT NULL";
             return lista;
         }
         /// <summary>
-        /// Listado completo (con Id y TotDiscosEntregados incluidos) usado
-        /// por los indicadores "Total de registros" / "Total Discos
-        /// Audiencia" en Consultar Registros.
-        /// </summary>
-        public List<RegistroCopia> ObtenerTodas()
-        {
-            var lista = new List<RegistroCopia>();
-
-            using (OleDbConnection conn = Conexion.ObtenerConexion())
-            {
-                conn.Open();
-
-                string sql = "SELECT Id, TotDiscosEntregados FROM CopiasAudiencias";
-
-                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
-                using (OleDbDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        lista.Add(new RegistroCopia
-                        {
-                            Id = reader["Id"] != DBNull.Value ? Convert.ToInt32(reader["Id"]) : 0,
-                            TotDiscosEntregados =
-                                int.TryParse(reader["TotDiscosEntregados"]?.ToString(), out int tot)
-                                    ? tot : (int?)null
-                        });
-                    }
-                }
-            }
-
-            return lista;
-        }
-
-        /// <summary>
         /// Obtiene un registro completo de "Registro de Copias" por Id,
         /// usado por "Ver Detalle" en Consulta de Registros.
         /// </summary>
@@ -263,5 +229,79 @@ WHERE [A quien se entraga] IS NOT NULL";
 
             return null;
         }
+
+        public List<RegistroCopia> ObtenerCopias()
+        {
+            var lista = new List<RegistroCopia>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                const string sql = @"
+            SELECT
+                Id,
+                FeAudiencia,
+                FeRecibo,
+                TotDiscosEntregados,
+                TipoDisco,
+                NoCausa,
+                NUC,
+                TipoCausa,
+                DiscosExternos,
+                [Etiquetas entregadas],
+                [A quien se entraga],
+                Observaciones,
+                [Quien Realiza]
+            FROM CopiasAudiencias
+            ORDER BY FeRecibo, Id";
+
+                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
+                using (OleDbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var registro = new RegistroCopia
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+
+                            FeAudiencia = DateTime.TryParse(
+                                reader["FeAudiencia"]?.ToString(),
+                                out DateTime fechaAudiencia)
+                                ? fechaAudiencia
+                                : null,
+
+                            FeRecibo = DateTime.TryParse(
+                                reader["FeRecibo"]?.ToString(),
+                                out DateTime fechaRecibo)
+                                ? fechaRecibo
+                                : null,
+
+                            TotDiscosEntregados = int.TryParse(
+                                reader["TotDiscosEntregados"]?.ToString(),
+                                out int totalDiscos)
+                                ? totalDiscos
+                                : null,
+
+                            TipoDisco = reader["TipoDisco"]?.ToString() ?? string.Empty,
+                            NoCausa = reader["NoCausa"]?.ToString() ?? string.Empty,
+                            NUC = reader["NUC"]?.ToString() ?? string.Empty,
+                            TipoCausa = reader["TipoCausa"]?.ToString() ?? string.Empty,
+                            DiscosExternos = reader["DiscosExternos"]?.ToString() ?? string.Empty,
+                            EtiquetasEntregadas = reader["Etiquetas entregadas"]?.ToString() ?? string.Empty,
+                            AQuienSeEntrega = reader["A quien se entraga"]?.ToString() ?? string.Empty,
+                            Observaciones = reader["Observaciones"]?.ToString() ?? string.Empty,
+                            QuienRegistra = reader["Quien Realiza"]?.ToString() ?? string.Empty
+                        };
+
+                        lista.Add(registro);
+                    }
+                }
+            }
+
+            return lista;
+        }
+
+
     }
 }
