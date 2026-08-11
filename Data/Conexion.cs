@@ -7,7 +7,7 @@ namespace PoderJudicial.Data
     public static class Conexion
     {
         public static readonly string RutaBD =
-            @"\\ANTONIOS_LAPTOP\Database\p.accdb";
+            @"\\ANTONIOS_LAPTOP\Prueba de Base General\Base 2024\BASE_2025.accdb";
 
         public static OleDbConnection ObtenerConexion()
         {
