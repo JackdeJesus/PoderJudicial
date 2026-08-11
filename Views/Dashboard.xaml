@@ -41,7 +41,7 @@
                 Value="Left"/>
 
             <Setter Property="Padding"
-                Value="16,12"/>
+                Value="12,12"/>
 
             <Setter Property="Cursor"
                 Value="Hand"/>
@@ -55,7 +55,7 @@
                         <Border x:Name="BorderBg"
                             Background="{TemplateBinding Background}"
                             CornerRadius="8"
-                            Margin="8,2">
+                            Margin="6,2">
 
                             <ContentPresenter HorizontalAlignment="Left"
                                           VerticalAlignment="Center"
@@ -121,7 +121,7 @@
         <Storyboard x:Key="SidebarCollapseStoryboard">
             <DoubleAnimation Storyboard.TargetName="SidebarBorder"
                               Storyboard.TargetProperty="Width"
-                              To="72" Duration="0:0:0.15"
+                              To="80" Duration="0:0:0.15"
                               AccelerationRatio="0.6"/>
 
             <DoubleAnimation Storyboard.TargetName="TxtLogoTitulo" Storyboard.TargetProperty="Opacity"
@@ -163,7 +163,7 @@
         <!-- SIDEBAR -->
         <Border x:Name="SidebarBorder"
             Grid.Column="0"
-            Width="72"
+            Width="80"
             Background="{StaticResource SidebarBg}"
             MouseEnter="SidebarBorder_MouseEnter"
             MouseLeave="SidebarBorder_MouseLeave"
@@ -256,7 +256,7 @@
             Height="24"                                    
             CornerRadius="2"
             Background="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-            Margin="0,0,20,0"
+            Margin="0,0,10,0"
             />
 
                                 <TextBlock Text="🏠"
@@ -297,7 +297,7 @@
                         CornerRadius="2"
                         Background="{Binding Foreground,
                                     RelativeSource={RelativeSource AncestorType=Button}}"
-                        Margin="0,0,12,0"/>
+                        Margin="0,0,10,0"/>
 
                                     <TextBlock Text="▦"
                            FontSize="16"
@@ -425,7 +425,7 @@
                                 Height="24"                                    
                                 CornerRadius="2"
                                 Background="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                Margin="0,0,20,0"
+                                Margin="0,0,10,0"
                                 />
 
                             <TextBlock Text="📅"
@@ -454,7 +454,7 @@
                   Height="24"
                   CornerRadius="2"
                   Background="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                  Margin="0,0,12,0"/>
+                  Margin="0,0,10,0"/>
 
                             <TextBlock Text="💽"
                   FontSize="16"
@@ -482,7 +482,7 @@
                                 Height="24"
                                 CornerRadius="2"
                                 Background="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                Margin="0,0,12,0"/>
+                                Margin="0,0,10,0"/>
 
                             <TextBlock Text="📋"
                                    FontSize="16"
@@ -536,7 +536,7 @@
                                 Height="24"
                                 CornerRadius="2"
                                 Background="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                Margin="0,0,12,0"/>
+                                Margin="0,0,10,0"/>
 
                             <TextBlock Text="⚙"
                                    FontSize="16"

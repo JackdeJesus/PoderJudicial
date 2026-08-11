@@ -9,7 +9,13 @@
 
     <Page.Resources>
 
-
+        <!-- TextBlock -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
 
         <!-- badge -->
         <Style x:Key="BadgeStyle" TargetType="Border">
@@ -22,7 +28,6 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
-        <!-- Botones acción -->
         <!-- Botones acción -->
         <Style x:Key="ActionBtnStyle" TargetType="Button">
 
@@ -75,6 +80,178 @@
             </Setter>
 
         </Style>
+
+        <Style x:Key="ComboStyle" TargetType="ComboBox">
+
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource InputBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="ComboBox">
+
+                        <Grid>
+
+                            <!-- BOTÓN PRINCIPAL -->
+                            <Border x:Name="Border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="8">
+
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="40"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- TEXTO -->
+                                    <TextBlock Text="{TemplateBinding SelectionBoxItem}"
+                                 Margin="12,0,0,0"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Left"
+                                 Foreground="{DynamicResource PrimaryTextBrush}"/>
+
+                                    <!-- FLECHA -->
+                                    <TextBlock Grid.Column="1"
+                               Text="▼"
+                               FontSize="10"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+
+
+                                    <!-- BOTÓN -->
+                                    <ToggleButton Grid.ColumnSpan="2"
+                               Background="Transparent"
+                               BorderThickness="0"
+                               Focusable="False"
+                               IsChecked="{Binding IsDropDownOpen,
+                               RelativeSource={RelativeSource TemplatedParent},
+                               Mode=TwoWay}">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="Transparent"/>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+                                </Grid>
+
+                            </Border>
+
+                            <!-- POPUP -->
+                            <Popup x:Name="Popup"
+                   Placement="Bottom"
+                   AllowsTransparency="True"
+                   Focusable="False"
+                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                   PopupAnimation="Slide">
+
+                                <Border Background="{DynamicResource CardBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Margin="0,4,0,0">
+
+                                    <ScrollViewer MaxHeight="250">
+
+                                        <StackPanel IsItemsHost="True"/>
+
+                                    </ScrollViewer>
+
+                                </Border>
+
+                            </Popup>
+
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush"
+    Value="{DynamicResource BorderBrush}"/>
+                            </Trigger>
+
+
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border"
+                        Property="BorderBrush"
+                        Value="#2ECC8F"/>
+                            </Trigger>
+
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter Property="BorderBrush"
+    Value="{DynamicResource BorderBrush}"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
+
+        <!-- ── Estilo base TextBox ── -->
+        <Style x:Key="InputStyle" TargetType="TextBox">
+
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource InputBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="TextBox">
+
+                        <Border Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="8"
+                Padding="{TemplateBinding Padding}">
+
+                            <ScrollViewer x:Name="PART_ContentHost"
+                          VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush"
+                        Value="#2ECC8F"/>
+
+                                <Setter Property="Background"
+                        Value="{DynamicResource HoverBrush}"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+
 
     </Page.Resources>
 
@@ -228,16 +405,17 @@
                         Content="Filtros avanzados ▾"
                         Grid.Column="1"
                         Height="42"
+                        Width="160"
                         Padding="14,0"
                         Margin="10,0"
                         Cursor="Hand"
                         FontSize="12.5"
                         FontWeight="SemiBold"
-                        Foreground="{DynamicResource PrimaryTextBrush}"
+                        Foreground="White"
                         Click="BtnFiltrosAvanzados_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
-                            <Border Background="{DynamicResource CardBrush}"
+                            <Border Background="#2ECC8F"
                                     BorderBrush="{DynamicResource BorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="10">
@@ -294,21 +472,8 @@
                     Margin="0,0,0,20">
 
                 <Border.Resources>
-                    <Style x:Key="FiltroLabelStyle" TargetType="TextBlock">
-                        <Setter Property="FontSize" Value="10"/>
-                        <Setter Property="FontWeight" Value="SemiBold"/>
-                        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}"/>
-                        <Setter Property="Margin" Value="0,0,0,3"/>
-                    </Style>
-                    <Style x:Key="FiltroInputStyle" TargetType="TextBox">
-                        <Setter Property="Height" Value="34"/>
-                        <Setter Property="Padding" Value="8,0"/>
-                        <Setter Property="Background" Value="{DynamicResource InputBrush}"/>
-                        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    </Style>
+                    
+                    
                     <Style x:Key="FiltroDateStyle" TargetType="DatePicker">
                         <Setter Property="Height" Value="34"/>
                         <Setter Property="Background" Value="{DynamicResource InputBrush}"/>
@@ -316,14 +481,7 @@
                         <Setter Property="BorderThickness" Value="1"/>
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
                     </Style>
-                    <Style x:Key="FiltroComboStyle" TargetType="ComboBox">
-                        <Setter Property="Height" Value="34"/>
-                        <Setter Property="Background" Value="{DynamicResource InputBrush}"/>
-                        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    </Style>
+                    
                 </Border.Resources>
 
                 <StackPanel>
@@ -331,38 +489,38 @@
                     <WrapPanel Orientation="Horizontal">
 
                         <!-- NUC -->
-                        <StackPanel x:Name="PanelFiltroNUC" Width="160" Margin="0,0,14,12">
-                            <TextBlock Text="NUC" Style="{StaticResource FiltroLabelStyle}"/>
-                            <TextBox Style="{StaticResource FiltroInputStyle}"
+                                <StackPanel x:Name="PanelFiltroNUC" Width="160" Margin="0,0,30,12">
+                                    <TextBlock Text="NUC" Style="{StaticResource LabelStyle}"/>
+                                    <TextBox Style="{StaticResource InputStyle}"
                                      Text="{Binding FiltroNUC, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
+                                </StackPanel>
 
-                        <!-- No. Causa -->
-                        <StackPanel x:Name="PanelFiltroNoCausa" Width="160" Margin="0,0,14,12">
-                            <TextBlock Text="No. Causa" Style="{StaticResource FiltroLabelStyle}"/>
-                            <TextBox Style="{StaticResource FiltroInputStyle}"
+                                <!-- No. Causa -->
+                                <StackPanel x:Name="PanelFiltroNoCausa" Width="160" Margin="0,0,30,12">
+                                    <TextBlock Text="No. Causa" Style="{StaticResource LabelStyle}"/>
+                                    <TextBox Style="{StaticResource InputStyle}"
                                      Text="{Binding FiltroNoCausa, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
+                                </StackPanel>
 
-                        <!-- Tipo Causa -->
-                        <StackPanel x:Name="PanelFiltroTipoCausa" Width="130" Margin="0,0,14,12">
-                            <TextBlock Text="Tipo Causa" Style="{StaticResource FiltroLabelStyle}"/>
-                            <ComboBox Style="{StaticResource FiltroComboStyle}"
+                                <!-- Tipo Causa -->
+                                <StackPanel x:Name="PanelFiltroTipoCausa" Width="130" Margin="0,0,30,12">
+                                    <TextBlock Text="Tipo Causa" Style="{StaticResource LabelStyle}"/>
+                                    <ComboBox Style="{StaticResource ComboStyle}"
                                       ItemsSource="{Binding TiposCausaDisponibles}"
                                       SelectedItem="{Binding FiltroTipoCausa}"
                                       IsEditable="False"/>
-                        </StackPanel>
+                                </StackPanel>
 
-                        <!-- Fecha desde -->
+                                <!-- Fecha desde -->
                         <StackPanel x:Name="PanelFiltroFechaDesde" Width="150" Margin="0,0,14,12">
-                            <TextBlock Text="Fecha audiencia — desde" Style="{StaticResource FiltroLabelStyle}"/>
+                            <TextBlock Text="Fecha audiencia — desde" Style="{StaticResource LabelStyle}"/>
                             <DatePicker Style="{StaticResource FiltroDateStyle}"
                                         SelectedDate="{Binding FiltroFechaDesde}"/>
                         </StackPanel>
 
                         <!-- Fecha hasta -->
                         <StackPanel x:Name="PanelFiltroFechaHasta" Width="150" Margin="0,0,14,12">
-                            <TextBlock Text="Fecha audiencia — hasta" Style="{StaticResource FiltroLabelStyle}"/>
+                            <TextBlock Text="Fecha audiencia — hasta" Style="{StaticResource LabelStyle}"/>
                             <DatePicker Style="{StaticResource FiltroDateStyle}"
                                         SelectedDate="{Binding FiltroFechaHasta}"/>
                         </StackPanel>
@@ -371,21 +529,21 @@
                              que realmente indica cuándo se entregó la copia,
                              a diferencia de Fecha Audiencia) -->
                         <StackPanel x:Name="PanelFiltroFechaReciboDesde" Width="150" Margin="0,0,14,12">
-                            <TextBlock Text="Fecha recibo — desde" Style="{StaticResource FiltroLabelStyle}"/>
+                            <TextBlock Text="Fecha recibo — desde" Style="{StaticResource LabelStyle}"/>
                             <DatePicker Style="{StaticResource FiltroDateStyle}"
                                         SelectedDate="{Binding FiltroFechaReciboDesde}"/>
                         </StackPanel>
 
                         <StackPanel x:Name="PanelFiltroFechaReciboHasta" Width="150" Margin="0,0,14,12">
-                            <TextBlock Text="Fecha recibo — hasta" Style="{StaticResource FiltroLabelStyle}"/>
+                            <TextBlock Text="Fecha recibo — hasta" Style="{StaticResource LabelStyle}"/>
                             <DatePicker Style="{StaticResource FiltroDateStyle}"
                                         SelectedDate="{Binding FiltroFechaReciboHasta}"/>
                         </StackPanel>
 
                         <!-- Juzgado -->
                         <StackPanel x:Name="PanelFiltroJuzgado" Width="140" Margin="0,0,14,12">
-                            <TextBlock Text="Juzgado" Style="{StaticResource FiltroLabelStyle}"/>
-                            <ComboBox Style="{StaticResource FiltroComboStyle}"
+                            <TextBlock Text="Juzgado" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox Style="{StaticResource ComboStyle}"
                                       ItemsSource="{Binding JuzgadosDisponibles}"
                                       SelectedItem="{Binding FiltroJuzgado}"
                                       IsEditable="False"/>
@@ -393,8 +551,8 @@
 
                         <!-- Sala -->
                         <StackPanel x:Name="PanelFiltroSala" Width="110" Margin="0,0,14,12">
-                            <TextBlock Text="Sala" Style="{StaticResource FiltroLabelStyle}"/>
-                            <ComboBox Style="{StaticResource FiltroComboStyle}"
+                            <TextBlock Text="Sala" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox Style="{StaticResource ComboStyle}"
                                       ItemsSource="{Binding SalasDisponibles}"
                                       SelectedItem="{Binding FiltroSala}"
                                       IsEditable="False"/>
@@ -402,36 +560,36 @@
 
                         <!-- Juez -->
                         <StackPanel x:Name="PanelFiltroJuez" Width="170" Margin="0,0,14,12">
-                            <TextBlock Text="Juez" Style="{StaticResource FiltroLabelStyle}"/>
-                            <TextBox Style="{StaticResource FiltroInputStyle}"
+                            <TextBlock Text="Juez" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource InputStyle}"
                                      Text="{Binding FiltroJuez, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <!-- Imputado -->
                         <StackPanel x:Name="PanelFiltroImputado" Width="170" Margin="0,0,14,12">
-                            <TextBlock Text="Imputado" Style="{StaticResource FiltroLabelStyle}"/>
-                            <TextBox Style="{StaticResource FiltroInputStyle}"
+                            <TextBlock Text="Imputado" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource InputStyle}"
                                      Text="{Binding FiltroImputado, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <!-- Delito -->
                         <StackPanel x:Name="PanelFiltroDelito" Width="170" Margin="0,0,14,12">
-                            <TextBlock Text="Delito" Style="{StaticResource FiltroLabelStyle}"/>
-                            <TextBox Style="{StaticResource FiltroInputStyle}"
+                            <TextBlock Text="Delito" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource InputStyle}"
                                      Text="{Binding FiltroDelito, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <!-- Expediente (solo Ejecución) -->
                         <StackPanel x:Name="PanelFiltroExpediente" Width="170" Margin="0,0,14,12">
-                            <TextBlock Text="Expediente" Style="{StaticResource FiltroLabelStyle}"/>
-                            <TextBox Style="{StaticResource FiltroInputStyle}"
+                            <TextBlock Text="Expediente" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource InputStyle}"
                                      Text="{Binding FiltroExpediente, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <!-- A Quien se Entrega (solo Copias) -->
                         <StackPanel x:Name="PanelFiltroAQuienEntrega" Width="190" Margin="0,0,14,12">
-                            <TextBlock Text="A Quien se Entrega" Style="{StaticResource FiltroLabelStyle}"/>
-                            <TextBox Style="{StaticResource FiltroInputStyle}"
+                            <TextBlock Text="A Quien se Entrega" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource InputStyle}"
                                      Text="{Binding FiltroAQuienEntrega, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
