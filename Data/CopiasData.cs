@@ -9,22 +9,17 @@ namespace PoderJudicial.Data
     {
         public int ObtenerSiguienteIdVisual()
         {
-            using (OleDbConnection conn =
-                Conexion.ObtenerConexion())
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
                 conn.Open();
 
-                string sql =
-                    "SELECT MAX(Id) FROM CopiasAudiencias";
+                string sql = "SELECT MAX(Id) FROM CopiasAudiencias";
 
-                using (OleDbCommand cmd =
-                    new OleDbCommand(sql, conn))
+                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
                 {
-                    object resultado =
-                        cmd.ExecuteScalar();
+                    object resultado = cmd.ExecuteScalar();
 
-                    if (resultado == null ||
-                        resultado == DBNull.Value)
+                    if (resultado == null || resultado == DBNull.Value)
                     {
                         return 1;
                     }
@@ -34,7 +29,9 @@ namespace PoderJudicial.Data
             }
         }
 
-        /// <summary>Actualiza un registro existente (modo edición).</summary>
+        /// <summary>
+        /// Actualiza un registro existente.
+        /// </summary>
         public void Actualizar(RegistroCopia registro)
         {
             using (OleDbConnection conn = Conexion.ObtenerConexion())
@@ -58,17 +55,56 @@ WHERE Id = ?";
 
                 using (OleDbCommand cmd = new OleDbCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("?", registro.FeAudiencia.HasValue ? (object)registro.FeAudiencia.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("?", registro.FeRecibo.HasValue ? (object)registro.FeRecibo.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("?", registro.TotDiscosEntregados.HasValue ? (object)registro.TotDiscosEntregados.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("?", registro.TipoDisco ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", registro.NoCausa ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", registro.NUC ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", registro.TipoCausa ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", registro.DiscosExternos ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", registro.EtiquetasEntregadas ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", registro.AQuienSeEntrega ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", registro.Observaciones ?? string.Empty);
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.FeAudiencia.HasValue
+                            ? (object)registro.FeAudiencia.Value
+                            : DBNull.Value);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.FeRecibo.HasValue
+                            ? (object)registro.FeRecibo.Value
+                            : DBNull.Value);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.TotDiscosEntregados.HasValue
+                            ? (object)registro.TotDiscosEntregados.Value
+                            : DBNull.Value);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.TipoDisco ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.NoCausa ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.NUC ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.TipoCausa ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.DiscosExternos ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.EtiquetasEntregadas ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.AQuienSeEntrega ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.Observaciones ?? string.Empty);
+
                     cmd.Parameters.AddWithValue("?", registro.Id);
 
                     cmd.ExecuteNonQuery();
@@ -76,10 +112,12 @@ WHERE Id = ?";
             }
         }
 
+        /// <summary>
+        /// Inserta un nuevo registro.
+        /// </summary>
         public void Insertar(RegistroCopia registro)
         {
-            using (OleDbConnection conn =
-                Conexion.ObtenerConexion())
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
                 conn.Open();
 
@@ -105,39 +143,57 @@ VALUES
     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )";
 
-                using (OleDbCommand cmd =
-                    new OleDbCommand(sql, conn))
+                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("?", registro.Id);
 
-                    cmd.Parameters.AddWithValue("?",
+                    cmd.Parameters.AddWithValue(
+                        "?",
                         registro.FeAudiencia ?? (object)DBNull.Value);
 
-                    cmd.Parameters.AddWithValue("?",
+                    cmd.Parameters.AddWithValue(
+                        "?",
                         registro.FeRecibo ?? (object)DBNull.Value);
 
-                    cmd.Parameters.AddWithValue("?",
+                    cmd.Parameters.AddWithValue(
+                        "?",
                         registro.TotDiscosEntregados ?? (object)DBNull.Value);
 
-                    cmd.Parameters.AddWithValue("?", registro.TipoDisco);
-                    cmd.Parameters.AddWithValue("?", registro.NoCausa);
-                    cmd.Parameters.AddWithValue("?", registro.NUC);
-                    cmd.Parameters.AddWithValue("?", registro.TipoCausa);
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.TipoDisco ?? string.Empty);
 
-                    cmd.Parameters.AddWithValue("?",
-                        registro.DiscosExternos?.ToString() ?? "");
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.NoCausa ?? string.Empty);
 
-                    cmd.Parameters.AddWithValue("?",
-                        registro.EtiquetasEntregadas?.ToString() ?? "");
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.NUC ?? string.Empty);
 
-                    cmd.Parameters.AddWithValue("?",
-                        registro.AQuienSeEntrega);
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.TipoCausa ?? string.Empty);
 
-                    cmd.Parameters.AddWithValue("?",
-                        registro.Observaciones);
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.DiscosExternos?.ToString() ?? string.Empty);
 
-                    cmd.Parameters.AddWithValue("?",
-                        registro.QuienRegistra);
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.EtiquetasEntregadas?.ToString() ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.AQuienSeEntrega ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.Observaciones ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        registro.QuienRegistra ?? string.Empty);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -145,9 +201,8 @@ VALUES
         }
 
         /// <summary>
-        /// Valores distintos ya capturados en la columna "A quien se entrega"
-        /// (CopiasAudiencias), usados como fuente del autocompletado del
-        /// campo del mismo nombre — misma infraestructura que Jueces/Delito.
+        /// Obtiene los valores distintos registrados en
+        /// "A quien se entrega".
         /// </summary>
         public List<string> ObtenerValoresAQuienSeEntrega()
         {
@@ -168,18 +223,21 @@ WHERE [A quien se entraga] IS NOT NULL";
                     while (reader.Read())
                     {
                         string valor = reader[0]?.ToString();
+
                         if (!string.IsNullOrWhiteSpace(valor))
+                        {
                             lista.Add(valor);
+                        }
                     }
                 }
             }
 
             return lista;
         }
+
         /// <summary>
-        /// Listado completo (con Id y TotDiscosEntregados incluidos) usado
-        /// por los indicadores "Total de registros" / "Total Discos
-        /// Audiencia" en Consultar Registros.
+        /// Obtiene todos los registros necesarios para calcular
+        /// el total de discos entregados.
         /// </summary>
         public List<RegistroCopia> ObtenerTodas()
         {
@@ -189,7 +247,11 @@ WHERE [A quien se entraga] IS NOT NULL";
             {
                 conn.Open();
 
-                string sql = "SELECT Id, TotDiscosEntregados FROM CopiasAudiencias";
+                string sql = @"
+SELECT
+    Id,
+    TotDiscosEntregados
+FROM CopiasAudiencias";
 
                 using (OleDbCommand cmd = new OleDbCommand(sql, conn))
                 using (OleDbDataReader reader = cmd.ExecuteReader())
@@ -198,10 +260,16 @@ WHERE [A quien se entraga] IS NOT NULL";
                     {
                         lista.Add(new RegistroCopia
                         {
-                            Id = reader["Id"] != DBNull.Value ? Convert.ToInt32(reader["Id"]) : 0,
+                            Id = reader["Id"] != DBNull.Value
+                                ? Convert.ToInt32(reader["Id"])
+                                : 0,
+
                             TotDiscosEntregados =
-                                int.TryParse(reader["TotDiscosEntregados"]?.ToString(), out int tot)
-                                    ? tot : (int?)null
+                                int.TryParse(
+                                    reader["TotDiscosEntregados"]?.ToString(),
+                                    out int total)
+                                    ? total
+                                    : (int?)null
                         });
                     }
                 }
@@ -211,8 +279,7 @@ WHERE [A quien se entraga] IS NOT NULL";
         }
 
         /// <summary>
-        /// Obtiene un registro completo de "Registro de Copias" por Id,
-        /// usado por "Ver Detalle" en Consulta de Registros.
+        /// Obtiene un registro completo de Registro de Copias por Id.
         /// </summary>
         public RegistroCopia ObtenerCopiaPorId(int id)
         {
@@ -220,7 +287,8 @@ WHERE [A quien se entraga] IS NOT NULL";
             {
                 conn.Open();
 
-                string sql = "SELECT * FROM CopiasAudiencias WHERE Id = ?";
+                string sql =
+                    "SELECT * FROM CopiasAudiencias WHERE Id = ?";
 
                 using (OleDbCommand cmd = new OleDbCommand(sql, conn))
                 {
@@ -235,26 +303,61 @@ WHERE [A quien se entraga] IS NOT NULL";
                                 Id = Convert.ToInt32(reader["Id"]),
 
                                 FeAudiencia =
-                                    DateTime.TryParse(reader["FeAudiencia"]?.ToString(), out DateTime feA)
-                                        ? feA : (DateTime?)null,
+                                    DateTime.TryParse(
+                                        reader["FeAudiencia"]?.ToString(),
+                                        out DateTime fechaAudiencia)
+                                        ? fechaAudiencia
+                                        : (DateTime?)null,
 
                                 FeRecibo =
-                                    DateTime.TryParse(reader["FeRecibo"]?.ToString(), out DateTime feR)
-                                        ? feR : (DateTime?)null,
+                                    DateTime.TryParse(
+                                        reader["FeRecibo"]?.ToString(),
+                                        out DateTime fechaRecibo)
+                                        ? fechaRecibo
+                                        : (DateTime?)null,
 
                                 TotDiscosEntregados =
-                                    int.TryParse(reader["TotDiscosEntregados"]?.ToString(), out int tot)
-                                        ? tot : (int?)null,
+                                    int.TryParse(
+                                        reader["TotDiscosEntregados"]?.ToString(),
+                                        out int totalDiscos)
+                                        ? totalDiscos
+                                        : (int?)null,
 
-                                TipoDisco = reader["TipoDisco"]?.ToString() ?? "",
-                                NoCausa = reader["NoCausa"]?.ToString() ?? "",
-                                NUC = reader["NUC"]?.ToString() ?? "",
-                                TipoCausa = reader["TipoCausa"]?.ToString() ?? "",
-                                DiscosExternos = reader["DiscosExternos"]?.ToString() ?? "",
-                                EtiquetasEntregadas = reader["Etiquetas entregadas"]?.ToString() ?? "",
-                                AQuienSeEntrega = reader["A quien se entraga"]?.ToString() ?? "",
-                                Observaciones = reader["Observaciones"]?.ToString() ?? "",
-                                QuienRegistra = reader["Quien Realiza"]?.ToString() ?? ""
+                                TipoDisco =
+                                    reader["TipoDisco"]?.ToString()
+                                    ?? string.Empty,
+
+                                NoCausa =
+                                    reader["NoCausa"]?.ToString()
+                                    ?? string.Empty,
+
+                                NUC =
+                                    reader["NUC"]?.ToString()
+                                    ?? string.Empty,
+
+                                TipoCausa =
+                                    reader["TipoCausa"]?.ToString()
+                                    ?? string.Empty,
+
+                                DiscosExternos =
+                                    reader["DiscosExternos"]?.ToString()
+                                    ?? string.Empty,
+
+                                EtiquetasEntregadas =
+                                    reader["Etiquetas entregadas"]?.ToString()
+                                    ?? string.Empty,
+
+                                AQuienSeEntrega =
+                                    reader["A quien se entraga"]?.ToString()
+                                    ?? string.Empty,
+
+                                Observaciones =
+                                    reader["Observaciones"]?.ToString()
+                                    ?? string.Empty,
+
+                                QuienRegistra =
+                                    reader["Quien Realiza"]?.ToString()
+                                    ?? string.Empty
                             };
                         }
                     }
@@ -263,5 +366,123 @@ WHERE [A quien se entraga] IS NOT NULL";
 
             return null;
         }
+
+        /// <summary>
+        /// Obtiene todos los registros de CopiasAudiencias.
+        /// Se utiliza para reportes y listados completos.
+        /// </summary>
+        public List<RegistroCopia> ObtenerCopias()
+        {
+            var lista = new List<RegistroCopia>();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                const string sql = @"
+SELECT
+    Id,
+    FeAudiencia,
+    FeRecibo,
+    TotDiscosEntregados,
+    TipoDisco,
+    NoCausa,
+    NUC,
+    TipoCausa,
+    DiscosExternos,
+    [Etiquetas entregadas],
+    [A quien se entraga],
+    Observaciones,
+    [Quien Realiza]
+FROM CopiasAudiencias
+ORDER BY FeRecibo, Id";
+
+                using (OleDbCommand cmd = new OleDbCommand(sql, conn))
+                using (OleDbDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var registro = new RegistroCopia
+                        {
+                            Id = Convert.ToInt32(reader["Id"]),
+
+                            FeAudiencia = DateTime.TryParse(
+                                reader["FeAudiencia"]?.ToString(),
+                                out DateTime fechaAudiencia)
+                                ? fechaAudiencia
+                                : (DateTime?)null,
+
+                            FeRecibo = DateTime.TryParse(
+                                reader["FeRecibo"]?.ToString(),
+                                out DateTime fechaRecibo)
+                                ? fechaRecibo
+                                : (DateTime?)null,
+
+                            TotDiscosEntregados = int.TryParse(
+                                reader["TotDiscosEntregados"]?.ToString(),
+                                out int totalDiscos)
+                                ? totalDiscos
+                                : (int?)null,
+
+                            TipoDisco =
+                                reader["TipoDisco"]?.ToString()
+                                ?? string.Empty,
+
+                            NoCausa =
+                                reader["NoCausa"]?.ToString()
+                                ?? string.Empty,
+
+                            NUC =
+                                reader["NUC"]?.ToString()
+                                ?? string.Empty,
+
+                            TipoCausa =
+                                reader["TipoCausa"]?.ToString()
+                                ?? string.Empty,
+
+                            DiscosExternos =
+                                reader["DiscosExternos"]?.ToString()
+                                ?? string.Empty,
+
+                            EtiquetasEntregadas =
+                                reader["Etiquetas entregadas"]?.ToString()
+                                ?? string.Empty,
+
+                            AQuienSeEntrega =
+                                reader["A quien se entraga"]?.ToString()
+                                ?? string.Empty,
+
+                            Observaciones =
+                                reader["Observaciones"]?.ToString()
+                                ?? string.Empty,
+
+                            QuienRegistra =
+                                reader["Quien Realiza"]?.ToString()
+                                ?? string.Empty
+                        };
+
+                        lista.Add(registro);
+                    }
+                }
+            }
+
+            return lista;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

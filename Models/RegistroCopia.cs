@@ -1,4 +1,6 @@
-﻿namespace PoderJudicial.Models
+﻿
+using System;
+namespace PoderJudicial.Models
 {
     public class RegistroCopia
     {
