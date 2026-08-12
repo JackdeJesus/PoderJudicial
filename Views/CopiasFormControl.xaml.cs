@@ -180,8 +180,7 @@ namespace PoderJudicial.Views
             if (string.IsNullOrWhiteSpace(nuc))
                 return Falla(out mensajeError, "El campo 'NUC' no pudo determinarse; verifique el No. Causa capturado.");
 
-            if (!ValidationHelper.NumerosYGuion(nuc))
-                return Falla(out mensajeError, "El campo 'NUC' solo permite números y '-'.");
+            
 
             if (CmbTipoDisco.SelectedIndex == 0)
                 return Falla(out mensajeError, "Debe seleccionar el tipo de disco.");
