@@ -407,11 +407,11 @@
                             <StackPanel Grid.Column="0">
                                 <TextBlock Text="Tipo de causa" Style="{StaticResource FiltroLabel}"/>
                                 <ComboBox x:Name="CmbTipoCausa" Style="{StaticResource FiltroCombo}" SelectionChanged="Filtro_Changed">
-                                    <ComboBoxItem Content="Todas" IsSelected="True"/>
+                                    <ComboBoxItem Content="Todos" IsSelected="True"/>
                                     <ComboBoxItem Content="C"/>
                                     <ComboBoxItem Content="CP"/>
                                     <ComboBoxItem Content="JO"/>
-                                    <ComboBoxItem Content="XP"/>
+                                    <ComboBoxItem Content="EXP"/>
                                 </ComboBox>
                             </StackPanel>
 

@@ -214,9 +214,8 @@ namespace PoderJudicial.Views
             CmbSala.SelectedIndex = 0;
         }
 
-        // ═══════════════════════════════════════════════════════════════
         // FILTROS DE AUDIENCIAS
-        // ═══════════════════════════════════════════════════════════════
+        //
 
         private void Filtro_Changed(object sender, SelectionChangedEventArgs e)
         {
@@ -249,10 +248,13 @@ namespace PoderJudicial.Views
                 ?? "Todos";
 
             int? mesNum = ObtenerNumeroMes(mes);
-            int? anioNum = int.TryParse(anio, out int a) ? a : null;
+            int? anioNum = int.TryParse(anio, out int a)
+                ? a
+                : null;
 
-            var filtradas = _todas.AsEnumerable();
+            IEnumerable<Audiencia> filtradas = _todas;
 
+            // MES
             if (mesNum.HasValue)
             {
                 filtradas = filtradas.Where(x =>
@@ -260,6 +262,7 @@ namespace PoderJudicial.Views
                     x.FechaAudiencia.Value.Month == mesNum.Value);
             }
 
+            // AÑO
             if (anioNum.HasValue)
             {
                 filtradas = filtradas.Where(x =>
@@ -267,25 +270,28 @@ namespace PoderJudicial.Views
                     x.FechaAudiencia.Value.Year == anioNum.Value);
             }
 
-            if (juzgado != "Todos")
+            // JUZGADO
+            if (!EsFiltroTodos(juzgado))
             {
                 filtradas = filtradas.Where(x =>
                     string.Equals(
-                        x.Juzgado,
-                        juzgado,
+                        x.Juzgado?.Trim(),
+                        juzgado.Trim(),
                         StringComparison.OrdinalIgnoreCase));
             }
 
-            if (sala != "Todas")
+            // SALA
+            if (!EsFiltroTodos(sala))
             {
                 filtradas = filtradas.Where(x =>
                     string.Equals(
-                        x.Sala,
-                        sala,
+                        x.Sala?.Trim(),
+                        sala.Trim(),
                         StringComparison.OrdinalIgnoreCase));
             }
 
-            if (tipoCausa != "Todos")
+            // TIPO DE CAUSA
+            if (!EsFiltroTodos(tipoCausa))
             {
                 filtradas = filtradas.Where(x =>
                 {
@@ -293,48 +299,64 @@ namespace PoderJudicial.Views
                         return false;
 
                     string valorDato =
-                        x.TipoCausa.Replace(" ", "").Trim().ToUpperInvariant();
+                        NormalizarTexto(x.TipoCausa);
 
                     string valorFiltro =
-                        tipoCausa.Replace(" ", "").Trim().ToUpperInvariant();
+                        NormalizarTexto(tipoCausa);
 
                     return valorDato == valorFiltro;
                 });
             }
 
-            List<Audiencia> resultado = filtradas.ToList();
-            _resultadosFiltrados = resultado;
+            _resultadosFiltrados = filtradas.ToList();
 
-            TxtTotalRegistros.Text = resultado.Count.ToString();
+            TxtTotalRegistros.Text =
+                _resultadosFiltrados.Count.ToString();
 
-            TxtTotalDiscos.Text = resultado.Sum(x =>
-            {
-                if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia))
-                    return 0;
+            TxtTotalDiscos.Text =
+                _resultadosFiltrados.Sum(x =>
+                {
+                    if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia))
+                        return 0;
 
-                string numeros =
-                    new string(
-                        x.TotDiscoAudiencia
-                            .Where(char.IsDigit)
-                            .ToArray());
+                    string numeros =
+                        new string(
+                            x.TotDiscoAudiencia
+                                .Where(char.IsDigit)
+                                .ToArray());
 
-                return int.TryParse(numeros, out int valor)
-                    ? valor
-                    : 0;
-            }).ToString();
+                    return int.TryParse(numeros, out int valor)
+                        ? valor
+                        : 0;
+                }).ToString();
 
-            int copiasSimples = resultado.Count(x =>
-                !string.IsNullOrWhiteSpace(x.TipoDisco) &&
-                NormalizarTexto(x.TipoDisco).Contains("SIMP"));
+            int copiasSimples =
+                _resultadosFiltrados.Count(x =>
+                    !string.IsNullOrWhiteSpace(x.TipoDisco) &&
+                    NormalizarTexto(x.TipoDisco).Contains("SIMP"));
 
-            int copiasAutenticas = resultado.Count(x =>
-                !string.IsNullOrWhiteSpace(x.TipoDisco) &&
-                NormalizarTexto(x.TipoDisco).Contains("AUT"));
+            int copiasAutenticas =
+                _resultadosFiltrados.Count(x =>
+                    !string.IsNullOrWhiteSpace(x.TipoDisco) &&
+                    NormalizarTexto(x.TipoDisco).Contains("AUT"));
 
-            TxtCopiasSimples.Text = copiasSimples.ToString();
-            TxtCopiasAutenticas.Text = copiasAutenticas.ToString();
+            TxtCopiasSimples.Text =
+                copiasSimples.ToString();
+
+            TxtCopiasAutenticas.Text =
+                copiasAutenticas.ToString();
         }
 
+        private static bool EsFiltroTodos(string valor)
+        {
+            return string.IsNullOrWhiteSpace(valor) ||
+                   valor.Equals(
+                       "Todos",
+                       StringComparison.OrdinalIgnoreCase) ||
+                   valor.Equals(
+                       "Todas",
+                       StringComparison.OrdinalIgnoreCase);
+        }
         private void AplicarFiltrosCopias()
         {
             _copiasFiltradas = _todasCopias
