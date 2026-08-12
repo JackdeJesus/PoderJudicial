@@ -1,25 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
 
 namespace PoderJudicial.Helpers
 {
-    public sealed class CatalogoPersonasData
+    public class CatalogoPersonasData
     {
+        public List<string> EntreganSimples { get; set; } = new();
+        public List<string> RecibenSimples { get; set; } = new();
+        public List<string> EntreganAutenticas { get; set; } = new();
+        public List<string> RecibenAutenticas { get; set; } = new();
+
+        // Propiedades legacy para poder leer un personas.json anterior
+        // sin provocar errores. No se vuelven a guardar.
         public List<string> Entregan { get; set; } = new();
         public List<string> Reciben { get; set; } = new();
     }
 
     public static class PersonaCatalogoService
     {
-        private static readonly JsonSerializerOptions OpcionesJson =
-            new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-
         public static CatalogoPersonasData Cargar()
         {
             RutasInformes.CrearEstructura();
@@ -30,46 +32,77 @@ namespace PoderJudicial.Helpers
             if (!File.Exists(ruta))
                 return new CatalogoPersonasData();
 
-            string json = File.ReadAllText(ruta);
+            string json =
+                File.ReadAllText(ruta);
 
             if (string.IsNullOrWhiteSpace(json))
                 return new CatalogoPersonasData();
 
-            CatalogoPersonasData? datos =
+            CatalogoPersonasData datos =
                 JsonSerializer.Deserialize<CatalogoPersonasData>(
                     json,
-                    OpcionesJson);
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    })
+                ?? new CatalogoPersonasData();
 
-            return datos ?? new CatalogoPersonasData();
+            datos.EntreganSimples ??= new();
+            datos.RecibenSimples ??= new();
+            datos.EntreganAutenticas ??= new();
+            datos.RecibenAutenticas ??= new();
+            datos.Entregan ??= new();
+            datos.Reciben ??= new();
+
+            // Migración segura del formato viejo:
+            // los nombres viejos no indican si eran simples o auténticas.
+            // Se conservan solo como respaldo en las propiedades legacy
+            // y NO se mezclan automáticamente con los nuevos catálogos.
+
+            return datos;
         }
 
         public static void Guardar(
-            IEnumerable<string> entregan,
-            IEnumerable<string> reciben)
+            IEnumerable<string> entreganSimples,
+            IEnumerable<string> recibenSimples,
+            IEnumerable<string> entreganAutenticas,
+            IEnumerable<string> recibenAutenticas)
         {
             RutasInformes.CrearEstructura();
 
-            var datos = new CatalogoPersonasData
-            {
-                Entregan = PrepararLista(entregan),
-                Reciben = PrepararLista(reciben)
-            };
+            CatalogoPersonasData datos =
+                new CatalogoPersonasData
+                {
+                    EntreganSimples =
+                        Normalizar(entreganSimples),
+
+                    RecibenSimples =
+                        Normalizar(recibenSimples),
+
+                    EntreganAutenticas =
+                        Normalizar(entreganAutenticas),
+
+                    RecibenAutenticas =
+                        Normalizar(recibenAutenticas)
+                };
 
             string json =
                 JsonSerializer.Serialize(
                     datos,
-                    OpcionesJson);
+                    new JsonSerializerOptions
+                    {
+                        WriteIndented = true
+                    });
 
-            string ruta =
-                RutasInformes.ObtenerRutaCatalogoPersonas();
-
-            File.WriteAllText(ruta, json);
+            File.WriteAllText(
+                RutasInformes.ObtenerRutaCatalogoPersonas(),
+                json);
         }
 
-        private static List<string> PrepararLista(
-            IEnumerable<string> valores)
+        private static List<string> Normalizar(
+            IEnumerable<string>? nombres)
         {
-            return (valores ?? Enumerable.Empty<string>())
+            return (nombres ?? Enumerable.Empty<string>())
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(x => x.Trim())
                 .Distinct(StringComparer.OrdinalIgnoreCase)

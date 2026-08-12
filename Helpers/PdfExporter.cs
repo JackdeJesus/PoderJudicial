@@ -12,12 +12,22 @@ namespace PoderJudicial.Helpers
         /// Genera un archivo .html con formato de tabla lista para imprimir como PDF
         /// desde el navegador (Ctrl+P → Guardar como PDF).
         /// </summary>
-        public static void Exportar(List<Audiencia> datos)
+        /// <summary>
+        /// Genera un archivo .html con formato de tabla lista para imprimir como PDF
+        /// desde el navegador (Ctrl+P → Guardar como PDF).
+        /// </summary>
+        public static void Exportar(
+            List<Audiencia> datos,
+            string nombreArchivo)
         {
             if (datos == null || datos.Count == 0)
             {
-                MessageBox.Show("No hay datos para exportar.", "Info",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "No hay datos para exportar.",
+                    "Info",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
                 return;
             }
 
@@ -25,26 +35,35 @@ namespace PoderJudicial.Helpers
             {
                 Title = "Guardar reporte PDF",
                 Filter = "Archivo HTML (*.html)|*.html",
-                FileName = $"Reporte_Audiencias_{DateTime.Now:yyyyMMdd_HHmm}.html"
+                FileName = nombreArchivo
             };
-            if (dlg.ShowDialog() != true) return;
+
+            if (dlg.ShowDialog() != true)
+                return;
 
             try
             {
                 var html = GenerarHtml(datos);
-                File.WriteAllText(dlg.FileName, html, Encoding.UTF8);
 
-                // Abre el navegador → usuario imprime con Ctrl+P → Guardar como PDF
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                {
-                    FileName = dlg.FileName,
-                    UseShellExecute = true
-                });
+                File.WriteAllText(
+                    dlg.FileName,
+                    html,
+                    Encoding.UTF8);
+
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = dlg.FileName,
+                        UseShellExecute = true
+                    });
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al exportar PDF:\n{ex.Message}",
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Error al exportar PDF:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 

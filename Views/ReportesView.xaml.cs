@@ -27,15 +27,29 @@ namespace PoderJudicial.Views
 
         private bool _cargando = true;
 
-        // Catálogos separados:
-        // - Entrega solo contiene nombres capturados en "Entregó".
-        // - Recibe solo contiene nombres capturados en "Recibió".
-        private readonly ObservableCollection<string> _catalogoEntregan = new();
-        private readonly ObservableCollection<string> _catalogoReciben = new();
+        // Catálogos separados por tipo de informe:
+        // - Simples: Entregan / Reciben
+        // - Auténticas: Entregan / Reciben
 
-        // Personas seleccionadas para cada informe.
-        private readonly ObservableCollection<string> _recibieronSimples = new();
-        private readonly ObservableCollection<string> _recibieronAutenticas = new();
+        private readonly ObservableCollection<string>
+            _catalogoEntreganSimples = new();
+
+        private readonly ObservableCollection<string>
+            _catalogoRecibenSimples = new();
+
+        private readonly ObservableCollection<string>
+            _catalogoEntreganAutenticas = new();
+
+        private readonly ObservableCollection<string>
+            _catalogoRecibenAutenticas = new();
+
+
+        // Personas seleccionadas temporalmente para cada informe
+        private readonly ObservableCollection<string>
+            _recibieronSimples = new();
+
+        private readonly ObservableCollection<string>
+            _recibieronAutenticas = new();
 
         private DateTime FechaInforme => DateTime.Today;
 
@@ -46,11 +60,17 @@ namespace PoderJudicial.Views
             LstRecibieronSimples.ItemsSource = _recibieronSimples;
             LstRecibieronAutenticas.ItemsSource = _recibieronAutenticas;
 
-            CmbEntregoSimples.ItemsSource = _catalogoEntregan;
-            CmbEntregoAutenticas.ItemsSource = _catalogoEntregan;
+            CmbEntregoSimples.ItemsSource =
+     _catalogoEntreganSimples;
 
-            CmbRecibioSimples.ItemsSource = _catalogoReciben;
-            CmbRecibioAutenticas.ItemsSource = _catalogoReciben;
+            CmbRecibioSimples.ItemsSource =
+                _catalogoRecibenSimples;
+
+            CmbEntregoAutenticas.ItemsSource =
+                _catalogoEntreganAutenticas;
+
+            CmbRecibioAutenticas.ItemsSource =
+                _catalogoRecibenAutenticas;
 
             Loaded += ReportesView_Loaded;
         }
@@ -59,9 +79,16 @@ namespace PoderJudicial.Views
         // CARGA INICIAL
         // ═══════════════════════════════════════════════════════════════
 
-        private void ReportesView_Loaded(object sender, RoutedEventArgs e)
+
+        private void ReportesView_Loaded(
+            object sender,
+            RoutedEventArgs e)
         {
             RutasInformes.CrearEstructura();
+
+            InformeCopiasService
+                .ArchivarTemporalesVencidos(
+                    FechaInforme);
 
             CargarCatalogosPersonas();
             ActualizarFechaInformeUI();
@@ -90,23 +117,41 @@ namespace PoderJudicial.Views
                 CatalogoPersonasData catalogo =
                     PersonaCatalogoService.Cargar();
 
-                _catalogoEntregan.Clear();
-                _catalogoReciben.Clear();
+                _catalogoEntreganSimples.Clear();
+                _catalogoRecibenSimples.Clear();
+                _catalogoEntreganAutenticas.Clear();
+                _catalogoRecibenAutenticas.Clear();
 
-                foreach (string nombre in catalogo.Entregan
+                foreach (string nombre in catalogo.EntreganSimples
                              .Where(x => !string.IsNullOrWhiteSpace(x))
                              .Distinct(StringComparer.OrdinalIgnoreCase)
                              .OrderBy(x => x))
                 {
-                    _catalogoEntregan.Add(nombre);
+                    _catalogoEntreganSimples.Add(nombre);
                 }
 
-                foreach (string nombre in catalogo.Reciben
+                foreach (string nombre in catalogo.RecibenSimples
                              .Where(x => !string.IsNullOrWhiteSpace(x))
                              .Distinct(StringComparer.OrdinalIgnoreCase)
                              .OrderBy(x => x))
                 {
-                    _catalogoReciben.Add(nombre);
+                    _catalogoRecibenSimples.Add(nombre);
+                }
+
+                foreach (string nombre in catalogo.EntreganAutenticas
+                             .Where(x => !string.IsNullOrWhiteSpace(x))
+                             .Distinct(StringComparer.OrdinalIgnoreCase)
+                             .OrderBy(x => x))
+                {
+                    _catalogoEntreganAutenticas.Add(nombre);
+                }
+
+                foreach (string nombre in catalogo.RecibenAutenticas
+                             .Where(x => !string.IsNullOrWhiteSpace(x))
+                             .Distinct(StringComparer.OrdinalIgnoreCase)
+                             .OrderBy(x => x))
+                {
+                    _catalogoRecibenAutenticas.Add(nombre);
                 }
             }
             catch (Exception ex)
@@ -122,8 +167,10 @@ namespace PoderJudicial.Views
         private void GuardarCatalogosPersonas()
         {
             PersonaCatalogoService.Guardar(
-                _catalogoEntregan,
-                _catalogoReciben);
+                _catalogoEntreganSimples,
+                _catalogoRecibenSimples,
+                _catalogoEntreganAutenticas,
+                _catalogoRecibenAutenticas);
         }
 
         private void CargarDatos()
@@ -157,8 +204,7 @@ namespace PoderJudicial.Views
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════
-        // LLENADO DE COMBOS DE AUDIENCIAS
+        // Llenar combox audiencias
         // ═══════════════════════════════════════════════════════════════
 
         private void LlenarComboAnios()
@@ -386,7 +432,69 @@ namespace PoderJudicial.Views
             _ => null
         };
 
-        // ═══════════════════════════════════════════════════════════════
+        ///Generar el nombre del archivo de reporte basado en los filtros seleccionados
+        private string GenerarNombreArchivoReporte(string extension)
+        {
+            string tipoCausa =
+                (CmbTipoCausa.SelectedItem as ComboBoxItem)?.Content?.ToString()
+                ?? "Todos";
+
+            string mes =
+                (CmbMes.SelectedItem as ComboBoxItem)?.Content?.ToString()
+                ?? "Todos";
+
+            string anio =
+                (CmbAnio.SelectedItem as ComboBoxItem)?.Content?.ToString()
+                ?? "Todos";
+
+            string juzgado =
+                (CmbJuzgado.SelectedItem as ComboBoxItem)?.Content?.ToString()
+                ?? "Todos";
+
+            string sala =
+                (CmbSala.SelectedItem as ComboBoxItem)?.Content?.ToString()
+                ?? "Todas";
+
+            List<string> filtros = new();
+
+            if (!EsFiltroTodos(tipoCausa))
+                filtros.Add(tipoCausa);
+
+            if (!EsFiltroTodos(mes))
+                filtros.Add($"-{mes}");
+
+            if (!EsFiltroTodos(anio))
+                filtros.Add($"-{anio}");
+
+            if (!EsFiltroTodos(juzgado))
+                filtros.Add($"-{juzgado}");
+
+            if (!EsFiltroTodos(sala))
+                filtros.Add($"-{sala}");
+            string fecha =
+                DateTime.Now.ToString("yyyy-MM-dd_HH-mm");
+
+            string nombre;
+
+            if (filtros.Count == 0)
+            {
+                nombre =
+                    $"Reporte_general_de_toda_la_base_de_datos_{fecha}";
+            }
+            else
+            {
+                nombre =
+                    $"Reporte_Audiencias_{string.Join("_", filtros)}_{fecha}";
+            }
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+                nombre = nombre.Replace(c, '-');
+
+            return $"{nombre}.{extension}";
+        }
+
+
+
         // EXPORTAR EXCEL
         // ═══════════════════════════════════════════════════════════════
 
@@ -409,7 +517,7 @@ namespace PoderJudicial.Views
             {
                 Title = "Guardar Excel",
                 Filter = "Excel (*.xlsx)|*.xlsx",
-                FileName = $"Reporte_Audiencias_{DateTime.Now:yyyyMMdd_HHmm}.xlsx"
+                FileName = GenerarNombreArchivoReporte("xlsx")
             };
 
             if (dlg.ShowDialog() != true)
@@ -579,15 +687,22 @@ namespace PoderJudicial.Views
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════
+
         // EXPORTAR PDF
         // ═══════════════════════════════════════════════════════════════
 
         private void BtnExportarPdf_Click(object sender, RoutedEventArgs e)
         {
             var datos = _resultadosFiltrados;
-            PdfExporter.Exportar(datos);
+
+            string nombreArchivo =
+                GenerarNombreArchivoReporte("html");
+
+            PdfExporter.Exportar(
+                datos,
+                nombreArchivo);
         }
+
 
         // ═══════════════════════════════════════════════════════════════
         // PERSONAS QUE RECIBIERON
@@ -599,7 +714,8 @@ namespace PoderJudicial.Views
         {
             AgregarPersonaRecibida(
                 CmbRecibioSimples,
-                _recibieronSimples);
+                _recibieronSimples,
+                _catalogoRecibenSimples);
         }
 
         private void BtnAgregarRecibioAutenticas_Click(
@@ -608,14 +724,17 @@ namespace PoderJudicial.Views
         {
             AgregarPersonaRecibida(
                 CmbRecibioAutenticas,
-                _recibieronAutenticas);
+                _recibieronAutenticas,
+                _catalogoRecibenAutenticas);
         }
 
         private void AgregarPersonaRecibida(
             ComboBox combo,
-            ObservableCollection<string> destino)
+            ObservableCollection<string> destino,
+            ObservableCollection<string> catalogo)
         {
-            string nombre = combo.Text?.Trim() ?? string.Empty;
+            string nombre =
+                combo.Text?.Trim() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(nombre))
             {
@@ -629,11 +748,12 @@ namespace PoderJudicial.Views
                 return;
             }
 
-            bool yaExiste = destino.Any(persona =>
-                string.Equals(
-                    persona,
-                    nombre,
-                    StringComparison.OrdinalIgnoreCase));
+            bool yaExiste =
+                destino.Any(persona =>
+                    string.Equals(
+                        persona,
+                        nombre,
+                        StringComparison.OrdinalIgnoreCase));
 
             if (yaExiste)
             {
@@ -647,11 +767,15 @@ namespace PoderJudicial.Views
                 return;
             }
 
+            // Agregar a la lista temporal de personas
+            // que recibieron este informe
             destino.Add(nombre);
 
-            // IMPORTANTE:
-            // Los nombres capturados en Recibió solamente van al catálogo Reciben.
-            AgregarAlCatalogoReciben(nombre);
+            // Guardar también como sugerencia
+            // únicamente en su catálogo correspondiente
+            AgregarAlCatalogo(
+                catalogo,
+                nombre);
 
             LimpiarCombo(combo);
             combo.Focus();
@@ -681,42 +805,30 @@ namespace PoderJudicial.Views
             }
         }
 
+
         // ═══════════════════════════════════════════════════════════════
-        // CATÁLOGOS SEPARADOS
+        // CATÁLOGOS
         // ═══════════════════════════════════════════════════════════════
 
-        private void AgregarAlCatalogoEntregan(string nombre)
+        private static void AgregarAlCatalogo(
+            ObservableCollection<string> catalogo,
+            string nombre)
         {
-            nombre = nombre?.Trim() ?? string.Empty;
+            nombre =
+                nombre?.Trim() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(nombre))
                 return;
 
-            bool yaExiste = _catalogoEntregan.Any(persona =>
-                string.Equals(
-                    persona,
-                    nombre,
-                    StringComparison.OrdinalIgnoreCase));
+            bool yaExiste =
+                catalogo.Any(persona =>
+                    string.Equals(
+                        persona,
+                        nombre,
+                        StringComparison.OrdinalIgnoreCase));
 
             if (!yaExiste)
-                _catalogoEntregan.Add(nombre);
-        }
-
-        private void AgregarAlCatalogoReciben(string nombre)
-        {
-            nombre = nombre?.Trim() ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(nombre))
-                return;
-
-            bool yaExiste = _catalogoReciben.Any(persona =>
-                string.Equals(
-                    persona,
-                    nombre,
-                    StringComparison.OrdinalIgnoreCase));
-
-            if (!yaExiste)
-                _catalogoReciben.Add(nombre);
+                catalogo.Add(nombre);
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -785,12 +897,18 @@ namespace PoderJudicial.Views
                     return;
                 }
 
-                // Solo el nombre capturado en Entregó se guarda en el catálogo Entregan.
-                AgregarAlCatalogoEntregan(entrego);
+                // Guardar "Entregó" únicamente en el catálogo de COPIAS SIMPLES.
+                AgregarAlCatalogo(
+                    _catalogoEntreganSimples,
+                    entrego);
 
-                // Las personas que recibieron solo permanecen en el catálogo Reciben.
+                // Guardar "Recibió" únicamente en el catálogo de COPIAS SIMPLES.
                 foreach (string persona in _recibieronSimples)
-                    AgregarAlCatalogoReciben(persona);
+                {
+                    AgregarAlCatalogo(
+                        _catalogoRecibenSimples,
+                        persona);
+                }
 
                 GuardarCatalogosPersonas();
 
@@ -881,10 +999,18 @@ namespace PoderJudicial.Views
                     return;
                 }
 
-                AgregarAlCatalogoEntregan(entrego);
+                // Guardar "Entregó" únicamente en el catálogo de COPIAS AUTÉNTICAS.
+                AgregarAlCatalogo(
+                    _catalogoEntreganAutenticas,
+                    entrego);
 
+                // Guardar "Recibió" únicamente en el catálogo de COPIAS AUTÉNTICAS.
                 foreach (string persona in _recibieronAutenticas)
-                    AgregarAlCatalogoReciben(persona);
+                {
+                    AgregarAlCatalogo(
+                        _catalogoRecibenAutenticas,
+                        persona);
+                }
 
                 GuardarCatalogosPersonas();
 
@@ -1045,9 +1171,26 @@ namespace PoderJudicial.Views
             string rutaConsolidado =
                 RutasInformes.ObtenerRutaConsolidado(FechaInforme);
 
-            bool existeSimples = File.Exists(rutaSimples);
-            bool existeAutenticas = File.Exists(rutaAutenticas);
-            bool existeConsolidado = File.Exists(rutaConsolidado);
+            string rutaAnual =
+                RutasInformes.ObtenerRutaInformeAnual(
+                    FechaInforme.Year);
+
+            bool existeSimples =
+                File.Exists(rutaSimples);
+
+            bool existeAutenticas =
+                File.Exists(rutaAutenticas);
+
+            bool existeConsolidado =
+                File.Exists(rutaConsolidado);
+
+            bool existeAnual =
+                File.Exists(rutaAnual);
+
+
+            // ═══════════════════════════════════════════════════════════════
+            // ESTADO COPIAS SIMPLES
+            // ═══════════════════════════════════════════════════════════════
 
             if (existeSimples)
             {
@@ -1063,6 +1206,11 @@ namespace PoderJudicial.Views
                     "Estado: No generado";
             }
 
+
+            // ═══════════════════════════════════════════════════════════════
+            // ESTADO COPIAS AUTÉNTICAS
+            // ═══════════════════════════════════════════════════════════════
+
             if (existeAutenticas)
             {
                 DateTime modificacion =
@@ -1077,6 +1225,11 @@ namespace PoderJudicial.Views
                     "Estado: No generado";
             }
 
+
+            // ═══════════════════════════════════════════════════════════════
+            // BOTONES
+            // ═══════════════════════════════════════════════════════════════
+
             BtnConsolidarInformeDiario.IsEnabled =
                 existeSimples &&
                 existeAutenticas &&
@@ -1084,6 +1237,11 @@ namespace PoderJudicial.Views
 
             BtnAgregarInformeAnual.IsEnabled =
                 existeConsolidado;
+
+
+            // ═══════════════════════════════════════════════════════════════
+            // ESTADO CONSOLIDADO
+            // ═══════════════════════════════════════════════════════════════
 
             if (existeConsolidado)
             {
@@ -1100,6 +1258,49 @@ namespace PoderJudicial.Views
                 TxtEstadoConsolidado.Text =
                     "Pendiente de ambos informes";
             }
+
+
+            // ═══════════════════════════════════════════════════════════════
+            // ESTADO INFORME ANUAL
+            // ═══════════════════════════════════════════════════════════════
+
+            bool agregadoAlAnual = false;
+
+            if (existeAnual)
+            {
+                agregadoAlAnual =
+                    InformeCopiasService
+                        .EstaAgregadoAlAnual(
+                            FechaInforme);
+            }
+
+            if (!existeAnual)
+            {
+                TxtEstadoInformeAnual.Text =
+                    "Estado: Sin agregar";
+
+                TxtNombreArchivoAnual.Text =
+                    "El documento todavía no se ha creado.";
+
+                TxtUltimaActualizacionAnual.Text =
+                    "Última actualización: Sin información";
+            }
+            else
+            {
+                TxtNombreArchivoAnual.Text =
+                    Path.GetFileName(rutaAnual);
+
+                DateTime ultimaActualizacion =
+                    File.GetLastWriteTime(rutaAnual);
+
+                TxtUltimaActualizacionAnual.Text =
+                    $"Última actualización: {ultimaActualizacion:dd/MM/yyyy hh:mm tt}";
+
+                TxtEstadoInformeAnual.Text =
+                    agregadoAlAnual
+                        ? $"Estado: Agregado al informe anual {FechaInforme.Year}"
+                        : "Estado: Sin agregar";
+            }
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -1107,8 +1308,8 @@ namespace PoderJudicial.Views
         // ═══════════════════════════════════════════════════════════════
 
         private void BtnAgregarInformeAnual_Click(
-    object sender,
-    RoutedEventArgs e)
+     object sender,
+     RoutedEventArgs e)
         {
             try
             {
@@ -1155,6 +1356,7 @@ namespace PoderJudicial.Views
                         .AgregarOActualizarInformeAnual(
                             FechaInforme);
 
+                // Actualiza todos los estados desde un solo lugar
                 ActualizarEstadoBotones();
 
                 int totalInformes =
@@ -1172,8 +1374,7 @@ namespace PoderJudicial.Views
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
-                AbrirArchivo(
-                    rutaAnual);
+                AbrirArchivo(rutaAnual);
             }
             catch (IOException ex)
             {
