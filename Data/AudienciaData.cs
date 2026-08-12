@@ -820,6 +820,68 @@ ExisteColumna(reader, "QuienRealiza")
 
 
 
+        public List<Audiencia> ObtenerTodasAudienciasParaReportes()
+        {
+            List<Audiencia> lista = new();
+
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
+            {
+                conn.Open();
+
+                DataTable schema = conn.GetSchema("Tables");
+
+                foreach (DataRow row in schema.Rows)
+                {
+                    string nombreTabla =
+                        row["TABLE_NAME"]?.ToString() ?? "";
+
+                    if (string.IsNullOrWhiteSpace(nombreTabla))
+                        continue;
+
+                    if (nombreTabla.StartsWith(
+                            "MSys",
+                            StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    if (!nombreTabla.Contains(
+                            "Audiencias",
+                            StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    string query =
+                        $"SELECT * FROM [{nombreTabla}]";
+
+                    using OleDbCommand cmd =
+                        new OleDbCommand(query, conn);
+
+                    using OleDbDataReader reader =
+                        cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Audiencia audiencia =
+                            MapearDesdeReader(reader);
+
+                        // Conservamos la misma regla que utiliza
+                        // ObtenerAudiencias().
+                        if (string.IsNullOrWhiteSpace(audiencia.NoCausa) &&
+                            string.IsNullOrWhiteSpace(audiencia.NUC))
+                        {
+                            continue;
+                        }
+
+                        lista.Add(audiencia);
+                    }
+                }
+            }
+
+            return lista;
+        }
+
+
+
+
+
     }
 
 }

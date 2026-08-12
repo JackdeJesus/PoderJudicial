@@ -132,7 +132,8 @@ namespace PoderJudicial.Views
             {
                 _cargando = true;
 
-                _todas = _data.ObtenerAudiencias();
+                _todas =
+                _data.ObtenerTodasAudienciasParaReportes();
                 _todasCopias = _copiasData.ObtenerCopias();
 
                 LlenarComboAnios();
