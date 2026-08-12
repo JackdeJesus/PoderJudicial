@@ -210,12 +210,14 @@
                                    Text="Sistema Judicial"
                                    Foreground="White"
                                    FontSize="14"
-                                   FontWeight="SemiBold"/>
+                                   FontWeight="SemiBold"
+                                   Opacity="0"/>
 
                             <TextBlock x:Name="TxtLogoSubtitulo"
                                    Text="Audiencias"
                                    Foreground="{StaticResource TextSecondary}"
-                                   FontSize="11"/>
+                                   FontSize="11"
+                                   Opacity="0"/>
 
                         </StackPanel>
 
@@ -238,6 +240,7 @@
                            Foreground="#4A5168"
                            FontSize="10"
                            FontWeight="Bold"
+                           Opacity="0"
                            Margin="28,0,0,8"/>
 
                     <!-- CONSULTAR -->
@@ -267,6 +270,7 @@
                                 <TextBlock x:Name="TxtHomeLabel"
                                        Text="Home"
                FontSize="13"
+               Opacity="0"
                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
                             </StackPanel>
@@ -286,11 +290,16 @@
                             <Grid>
 
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="24"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel Orientation="Horizontal">
+                                <!-- Ícono: columna Auto — nunca se comprime,
+                                     a diferencia de antes donde competía por
+                                     espacio con la columna fija de la flecha
+                                     y terminaba recortado al contraer. -->
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
 
                                     <Border Width="3"
                         Height="24"
@@ -301,25 +310,29 @@
 
                                     <TextBlock Text="▦"
                            FontSize="16"
-                           Margin="0,0,10,0"
-                           Foreground="{Binding Foreground,
-                                       RelativeSource={RelativeSource AncestorType=Button}}"/>
-
-                                    <TextBlock x:Name="TxtConsultarLabel"
-                                           Text="Consultar Registros"
-                           FontSize="13"
                            Foreground="{Binding Foreground,
                                        RelativeSource={RelativeSource AncestorType=Button}}"/>
 
                                 </StackPanel>
 
+                                <TextBlock x:Name="TxtConsultarLabel"
+                                       Grid.Column="1"
+                                       Text="Consultar Registros"
+                           FontSize="13"
+                           Margin="10,0,0,0"
+                           VerticalAlignment="Center"
+                           Opacity="0"
+                           Foreground="{Binding Foreground,
+                                       RelativeSource={RelativeSource AncestorType=Button}}"/>
+
                                 <!-- FLECHA -->
                                 <TextBlock x:Name="TxtFlechaConsultar"
-                       Grid.Column="1"
+                       Grid.Column="2"
                        Text="▼"
                        FontSize="12"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
+                       Opacity="0"
                        Foreground="{Binding Foreground,
                                    RelativeSource={RelativeSource AncestorType=Button}}"/>
 
@@ -436,6 +449,7 @@
                             <TextBlock x:Name="TxtNuevoLabel"
                                    Text="Nueva Audiencia"
                                    FontSize="13"
+                                   Opacity="0"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
                         </StackPanel>
@@ -464,6 +478,7 @@
                             <TextBlock x:Name="TxtCopiasLabel"
                                    Text="Registro de Copias"
                   FontSize="13"
+                  Opacity="0"
                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
                         </StackPanel>
@@ -492,6 +507,7 @@
                             <TextBlock x:Name="TxtReportesLabel"
                                    Text="Reportes"
                                    FontSize="13"
+                                   Opacity="0"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
                         </StackPanel>
@@ -546,6 +562,7 @@
                             <TextBlock x:Name="TxtConfigLabel"
                                    Text="Configuración"
                                    FontSize="13"
+                                   Opacity="0"
                                    Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
 
                         </StackPanel>
@@ -589,12 +606,14 @@
        Text="Admin Sistema"
        Foreground="White"
        FontSize="12"
+       Opacity="0"
        FontWeight="SemiBold"/>
 
                             <TextBlock x:Name="TxtRolUsuario"
                                    Text="Admin"
                                    Foreground="{StaticResource TextSecondary}"
-                                   FontSize="11"/>
+                                   FontSize="11"
+                                   Opacity="0"/>
 
                         </StackPanel>
                         <Button x:Name="BtnRegresar"

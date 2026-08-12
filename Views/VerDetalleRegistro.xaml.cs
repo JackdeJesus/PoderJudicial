@@ -1,4 +1,5 @@
-﻿using PoderJudicial.Models;
+﻿using PoderJudicial.Helpers;
+using PoderJudicial.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,11 +49,18 @@ namespace PoderJudicial.Views
             TxtDelito.Text = delito;
             TxtAgraviado.Text = agraviado;
             TxtNoCausaJuicio.Text = noCausaJuicio;
-           
+
+            // Misma regla que usa Nuevo Registro (ver TipoCausaHelper): No.
+            // Causa Juicio solo corresponde al tipo de causa JO.
+            PanelNoCausaJuicioDetalle.Visibility =
+                TipoCausaHelper.MuestraNoCausaJuicio(tipoCausa)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
             TxtQuienRealiza.Text = quienRealiza;
         }
 
-        
+
         // Permite arrastrar la ventana desde cualquier parte
         protected override void OnMouseLeftButtonDown(
             System.Windows.Input.MouseButtonEventArgs e)
@@ -69,5 +77,5 @@ namespace PoderJudicial.Views
     }
 
 
-   
+
 }

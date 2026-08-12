@@ -1,4 +1,5 @@
 ﻿using PoderJudicial.Helpers;
+using PoderJudicial.Helpers;
 using PoderJudicial.ViewModels;
 using System;
 using System.Globalization;
@@ -35,6 +36,16 @@ namespace PoderJudicial.Views
             CargarIdVisual();
             IniciarReloj();
             AplicarPlaceholders();
+
+            // CmbTipoCausa.SelectedIndex="1" (XAML) dispara SelectionChanged
+            // DURANTE InitializeComponent, antes de que PanelJuecesExtra
+            // (declarado más abajo en el XAML) ya esté asignado — el guard
+            // de esa función lo descarta en ese momento. Se vuelve a invocar
+            // aquí, ya con InitializeComponent totalmente terminado y todos
+            // los campos asignados, para que la visibilidad de "No. Causa
+            // Juicio"/EXP quede correcta desde que se abre el formulario y
+            // no solo cuando el usuario cambia el combo a mano.
+            CmbTipoCausa_SelectionChanged(CmbTipoCausa, null);
         }
 
         // ── Identificación del formulario dentro de la cadena de concentradas ─
@@ -155,7 +166,8 @@ namespace PoderJudicial.Views
             string tipo = item.Content.ToString();
 
             PanelNUC.Visibility = Visibility.Visible;
-            PanelNoCausaJuicio.Visibility = Visibility.Collapsed;
+            PanelNoCausaJuicio.Visibility =
+                TipoCausaHelper.MuestraNoCausaJuicio(tipo) ? Visibility.Visible : Visibility.Collapsed;
             PanelCamposEXP.Visibility = Visibility.Collapsed;
             TxtNoCausaJuicio.Text = "";
             TxtExpediente.Text = "";
@@ -170,7 +182,6 @@ namespace PoderJudicial.Views
                     break;
 
                 case "JO":
-                    PanelNoCausaJuicio.Visibility = Visibility.Visible;
                     BtnAgregarJuez.Visibility = Visibility.Visible;
                     if (PanelJuecesExtra.Children.Count == 0)
                         AgregarCampoJuez();

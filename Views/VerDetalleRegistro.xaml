@@ -259,7 +259,7 @@
                             <TextBlock Text="AGRAVIADO" Style="{StaticResource LabelStyle}"/>
                             <TextBlock x:Name="TxtAgraviado" Text="-" Style="{StaticResource ValorStyle}" TextWrapping="Wrap"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="1">
+                        <StackPanel x:Name="PanelNoCausaJuicioDetalle" Grid.Column="1">
                             <TextBlock Text="NO. CAUSA JUICIO" Style="{StaticResource LabelStyle}"/>
                             <TextBlock x:Name="TxtNoCausaJuicio" Text="-" Style="{StaticResource ValorStyle}"/>
                         </StackPanel>
@@ -271,7 +271,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="QUIEN REALIZA" Style="{StaticResource LabelStyle}"/>
                             <TextBlock x:Name="TxtQuienRealiza" Text="-" Style="{StaticResource ValorStyle}" TextWrapping="Wrap"/>
