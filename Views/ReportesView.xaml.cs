@@ -783,7 +783,7 @@ namespace PoderJudicial.Views
 
         // ═══════════════════════════════════════════════════════════════
         // CONSOLIDACIÓN 
-        // ═══════════════════════════════════════════════════════════════
+       
 
         private void BtnAgregarInformeAnual_Click(
      object sender,
