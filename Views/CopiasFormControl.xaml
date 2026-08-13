@@ -212,7 +212,7 @@
                     Margin="35,0,35,35">
                 <StackPanel>
 
-                    <!-- ─── FILA 1: ID | Fecha Audiencia | Fecha Recibo ─── -->
+                    <!-- ─── FILA 1: ID | no. Causa | Fecha Recibo ─── -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -242,8 +242,6 @@
              LostFocus="TxtNoCausa_LostFocus"/>
                         </StackPanel>
 
-
-
                         <!-- Fecha Recibo -->
                         <StackPanel Grid.Column="4">
                             <StackPanel Orientation="Horizontal">
@@ -258,7 +256,7 @@
                     <!-- ─── SEPARADOR ─── -->
                     <Separator Background="{DynamicResource BorderBrush}" Margin="0,4,0,20"/>
 
-                    <!-- ─── FILA 2: No. Causa | NUC | Tipo Causa ─── -->
+                    <!-- ─── FILA 2: Fecha Audiencia | NUC | Tipo Causa ─── -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -268,7 +266,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-
+                        <!-- Fecha Audiencia (autocompletada desde No. Causa, solo lectura) -->
                         <StackPanel Grid.Column="0">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Fecha Audiencia" Style="{StaticResource LabelStyle}"/>
@@ -292,7 +290,6 @@
               Visibility="Collapsed"
               SelectionChanged="CmbFeAudienciaOpciones_SelectionChanged"/>
                         </StackPanel>
-
 
                         <!-- NUC (autocompletado desde No. Causa, solo lectura) -->
                         <StackPanel Grid.Column="2">
@@ -480,6 +477,27 @@
                             </TextBox.Template>
                         </TextBox>
                     </StackPanel>
+
+                    <!-- ─── FILA 6: ¿Se grabó directo? (afecta "Quien Realiza") ─── -->
+                    <Grid Margin="0,0,0,32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="¿Se grabó directo?" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox x:Name="CmbGrabadoDirecto"
+                                      Style="{StaticResource ComboStyle}"
+                                      SelectedIndex="0">
+                                <ComboBoxItem Content="No"/>
+                                <ComboBoxItem Content="Sí"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
 
                     <!-- ─── SEPARADOR ─── -->
                     <Separator Background="{DynamicResource BorderBrush}" Margin="0,0,0,24"/>

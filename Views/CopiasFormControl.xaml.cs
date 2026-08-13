@@ -234,9 +234,14 @@ namespace PoderJudicial.Views
                 EtiquetasEntregadas = ObtenerValorCombo(CmbEtiquetasEntregadas),
                 AQuienSeEntrega = ObtenerTexto(TxtAQuienSeEntrega),
                 Observaciones = ObtenerTexto(TxtObservaciones),
-                QuienRegistra = SesionActual.Usuario
+                QuienRegistra = ModalidadCopiaHelper.ConstruirRegistro(SesionActual.Usuario, EsGrabadoDirecto())
             };
         }
+
+        // ── ¿Se grabó directo? (afecta "Quien Realiza", mismo patrón que
+        //    Videoconferencia en AudienciaFormControl) ────────────────────
+        private bool EsGrabadoDirecto()
+            => ObtenerValorCombo(CmbGrabadoDirecto) == "Sí";
 
         // ── Persistencia (expuesta para el host): INSERT o UPDATE ──
         public void PersistirModelo(RegistroCopia registro)
@@ -275,6 +280,7 @@ namespace PoderJudicial.Views
 
             CmbDiscosExternos.SelectedIndex = 0;
             CmbEtiquetasEntregadas.SelectedIndex = 0;
+            CmbGrabadoDirecto.SelectedIndex = 0;
 
             OcultarComboFechas();
 
@@ -441,6 +447,9 @@ namespace PoderJudicial.Views
 
             EstablecerTexto(TxtAQuienSeEntrega, registro.AQuienSeEntrega, brushNormal);
             EstablecerTexto(TxtObservaciones, registro.Observaciones, brushNormal);
+
+            CmbGrabadoDirecto.SelectedIndex =
+                ModalidadCopiaHelper.SeGraboDirecto(registro.QuienRegistra) ? 1 : 0;
 
             BtnGuardar.Content = "Guardar Cambios";
         }
