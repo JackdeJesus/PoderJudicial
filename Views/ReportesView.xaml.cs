@@ -1,57 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using ClosedXML.Excel;
 using PoderJudicial.Data;
 using PoderJudicial.Helpers;
 using PoderJudicial.Models;
+using PoderJudicial.ViewModels;
 
 namespace PoderJudicial.Views
 {
     public partial class ReportesView : Page
     {
-        private readonly AudienciaData _data = new AudienciaData();
-        private readonly CopiasData _copiasData = new CopiasData();
+        private readonly ReportesViewModel _viewModel = new ReportesViewModel();
 
-        private List<Audiencia> _todas = new();
-        private List<Audiencia> _resultadosFiltrados = new();
+        private List<Audiencia> _resultadosFiltrados => _viewModel.ResultadosFiltrados;
+        private List<RegistroCopia> _copiasFiltradas => _viewModel.CopiasFiltradas;
 
-        private List<RegistroCopia> _todasCopias = new();
-        private List<RegistroCopia> _copiasFiltradas = new();
+        private ObservableCollection<string> _catalogoEntreganSimples => _viewModel.CatalogoEntreganSimples;
+        private ObservableCollection<string> _catalogoRecibenSimples => _viewModel.CatalogoRecibenSimples;
+        private ObservableCollection<string> _catalogoEntreganAutenticas => _viewModel.CatalogoEntreganAutenticas;
+        private ObservableCollection<string> _catalogoRecibenAutenticas => _viewModel.CatalogoRecibenAutenticas;
+        private ObservableCollection<string> _recibieronSimples => _viewModel.RecibieronSimples;
+        private ObservableCollection<string> _recibieronAutenticas => _viewModel.RecibieronAutenticas;
 
+        private DateTime FechaInforme => _viewModel.FechaInforme;
         private bool _cargando = true;
-
-        // Catálogos separados por tipo de informe:
-        // - Simples: Entregan / Reciben
-        // - Auténticas: Entregan / Reciben
-
-        private readonly ObservableCollection<string>
-            _catalogoEntreganSimples = new();
-
-        private readonly ObservableCollection<string>
-            _catalogoRecibenSimples = new();
-
-        private readonly ObservableCollection<string>
-            _catalogoEntreganAutenticas = new();
-
-        private readonly ObservableCollection<string>
-            _catalogoRecibenAutenticas = new();
-
-
-        // Personas seleccionadas temporalmente para cada informe
-        private readonly ObservableCollection<string>
-            _recibieronSimples = new();
-
-        private readonly ObservableCollection<string>
-            _recibieronAutenticas = new();
-
-        private DateTime FechaInforme => DateTime.Today;
 
         public ReportesView()
         {
@@ -84,16 +60,29 @@ namespace PoderJudicial.Views
             object sender,
             RoutedEventArgs e)
         {
-            RutasInformes.CrearEstructura();
+            try
+            {
+                _cargando = true;
+                _viewModel.Inicializar();
 
-            InformeCopiasService
-                .ArchivarTemporalesVencidos(
-                    FechaInforme);
+                ActualizarFechaInformeUI();
+                LlenarComboAnios();
+                LlenarComboJuzgados();
+                LlenarComboSalas();
 
-            CargarCatalogosPersonas();
-            ActualizarFechaInformeUI();
-            CargarDatos();
-            ActualizarEstadoBotones();
+                _cargando = false;
+                AplicarFiltros();
+                ActualizarEstadoBotones();
+            }
+            catch (Exception ex)
+            {
+                _cargando = false;
+                MessageBox.Show(
+                    $"Error al cargar reportes:\n{ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         private void ActualizarFechaInformeUI()
@@ -112,96 +101,17 @@ namespace PoderJudicial.Views
 
         private void CargarCatalogosPersonas()
         {
-            try
-            {
-                CatalogoPersonasData catalogo =
-                    PersonaCatalogoService.Cargar();
-
-                _catalogoEntreganSimples.Clear();
-                _catalogoRecibenSimples.Clear();
-                _catalogoEntreganAutenticas.Clear();
-                _catalogoRecibenAutenticas.Clear();
-
-                foreach (string nombre in catalogo.EntreganSimples
-                             .Where(x => !string.IsNullOrWhiteSpace(x))
-                             .Distinct(StringComparer.OrdinalIgnoreCase)
-                             .OrderBy(x => x))
-                {
-                    _catalogoEntreganSimples.Add(nombre);
-                }
-
-                foreach (string nombre in catalogo.RecibenSimples
-                             .Where(x => !string.IsNullOrWhiteSpace(x))
-                             .Distinct(StringComparer.OrdinalIgnoreCase)
-                             .OrderBy(x => x))
-                {
-                    _catalogoRecibenSimples.Add(nombre);
-                }
-
-                foreach (string nombre in catalogo.EntreganAutenticas
-                             .Where(x => !string.IsNullOrWhiteSpace(x))
-                             .Distinct(StringComparer.OrdinalIgnoreCase)
-                             .OrderBy(x => x))
-                {
-                    _catalogoEntreganAutenticas.Add(nombre);
-                }
-
-                foreach (string nombre in catalogo.RecibenAutenticas
-                             .Where(x => !string.IsNullOrWhiteSpace(x))
-                             .Distinct(StringComparer.OrdinalIgnoreCase)
-                             .OrderBy(x => x))
-                {
-                    _catalogoRecibenAutenticas.Add(nombre);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    $"No fue posible cargar el catálogo de personas.\n\n{ex.Message}",
-                    "Aviso",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-            }
+            _viewModel.CargarCatalogosPersonas();
         }
 
         private void GuardarCatalogosPersonas()
         {
-            PersonaCatalogoService.Guardar(
-                _catalogoEntreganSimples,
-                _catalogoRecibenSimples,
-                _catalogoEntreganAutenticas,
-                _catalogoRecibenAutenticas);
+            _viewModel.GuardarCatalogosPersonas();
         }
 
         private void CargarDatos()
         {
-            try
-            {
-                _cargando = true;
-
-                _todas =
-                _data.ObtenerTodasAudienciasParaReportes();
-                _todasCopias = _copiasData.ObtenerCopias();
-
-                LlenarComboAnios();
-                LlenarComboJuzgados();
-                LlenarComboSalas();
-
-                _cargando = false;
-
-                AplicarFiltros();
-                AplicarFiltrosCopias();
-            }
-            catch (Exception ex)
-            {
-                _cargando = false;
-
-                MessageBox.Show(
-                    $"Error al cargar datos:\n{ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-            }
+            _viewModel.CargarDatos();
         }
 
         // Llenar combox audiencias
@@ -209,7 +119,7 @@ namespace PoderJudicial.Views
 
         private void LlenarComboAnios()
         {
-            var anios = _todas
+            var anios = _viewModel.Todas
                 .Where(a => a.FechaAudiencia.HasValue)
                 .Select(a => a.FechaAudiencia!.Value.Year)
                 .Distinct()
@@ -227,7 +137,7 @@ namespace PoderJudicial.Views
 
         private void LlenarComboJuzgados()
         {
-            var juzgados = _todas
+            var juzgados = _viewModel.Todas
                 .Select(a => a.Juzgado)
                 .Where(j => !string.IsNullOrWhiteSpace(j))
                 .Distinct()
@@ -245,7 +155,7 @@ namespace PoderJudicial.Views
 
         private void LlenarComboSalas()
         {
-            var salas = _todas
+            var salas = _viewModel.Todas
                 .Select(a => a.Sala)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Distinct()
@@ -275,162 +185,38 @@ namespace PoderJudicial.Views
         private void AplicarFiltros()
         {
             string mes =
-                (CmbMes.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                ?? "Todos";
+                (CmbMes.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Todos";
 
             string anio =
-                (CmbAnio.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                ?? "Todos";
+                (CmbAnio.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Todos";
 
             string juzgado =
-                (CmbJuzgado.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                ?? "Todos";
+                (CmbJuzgado.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Todos";
 
             string sala =
-                (CmbSala.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                ?? "Todas";
+                (CmbSala.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Todas";
 
             string tipoCausa =
-                (CmbTipoCausa.SelectedItem as ComboBoxItem)?.Content?.ToString()
-                ?? "Todos";
+                (CmbTipoCausa.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Todos";
 
-            int? mesNum = ObtenerNumeroMes(mes);
-            int? anioNum = int.TryParse(anio, out int a)
-                ? a
-                : null;
+            _viewModel.AplicarFiltros(mes, anio, juzgado, sala, tipoCausa);
 
-            IEnumerable<Audiencia> filtradas = _todas;
-
-            // MES
-            if (mesNum.HasValue)
-            {
-                filtradas = filtradas.Where(x =>
-                    x.FechaAudiencia.HasValue &&
-                    x.FechaAudiencia.Value.Month == mesNum.Value);
-            }
-
-            // AÑO
-            if (anioNum.HasValue)
-            {
-                filtradas = filtradas.Where(x =>
-                    x.FechaAudiencia.HasValue &&
-                    x.FechaAudiencia.Value.Year == anioNum.Value);
-            }
-
-            // JUZGADO
-            if (!EsFiltroTodos(juzgado))
-            {
-                filtradas = filtradas.Where(x =>
-                    string.Equals(
-                        x.Juzgado?.Trim(),
-                        juzgado.Trim(),
-                        StringComparison.OrdinalIgnoreCase));
-            }
-
-            // SALA
-            if (!EsFiltroTodos(sala))
-            {
-                filtradas = filtradas.Where(x =>
-                    string.Equals(
-                        x.Sala?.Trim(),
-                        sala.Trim(),
-                        StringComparison.OrdinalIgnoreCase));
-            }
-
-            // TIPO DE CAUSA
-            if (!EsFiltroTodos(tipoCausa))
-            {
-                filtradas = filtradas.Where(x =>
-                {
-                    if (string.IsNullOrWhiteSpace(x.TipoCausa))
-                        return false;
-
-                    string valorDato =
-                        NormalizarTexto(x.TipoCausa);
-
-                    string valorFiltro =
-                        NormalizarTexto(tipoCausa);
-
-                    return valorDato == valorFiltro;
-                });
-            }
-
-            _resultadosFiltrados = filtradas.ToList();
-
-            TxtTotalRegistros.Text =
-                _resultadosFiltrados.Count.ToString();
-
-            TxtTotalDiscos.Text =
-                _resultadosFiltrados.Sum(x =>
-                {
-                    if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia))
-                        return 0;
-
-                    string numeros =
-                        new string(
-                            x.TotDiscoAudiencia
-                                .Where(char.IsDigit)
-                                .ToArray());
-
-                    return int.TryParse(numeros, out int valor)
-                        ? valor
-                        : 0;
-                }).ToString();
-
-            int copiasSimples =
-                _resultadosFiltrados.Count(x =>
-                    !string.IsNullOrWhiteSpace(x.TipoDisco) &&
-                    NormalizarTexto(x.TipoDisco).Contains("SIMP"));
-
-            int copiasAutenticas =
-                _resultadosFiltrados.Count(x =>
-                    !string.IsNullOrWhiteSpace(x.TipoDisco) &&
-                    NormalizarTexto(x.TipoDisco).Contains("AUT"));
-
-            TxtCopiasSimples.Text =
-                copiasSimples.ToString();
-
-            TxtCopiasAutenticas.Text =
-                copiasAutenticas.ToString();
+            TxtTotalRegistros.Text = _viewModel.TotalRegistros.ToString();
+            TxtTotalDiscos.Text = _viewModel.TotalDiscos.ToString();
+            TxtCopiasSimples.Text = _viewModel.TotalCopiasSimples.ToString();
+            TxtCopiasAutenticas.Text = _viewModel.TotalCopiasAutenticas.ToString();
         }
 
         private static bool EsFiltroTodos(string valor)
         {
-            return string.IsNullOrWhiteSpace(valor) ||
-                   valor.Equals(
-                       "Todos",
-                       StringComparison.OrdinalIgnoreCase) ||
-                   valor.Equals(
-                       "Todas",
-                       StringComparison.OrdinalIgnoreCase);
+            return ReportesViewModel.EsFiltroTodos(valor);
         }
         private void AplicarFiltrosCopias()
         {
-            _copiasFiltradas = _todasCopias
-                .Where(c =>
-                    c.FeRecibo.HasValue &&
-                    c.FeRecibo.Value.Date == FechaInforme.Date)
-                .OrderBy(c => c.FeRecibo)
-                .ThenBy(c => c.Id)
-                .ToList();
+            _viewModel.AplicarFiltrosCopias();
         }
 
-        private static int? ObtenerNumeroMes(string nombre) => nombre switch
-        {
-            "Enero" => 1,
-            "Febrero" => 2,
-            "Marzo" => 3,
-            "Abril" => 4,
-            "Mayo" => 5,
-            "Junio" => 6,
-            "Julio" => 7,
-            "Agosto" => 8,
-            "Septiembre" => 9,
-            "Octubre" => 10,
-            "Noviembre" => 11,
-            "Diciembre" => 12,
-            _ => null
-        };
+
 
         ///Generar el nombre del archivo de reporte basado en los filtros seleccionados
         private string GenerarNombreArchivoReporte(string extension)
@@ -525,156 +311,19 @@ namespace PoderJudicial.Views
 
             try
             {
-                using var wb = new XLWorkbook();
-                var ws = wb.Worksheets.Add("Audiencias");
+                ExcelReporteHelper.ExportarAudiencias(
+                    datos,
+                    dlg.FileName);
 
-                string[] headers =
-                {
-                    "Fecha Audiencia",
-                    "Tot. Discos",
-                    "Juzgado",
-                    "Juez",
-                    "No. Causa",
-                    "NUC",
-                    "Tipo Causa",
-                    "Tipo Audiencia",
-                    "Hora Conclusión",
-                    "Imputado",
-                    "Delito",
-                    "Agraviado",
-                    "Sala",
-                    "No. Causa Juicio"
-                };
-
-                for (int i = 0; i < headers.Length; i++)
-                    ws.Cell(1, i + 1).Value = headers[i];
-
-                var headerRange = ws.Range(1, 1, 1, headers.Length);
-                headerRange.Style.Font.Bold = true;
-                headerRange.Style.Font.FontColor = XLColor.White;
-                headerRange.Style.Fill.BackgroundColor = XLColor.FromHtml("#1F7A5C");
-                headerRange.Style.Alignment.Horizontal =
-                    XLAlignmentHorizontalValues.Center;
-
-                headerRange.Style.Border.BottomBorder =
-                    XLBorderStyleValues.Medium;
-
-                for (int row = 0; row < datos.Count; row++)
-                {
-                    var aud = datos[row];
-                    int r = row + 2;
-
-                    ws.Cell(r, 1).Value =
-                        aud.FechaAudiencia?.ToString("dd/MM/yyyy HH:mm") ?? "";
-
-                    ws.Cell(r, 2).Value =
-                        aud.TotDiscos.HasValue ? aud.TotDiscos.Value : "";
-
-                    ws.Cell(r, 3).Value = aud.Juzgado ?? "";
-                    ws.Cell(r, 4).Value = aud.Juez ?? "";
-                    ws.Cell(r, 5).Value = aud.NoCausa ?? "";
-                    ws.Cell(r, 6).Value = aud.NUC ?? "";
-                    ws.Cell(r, 7).Value = aud.TipoCausa ?? "";
-                    ws.Cell(r, 8).Value = aud.TipoAudiencia ?? "";
-
-                    ws.Cell(r, 9).Value =
-                        aud.HoraConclusion?.ToString("HH:mm") ?? "";
-
-                    ws.Cell(r, 10).Value = aud.Imputado ?? "";
-                    ws.Cell(r, 11).Value = aud.Delito ?? "";
-                    ws.Cell(r, 12).Value = aud.Agraviado ?? "";
-                    ws.Cell(r, 13).Value = aud.Sala ?? "";
-                    ws.Cell(r, 14).Value = aud.NoCausaJuicio ?? "";
-
-                    if (row % 2 == 1)
-                    {
-                        ws.Range(r, 1, r, headers.Length)
-                            .Style.Fill.BackgroundColor =
-                            XLColor.FromHtml("#F9FAFB");
-                    }
-                }
-
-                var tableRange =
-                    ws.Range(1, 1, datos.Count + 1, headers.Length);
-
-                tableRange.Style.Border.OutsideBorder =
-                    XLBorderStyleValues.Thin;
-
-                tableRange.Style.Border.OutsideBorderColor =
-                    XLColor.FromHtml("#D1D5DB");
-
-                tableRange.Style.Border.InsideBorder =
-                    XLBorderStyleValues.Thin;
-
-                tableRange.Style.Border.InsideBorderColor =
-                    XLColor.FromHtml("#E5E7EB");
-
-                ws.Style.Font.FontName = "Arial";
-                ws.Style.Font.FontSize = 10;
-
-                int totalRow = datos.Count + 2;
-
-                ws.Cell(totalRow, 1).Value =
-                    $"Registros: {datos.Count}";
-
-                ws.Cell(totalRow, 1).Style.Font.Bold = true;
-
-                ws.Cell(totalRow, 14).Value =
-                    "TOTAL DISCOS:";
-
-                ws.Cell(totalRow, 14).Style.Font.Bold = true;
-
-                ws.Cell(totalRow, 14)
-                    .Style.Alignment.Horizontal =
-                    XLAlignmentHorizontalValues.Right;
-
-                ws.Cell(totalRow, 15).Value = datos.Sum(x =>
-                {
-                    if (string.IsNullOrWhiteSpace(x.TotDiscoAudiencia))
-                        return 0;
-
-                    string numeros =
-                        new string(
-                            x.TotDiscoAudiencia
-                                .Where(char.IsDigit)
-                                .ToArray());
-
-                    return int.TryParse(numeros, out int valor)
-                        ? valor
-                        : 0;
-                });
-
-                ws.Cell(totalRow, 15).Style.Font.Bold = true;
-
-                ws.Cell(totalRow, 15)
-                    .Style.Font.FontColor =
-                    XLColor.FromHtml("#1F7A5C");
-
-                ws.Columns().AdjustToContents();
-
-                foreach (int col in new[] { 4, 10, 11, 12, 20 })
-                {
-                    if (ws.Column(col).Width > 40)
-                        ws.Column(col).Width = 40;
-                }
-
-                ws.SheetView.FreezeRows(1);
-                wb.SaveAs(dlg.FileName);
-
-                var res = MessageBox.Show(
+                MessageBoxResult respuesta = MessageBox.Show(
                     $"Excel exportado exitosamente.\n{dlg.FileName}\n\n¿Deseas abrirlo ahora?",
                     "Éxito",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
 
-                if (res == MessageBoxResult.Yes)
+                if (respuesta == MessageBoxResult.Yes)
                 {
-                    System.Diagnostics.Process.Start(
-                        new System.Diagnostics.ProcessStartInfo
-                        {
-                            FileName = dlg.FileName,
-                            UseShellExecute = true
-                        });
+                    AbrirArchivo(dlg.FileName);
                 }
             }
             catch (Exception ex)
@@ -814,21 +463,7 @@ namespace PoderJudicial.Views
             ObservableCollection<string> catalogo,
             string nombre)
         {
-            nombre =
-                nombre?.Trim() ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(nombre))
-                return;
-
-            bool yaExiste =
-                catalogo.Any(persona =>
-                    string.Equals(
-                        persona,
-                        nombre,
-                        StringComparison.OrdinalIgnoreCase));
-
-            if (!yaExiste)
-                catalogo.Add(nombre);
+            ReportesViewModel.AgregarAlCatalogo(catalogo, nombre);
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -1109,51 +744,21 @@ namespace PoderJudicial.Views
 
         private List<RegistroCopia> ObtenerCopiasSimples()
         {
-            return _copiasFiltradas
-                .Where(EsCopiaSimple)
-                .ToList();
+            return _viewModel.ObtenerCopiasSimples();
         }
 
         private List<RegistroCopia> ObtenerCopiasAutenticas()
         {
-            return _copiasFiltradas
-                .Where(EsCopiaAutentica)
-                .ToList();
+            return _viewModel.ObtenerCopiasAutenticas();
         }
 
-        private static bool EsCopiaSimple(RegistroCopia copia)
-        {
-            string tipo =
-                NormalizarTexto(copia?.TipoDisco ?? string.Empty);
 
-            return tipo.Contains("SIMP");
-        }
 
-        private static bool EsCopiaAutentica(RegistroCopia copia)
-        {
-            string tipo =
-                NormalizarTexto(copia?.TipoDisco ?? string.Empty);
 
-            return tipo.Contains("AUT");
-        }
 
         private static string NormalizarTexto(string valor)
         {
-            if (string.IsNullOrWhiteSpace(valor))
-                return string.Empty;
-
-            string texto = valor
-                .Trim()
-                .ToUpperInvariant()
-                .Normalize(NormalizationForm.FormD);
-
-            var caracteres = texto.Where(c =>
-                CharUnicodeInfo.GetUnicodeCategory(c) !=
-                UnicodeCategory.NonSpacingMark);
-
-            return new string(caracteres.ToArray())
-                .Replace(" ", string.Empty)
-                .Normalize(NormalizationForm.FormC);
+            return ReportesViewModel.NormalizarTexto(valor);
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -1162,146 +767,19 @@ namespace PoderJudicial.Views
 
         private void ActualizarEstadoBotones()
         {
-            string rutaSimples =
-                RutasInformes.ObtenerRutaSimples(FechaInforme);
+            EstadoInformesResultado estado =
+                EstadoInformesHelper.ObtenerEstado(FechaInforme);
 
-            string rutaAutenticas =
-                RutasInformes.ObtenerRutaAutenticas(FechaInforme);
-
-            string rutaConsolidado =
-                RutasInformes.ObtenerRutaConsolidado(FechaInforme);
-
-            string rutaAnual =
-                RutasInformes.ObtenerRutaInformeAnual(
-                    FechaInforme.Year);
-
-            bool existeSimples =
-                File.Exists(rutaSimples);
-
-            bool existeAutenticas =
-                File.Exists(rutaAutenticas);
-
-            bool existeConsolidado =
-                File.Exists(rutaConsolidado);
-
-            bool existeAnual =
-                File.Exists(rutaAnual);
-
-
-            // ═══════════════════════════════════════════════════════════════
-            // ESTADO COPIAS SIMPLES
-            // ═══════════════════════════════════════════════════════════════
-
-            if (existeSimples)
-            {
-                DateTime modificacion =
-                    File.GetLastWriteTime(rutaSimples);
-
-                TxtEstadoSimples.Text =
-                    $"Estado: Generado a las {modificacion:hh:mm tt}";
-            }
-            else
-            {
-                TxtEstadoSimples.Text =
-                    "Estado: No generado";
-            }
-
-
-            // ═══════════════════════════════════════════════════════════════
-            // ESTADO COPIAS AUTÉNTICAS
-            // ═══════════════════════════════════════════════════════════════
-
-            if (existeAutenticas)
-            {
-                DateTime modificacion =
-                    File.GetLastWriteTime(rutaAutenticas);
-
-                TxtEstadoAutenticas.Text =
-                    $"Estado: Generado a las {modificacion:hh:mm tt}";
-            }
-            else
-            {
-                TxtEstadoAutenticas.Text =
-                    "Estado: No generado";
-            }
-
-
-            // ═══════════════════════════════════════════════════════════════
-            // BOTONES
-            // ═══════════════════════════════════════════════════════════════
-
-            BtnConsolidarInformeDiario.IsEnabled =
-                existeSimples &&
-                existeAutenticas &&
-                !existeConsolidado;
-
-            BtnAgregarInformeAnual.IsEnabled =
-                existeConsolidado;
-
-
-            // ═══════════════════════════════════════════════════════════════
-            // ESTADO CONSOLIDADO
-            // ═══════════════════════════════════════════════════════════════
-
-            if (existeConsolidado)
-            {
-                TxtEstadoConsolidado.Text =
-                    "Estado: Informe diario consolidado";
-            }
-            else if (existeSimples && existeAutenticas)
-            {
-                TxtEstadoConsolidado.Text =
-                    "Estado: Listo para consolidar";
-            }
-            else
-            {
-                TxtEstadoConsolidado.Text =
-                    "Pendiente de ambos informes";
-            }
-
-
-            // ═══════════════════════════════════════════════════════════════
-            // ESTADO INFORME ANUAL
-            // ═══════════════════════════════════════════════════════════════
-
-            bool agregadoAlAnual = false;
-
-            if (existeAnual)
-            {
-                agregadoAlAnual =
-                    InformeCopiasService
-                        .EstaAgregadoAlAnual(
-                            FechaInforme);
-            }
-
-            if (!existeAnual)
-            {
-                TxtEstadoInformeAnual.Text =
-                    "Estado: Sin agregar";
-
-                TxtNombreArchivoAnual.Text =
-                    "El documento todavía no se ha creado.";
-
-                TxtUltimaActualizacionAnual.Text =
-                    "Última actualización: Sin información";
-            }
-            else
-            {
-                TxtNombreArchivoAnual.Text =
-                    Path.GetFileName(rutaAnual);
-
-                DateTime ultimaActualizacion =
-                    File.GetLastWriteTime(rutaAnual);
-
-                TxtUltimaActualizacionAnual.Text =
-                    $"Última actualización: {ultimaActualizacion:dd/MM/yyyy hh:mm tt}";
-
-                TxtEstadoInformeAnual.Text =
-                    agregadoAlAnual
-                        ? $"Estado: Agregado al informe anual {FechaInforme.Year}"
-                        : "Estado: Sin agregar";
-            }
+            TxtEstadoSimples.Text = estado.EstadoSimples;
+            TxtEstadoAutenticas.Text = estado.EstadoAutenticas;
+            BtnConsolidarInformeDiario.IsEnabled = estado.PuedeConsolidar;
+            BtnAgregarInformeAnual.IsEnabled = estado.PuedeAgregarInformeAnual;
+            TxtEstadoConsolidado.Text = estado.EstadoConsolidado;
+            TxtEstadoInformeAnual.Text = estado.EstadoInformeAnual;
+            TxtNombreArchivoAnual.Text = estado.NombreArchivoAnual;
+            TxtUltimaActualizacionAnual.Text = estado.UltimaActualizacionAnual;
         }
+
 
         // ═══════════════════════════════════════════════════════════════
         // CONSOLIDACIÓN 
@@ -1461,14 +939,6 @@ namespace PoderJudicial.Views
                     UseShellExecute = true
                 });
         }
-
-
-
-
-
-
-
-
 
     }
 }

@@ -7,6 +7,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using A = DocumentFormat.OpenXml.Drawing;
+using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
+using WP = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace PoderJudicial.Helpers
 {
@@ -76,13 +80,37 @@ namespace PoderJudicial.Helpers
                     WordprocessingDocumentType.Document);
 
             MainDocumentPart partePrincipal =
-                documento.AddMainDocumentPart();
+    documento.AddMainDocumentPart();
 
             partePrincipal.Document =
                 new Document(new Body());
 
             Body cuerpo =
                 partePrincipal.Document.Body!;
+
+            // ======================================================
+            // ENCABEZADO CON LOGOS
+            // ======================================================
+
+            string rutaLogo1 = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Resources",
+                "logo1.png");
+
+            string rutaLogo2 = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Resources",
+                "logo2.png");
+
+            AgregarEncabezadoConLogos(
+                partePrincipal,
+                cuerpo,
+                rutaLogo1,
+                rutaLogo2);
+
+            // ======================================================
+            // CONTENIDO NORMAL DEL DOCUMENTO
+            // ======================================================
 
             AgregarSeccion(
                 cuerpo,
@@ -686,6 +714,355 @@ namespace PoderJudicial.Helpers
                         {
                             Space = SpaceProcessingModeValues.Preserve
                         })));
+        }
+
+
+        private static void AgregarEncabezadoConLogos(
+    MainDocumentPart partePrincipal,
+    Body cuerpo,
+    string rutaLogo1,
+    string rutaLogo2)
+        {
+            if (!File.Exists(rutaLogo1))
+                throw new FileNotFoundException(
+                    "No se encontró el logo 1.",
+                    rutaLogo1);
+
+            if (!File.Exists(rutaLogo2))
+                throw new FileNotFoundException(
+                    "No se encontró el logo 2.",
+                    rutaLogo2);
+
+            HeaderPart headerPart =
+                partePrincipal.AddNewPart<HeaderPart>();
+
+            ImagePart imagePartLogo1 =
+                headerPart.AddImagePart(ImagePartType.Png);
+
+            using (FileStream stream =
+                   new FileStream(
+                       rutaLogo1,
+                       FileMode.Open,
+                       FileAccess.Read))
+            {
+                imagePartLogo1.FeedData(stream);
+            }
+
+            ImagePart imagePartLogo2 =
+                headerPart.AddImagePart(ImagePartType.Png);
+
+            using (FileStream stream =
+                   new FileStream(
+                       rutaLogo2,
+                       FileMode.Open,
+                       FileAccess.Read))
+            {
+                imagePartLogo2.FeedData(stream);
+            }
+
+            string relacionLogo1 =
+                headerPart.GetIdOfPart(imagePartLogo1);
+
+            string relacionLogo2 =
+                headerPart.GetIdOfPart(imagePartLogo2);
+
+            // ==================================================
+            // MEDIDAS EXACTAS DE LOS LOGOS
+            //
+            // 1 cm = 360000 EMU
+            //
+            // Logo 1:
+            // ancho = 2.86 cm
+            // alto  = 2.29 cm
+            //
+            // Logo 2:
+            // ancho = 2.90 cm
+            // alto  = 2.38 cm
+            // ==================================================
+
+            long anchoLogo1 = 1029600L;
+            long altoLogo1 = 824400L;
+
+            long anchoLogo2 = 1044000L;
+            long altoLogo2 = 856800L;
+
+            Drawing dibujoLogo1 =
+                CrearImagenEncabezado(
+                    relacionLogo1,
+                    "Logo Poder Judicial",
+                    1U,
+                    anchoLogo1,
+                    altoLogo1);
+
+            Drawing dibujoLogo2 =
+                CrearImagenEncabezado(
+                    relacionLogo2,
+                    "Logo Consejo de la Judicatura",
+                    2U,
+                    anchoLogo2,
+                    altoLogo2);
+
+            // ==================================================
+            // TABLA DEL ENCABEZADO
+            // Izquierda: logo1
+            // Derecha: logo2
+            // Sin bordes
+            // ==================================================
+
+            Table tablaEncabezado =
+                new Table(
+                    new TableProperties(
+                        new TableWidth
+                        {
+                            Type = TableWidthUnitValues.Pct,
+                            Width = "5000"
+                        },
+                        new TableLayout
+                        {
+                            Type = TableLayoutValues.Fixed
+                        },
+                        new TableBorders(
+                            new TopBorder
+                            {
+                                Val = BorderValues.Nil
+                            },
+                            new BottomBorder
+                            {
+                                Val = BorderValues.Nil
+                            },
+                            new LeftBorder
+                            {
+                                Val = BorderValues.Nil
+                            },
+                            new RightBorder
+                            {
+                                Val = BorderValues.Nil
+                            },
+                            new InsideHorizontalBorder
+                            {
+                                Val = BorderValues.Nil
+                            },
+                            new InsideVerticalBorder
+                            {
+                                Val = BorderValues.Nil
+                            })));
+
+            TableRow fila =
+                new TableRow();
+
+            // --------------------------------------------------
+            // CELDA IZQUIERDA
+            // --------------------------------------------------
+
+            TableCell celdaIzquierda =
+                new TableCell(
+                    new TableCellProperties(
+                        new TableCellWidth
+                        {
+                            Type = TableWidthUnitValues.Pct,
+                            Width = "2500"
+                        },
+                        new TableCellVerticalAlignment
+                        {
+                            Val = TableVerticalAlignmentValues.Center
+                        }),
+                    new Paragraph(
+                        new ParagraphProperties(
+                            new Justification
+                            {
+                                Val = JustificationValues.Left
+                            },
+                            new SpacingBetweenLines
+                            {
+                                Before = "0",
+                                After = "0"
+                            }),
+                        new Run(dibujoLogo1)));
+
+            // --------------------------------------------------
+            // CELDA DERECHA
+            // --------------------------------------------------
+
+            TableCell celdaDerecha =
+                new TableCell(
+                    new TableCellProperties(
+                        new TableCellWidth
+                        {
+                            Type = TableWidthUnitValues.Pct,
+                            Width = "2500"
+                        },
+                        new TableCellVerticalAlignment
+                        {
+                            Val = TableVerticalAlignmentValues.Center
+                        }),
+                    new Paragraph(
+                        new ParagraphProperties(
+                            new Justification
+                            {
+                                Val = JustificationValues.Right
+                            },
+                            new SpacingBetweenLines
+                            {
+                                Before = "0",
+                                After = "0"
+                            }),
+                        new Run(dibujoLogo2)));
+
+            fila.Append(
+                celdaIzquierda,
+                celdaDerecha);
+
+            tablaEncabezado.Append(fila);
+
+            Header header =
+                new Header();
+
+            header.Append(tablaEncabezado);
+
+            headerPart.Header = header;
+            headerPart.Header.Save();
+
+            // ==================================================
+            // CONFIGURACIÓN DE SECCIÓN
+            // Encabezado desde arriba = 1.25 cm
+            // ==================================================
+
+            string relacionHeader =
+                partePrincipal.GetIdOfPart(headerPart);
+
+            SectionProperties sectionProperties =
+                cuerpo.Elements<SectionProperties>()
+                      .LastOrDefault();
+
+            if (sectionProperties == null)
+            {
+                sectionProperties =
+                    new SectionProperties();
+
+                cuerpo.Append(sectionProperties);
+            }
+
+            // Referencia al encabezado
+            sectionProperties.PrependChild(
+                new HeaderReference
+                {
+                    Type = HeaderFooterValues.Default,
+                    Id = relacionHeader
+                });
+
+            // 1.25 cm ≈ 709 twips
+            PageMargin? margen =
+                sectionProperties.GetFirstChild<PageMargin>();
+
+            if (margen == null)
+            {
+                margen =
+                    new PageMargin
+                    {
+                        Top = 1440,
+                        Right = 1440U,
+                        Bottom = 1440,
+                        Left = 1440U,
+                        Header = 709U,
+                        Footer = 709U,
+                        Gutter = 0U
+                    };
+
+                sectionProperties.Append(margen);
+            }
+            else
+            {
+                margen.Header = 709U;
+            }
+        }
+
+
+        private static Drawing CrearImagenEncabezado(
+    string relacionImagen,
+    string nombreImagen,
+    uint idImagen,
+    long ancho,
+    long alto)
+        {
+            return new Drawing(
+                new DW.Inline(
+                    new DW.Extent
+                    {
+                        Cx = ancho,
+                        Cy = alto
+                    },
+
+                    new DW.EffectExtent
+                    {
+                        LeftEdge = 0L,
+                        TopEdge = 0L,
+                        RightEdge = 0L,
+                        BottomEdge = 0L
+                    },
+
+                    new DW.DocProperties
+                    {
+                        Id = idImagen,
+                        Name = nombreImagen
+                    },
+
+                    new DW.NonVisualGraphicFrameDrawingProperties(
+                        new A.GraphicFrameLocks
+                        {
+                            NoChangeAspect = true
+                        }),
+
+                    new A.Graphic(
+                        new A.GraphicData(
+                            new PIC.Picture(
+
+                                new PIC.NonVisualPictureProperties(
+                                    new PIC.NonVisualDrawingProperties
+                                    {
+                                        Id = idImagen,
+                                        Name = nombreImagen
+                                    },
+                                    new PIC.NonVisualPictureDrawingProperties()),
+
+                                new PIC.BlipFill(
+                                    new A.Blip
+                                    {
+                                        Embed = relacionImagen,
+                                        CompressionState =
+                                            A.BlipCompressionValues.Print
+                                    },
+                                    new A.Stretch(
+                                        new A.FillRectangle())),
+
+                                new PIC.ShapeProperties(
+                                    new A.Transform2D(
+                                        new A.Offset
+                                        {
+                                            X = 0L,
+                                            Y = 0L
+                                        },
+                                        new A.Extents
+                                        {
+                                            Cx = ancho,
+                                            Cy = alto
+                                        }),
+                                    new A.PresetGeometry(
+                                        new A.AdjustValueList())
+                                    {
+                                        Preset =
+                                            A.ShapeTypeValues.Rectangle
+                                    })))
+                        {
+                            Uri =
+                                "http://schemas.openxmlformats.org/drawingml/2006/picture"
+                        }))
+                {
+                    DistanceFromTop = 0U,
+                    DistanceFromBottom = 0U,
+                    DistanceFromLeft = 0U,
+                    DistanceFromRight = 0U,
+                    EditId = "50D07946"
+                });
         }
     }
 }
