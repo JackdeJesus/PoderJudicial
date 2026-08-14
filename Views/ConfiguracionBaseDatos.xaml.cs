@@ -1,0 +1,110 @@
+﻿using Microsoft.Win32;
+using PoderJudicial.Data;
+using PoderJudicial.Helpers;
+using System.Windows;
+using System.Windows.Media;
+
+namespace PoderJudicial.Views
+{
+    /// <summary>
+    /// Ventana única reutilizada en los 3 escenarios descritos en el
+    /// análisis: primera ejecución (sin configuración todavía), la base de
+    /// datos configurada dejó de estar disponible, y "Cambiar base de
+    /// datos" manual desde Configuración.
+    /// </summary>
+    public partial class ConfiguracionBaseDatos : Window
+    {
+        /// <param name="mensajeError">
+        /// Si se pasa (ej. "no se pudo conectar"), se muestra un banner rojo
+        /// explicando por qué se abrió esta ventana. Null en primera ejecución.
+        /// </param>
+        /// <param name="permiteCancelar">
+        /// True cuando ya existe una configuración funcional a la que se
+        /// puede volver (ej. "Cambiar base de datos" desde Configuración,
+        /// o un simple "Reintentar" fallido pero la app puede seguir
+        /// mostrando lo que no dependa de la BD). False en primera
+        /// ejecución, donde no hay nada a lo que cancelar.
+        /// </param>
+        public ConfiguracionBaseDatos(string mensajeError = null, bool permiteCancelar = false)
+        {
+            InitializeComponent();
+
+            ConfiguracionBD configActual = ConfiguracionBD.Cargar();
+            if (configActual != null)
+                TxtRuta.Text = configActual.RutaArchivo;
+
+            if (!string.IsNullOrWhiteSpace(mensajeError))
+            {
+                TxtMensajeError.Text = mensajeError;
+                PanelError.Visibility = Visibility.Visible;
+            }
+
+            BtnCancelar.Visibility = permiteCancelar ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void BtnBuscar_Click(object sender, RoutedEventArgs e)
+        {
+            var dialogo = new OpenFileDialog
+            {
+                Title = "Seleccionar base de datos",
+                Filter = "Base de datos Access (*.accdb)|*.accdb|Todos los archivos (*.*)|*.*"
+            };
+
+            if (dialogo.ShowDialog() == true)
+            {
+                TxtRuta.Text = dialogo.FileName;
+                TxtEstado.Text = "";
+            }
+        }
+
+        private void BtnProbar_Click(object sender, RoutedEventArgs e)
+        {
+            string error = Conexion.ProbarConexion(TxtRuta.Text);
+
+            if (error == null)
+            {
+                TxtEstado.Text = "✔ Conexión exitosa.";
+                TxtEstado.Foreground = new SolidColorBrush(Color.FromRgb(0x16, 0xA3, 0x4A));
+            }
+            else
+            {
+                TxtEstado.Text = error;
+                TxtEstado.Foreground = new SolidColorBrush(Color.FromRgb(0xB9, 0x1C, 0x1C));
+            }
+        }
+
+        private void BtnGuardar_Click(object sender, RoutedEventArgs e)
+        {
+            string error = Conexion.ProbarConexion(TxtRuta.Text);
+
+            if (error != null)
+            {
+                TxtEstado.Text = error;
+                TxtEstado.Foreground = new SolidColorBrush(Color.FromRgb(0xB9, 0x1C, 0x1C));
+
+                MessageBox.Show(
+                    "No se puede guardar: la conexión de prueba falló.\n\n" + error,
+                    "Conexión fallida", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var nuevaConfig = new ConfiguracionBD { RutaArchivo = TxtRuta.Text.Trim() };
+            nuevaConfig.Guardar();
+
+            // Para que la app use la ruta nueva de inmediato, sin reiniciar,
+            // y para que el sidebar/consultas dinámicas no sigan mostrando
+            // datos de la base de datos anterior.
+            Conexion.InvalidarConfiguracion();
+            TableDetector.InvalidarCache();
+
+            DialogResult = true;
+            Close();
+        }
+
+        private void BtnCancelar_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+    }
+}

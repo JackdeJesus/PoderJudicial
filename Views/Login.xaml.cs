@@ -15,7 +15,7 @@ namespace PoderJudicial.Views
         {
             InitializeComponent();
 
-            
+
         }
 
         private void btnIngresar_Click(object sender, RoutedEventArgs e)
@@ -36,6 +36,15 @@ namespace PoderJudicial.Views
             if (acceso)
             {
                 SesionActual.Usuario = usuario;
+
+                // El login usa SQLite (UserRepository), no depende de Access.
+                // Este es el primer punto donde la app está a punto de tocar
+                // la base de datos configurable (Dashboard la usa en su
+                // constructor) — se valida aquí, antes de abrirlo, para
+                // mostrar un mensaje claro en vez de un crash sin control.
+                if (!GarantizarBaseDeDatosConfigurada())
+                    return;
+
                 Dashboard dashboard = new Dashboard(usuario);
                 dashboard.Show();
                 this.Close();
@@ -45,6 +54,33 @@ namespace PoderJudicial.Views
                 MessageBox.Show("Usuario o contraseña incorrectos.", "Acceso denegado",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        /// <summary>
+        /// Devuelve true si hay una base de datos configurada y accesible
+        /// (mostrando la ventana de configuración si hace falta, ya sea
+        /// porque es la primera vez o porque la ruta guardada dejó de
+        /// responder). Devuelve false si el usuario cierra esa ventana sin
+        /// completar la configuración — en ese caso, Login simplemente no
+        /// avanza a Dashboard.
+        /// </summary>
+        private bool GarantizarBaseDeDatosConfigurada()
+        {
+            if (!Conexion.EstaConfigurada)
+            {
+                var ventana = new ConfiguracionBaseDatos(permiteCancelar: false);
+                return ventana.ShowDialog() == true;
+            }
+
+            string error = Conexion.ProbarConexion(Conexion.RutaBD);
+            if (error == null) return true;
+
+            var ventanaError = new ConfiguracionBaseDatos(
+                mensajeError:
+                    $"No se pudo conectar a la base de datos configurada:\n{Conexion.RutaBD}\n\n{error}",
+                permiteCancelar: false);
+
+            return ventanaError.ShowDialog() == true;
         }
 
         private void btnMostrar_Click(object sender, RoutedEventArgs e)
@@ -108,6 +144,6 @@ namespace PoderJudicial.Views
 
 
         // activa cursor de campo usuario
-       
+
     }
 }

@@ -541,6 +541,11 @@
                                 <MenuItem Header="🌙 Modo Oscuro"
           Click="ModoOscuro_Click"/>
 
+                                <Separator/>
+
+                                <MenuItem Header="🗄 Base de Datos..."
+          Click="BaseDatos_Click"/>
+
 
 
                             </ContextMenu>

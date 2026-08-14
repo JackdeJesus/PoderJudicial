@@ -46,29 +46,44 @@ namespace PoderJudicial.Views
         {
             List<string> tablas = new();
 
-            using (OleDbConnection conn =
-                Conexion.ObtenerConexion())
+            try
             {
-                conn.Open();
-
-                DataTable schema =
-                    conn.GetSchema("Tables");
-
-                foreach (DataRow row in schema.Rows)
+                using (OleDbConnection conn =
+                    Conexion.ObtenerConexion())
                 {
-                    string nombreTabla =
-                        row["TABLE_NAME"].ToString();
+                    conn.Open();
 
-                    // IGNORAR tablas del sistema
-                    if (nombreTabla.StartsWith("MSys"))
-                        continue;
+                    DataTable schema =
+                        conn.GetSchema("Tables");
 
-                    // IGNORAR tablas temporales
-                    if (nombreTabla.StartsWith("~"))
-                        continue;
+                    foreach (DataRow row in schema.Rows)
+                    {
+                        string nombreTabla =
+                            row["TABLE_NAME"].ToString();
 
-                    tablas.Add(nombreTabla);
+                        // IGNORAR tablas del sistema
+                        if (nombreTabla.StartsWith("MSys"))
+                            continue;
+
+                        // IGNORAR tablas temporales
+                        if (nombreTabla.StartsWith("~"))
+                            continue;
+
+                        tablas.Add(nombreTabla);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                // Defensa adicional: Login ya valida la conexión antes de
+                // abrir este Dashboard, pero si la base de datos se vuelve
+                // inaccesible justo en este instante (red caída, archivo
+                // movido, etc.), no queremos que el constructor truene sin
+                // control. Se avisa y se deja el sidebar de tablas vacío —
+                // el resto del Dashboard (Home, navegación) sigue usable.
+                MessageBox.Show(
+                    "No se pudieron cargar las tablas de la base de datos:\n" + ex.Message,
+                    "Error de conexión", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             // Ordenar
@@ -432,6 +447,19 @@ namespace PoderJudicial.Views
         private void ModoOscuro_Click(object sender, RoutedEventArgs e)
         {
             ThemeManager.CambiarTema("Dark");
+        }
+
+        // Consultar/cambiar la ruta de la base de datos desde el propio
+        // sistema (Configuración → Base de Datos...). Reutiliza la misma
+        // ventana del primer arranque: ya llega con la ruta actual
+        // precargada (consultar) y permite Buscar/Probar/Guardar una nueva
+        // (cambiar). permiteCancelar: true porque aquí sí hay una
+        // configuración funcionando a la que volver si el usuario se
+        // arrepiente.
+        private void BaseDatos_Click(object sender, RoutedEventArgs e)
+        {
+            var ventana = new ConfiguracionBaseDatos(permiteCancelar: true);
+            ventana.ShowDialog();
         }
 
         private void ModoDescanso_Click(object sender, RoutedEventArgs e)
