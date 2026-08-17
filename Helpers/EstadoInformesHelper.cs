@@ -43,8 +43,11 @@ namespace PoderJudicial.Helpers
                 resultado.EstadoAutenticas = $"Estado: Generado a las {modificacion:hh:mm tt}";
             }
 
+            // Se puede consolidar siempre que existan los dos informes del día.
+            // Si ya existe un consolidado, se permitirá volver a consolidar
+            // para reemplazarlo con la versión más reciente.
             resultado.PuedeConsolidar =
-                existeSimples && existeAutenticas && !existeConsolidado;
+                existeSimples && existeAutenticas;
 
             resultado.PuedeAgregarInformeAnual = existeConsolidado;
 
