@@ -17,7 +17,7 @@ namespace PoderJudicial.Views
         private DispatcherTimer _timerBusqueda;
         private ConsultarRegistrosViewModel _vm;
         private const string Placeholder = "Buscar por causa, NUC, imputado o fecha...";
-        private string TablaActualSeleccionada = "";
+        public string TablaActualSeleccionada = "";
 
 
         public ConsultarRegistros(
@@ -82,12 +82,23 @@ namespace PoderJudicial.Views
         }
 
 
+        // Evita recargar en el primer Loaded (el constructor ya cargó los
+        // datos); en los siguientes Loaded (ej. al regresar de Editar con
+        // NavigationService.GoBack, que reutiliza esta misma instancia) sí
+        // hace falta, para reflejar los cambios guardados.
+        private bool _yaCargado = false;
+
         private void ConsultarRegistros_Loaded(
     object sender,
     RoutedEventArgs e)
         {
             ConfigurarColumnas();
             ConfigurarFiltrosVisibles();
+
+            if (_yaCargado)
+                _vm.RecargarDatos();
+
+            _yaCargado = true;
         }
 
         // ── Mostrar/ocultar el panel de filtros avanzados ──

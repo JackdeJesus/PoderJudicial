@@ -39,6 +39,14 @@ namespace PoderJudicial.Views
 
             txtAvatar.Text = usuario.Substring(0, 1).ToUpper();
             txtNombreUsuario.Text = usuario;
+
+            // Único suscriptor hoy: refresca el Sidebar y la sección
+            // actualmente abierta cuando se cambia la BD desde
+            // Configuración, sin tener que reiniciar la aplicación.
+            // Se desuscribe al cerrar (logout puede crear un Dashboard
+            // nuevo) para no acumular referencias a instancias viejas.
+            EstadoBaseDatos.CambioBaseDatos += EstadoBaseDatos_CambioBaseDatos;
+            Closed += (s, e) => EstadoBaseDatos.CambioBaseDatos -= EstadoBaseDatos_CambioBaseDatos;
         }
         public Frame FramePrincipal => MainFrame;
 
@@ -460,6 +468,61 @@ namespace PoderJudicial.Views
         {
             var ventana = new ConfiguracionBaseDatos(permiteCancelar: true);
             ventana.ShowDialog();
+        }
+
+        // ══════════════════════════════════════════════
+        //  CAMBIO DE BASE DE DATOS: refrescar todo lo que
+        //  dependa de ella, sin reiniciar la aplicación.
+        // ══════════════════════════════════════════════
+        private void EstadoBaseDatos_CambioBaseDatos(object sender, EventArgs e)
+        {
+            RecargarTrasCambioBD();
+        }
+
+        /// <summary>
+        /// Vuelve a detectar las tablas (Sidebar) y reconstruye la sección
+        /// que esté actualmente abierta en el Frame, para que deje de
+        /// mostrar información de la base de datos anterior. Reutiliza los
+        /// mismos métodos "Abrir*" que ya usa la navegación normal — no hay
+        /// una segunda ruta de carga de datos.
+        /// Si la tabla/registro que estaba abierto ya no existe en la BD
+        /// nueva, el propio método "Abrir*" reutilizado ya maneja ese error
+        /// de forma controlada (igual que cuando el usuario navega ahí
+        /// manualmente); el try/catch de aquí es una defensa adicional para
+        /// que, pase lo que pase, nunca se caiga toda la aplicación por
+        /// esto.
+        /// </summary>
+        private void RecargarTrasCambioBD()
+        {
+            try
+            {
+                CargarTablasBD();
+
+                object actual = MainFrame.Content;
+
+                if (actual is ConsultarRegistros consulta)
+                    AbrirConsultarRegistros(consulta.TablaActualSeleccionada);
+                else if (actual is HomePage)
+                    Navegar(new HomePage(), BtnHome);
+                else if (actual is NuevoRegistro)
+                    AbrirNuevoRegistro();
+                else if (actual is RegistroCopias)
+                    AbrirRegistroCopias();
+                else if (actual is ReportesView)
+                    AbrirReportes();
+
+                // EditarRegistro/EditarCopias y otras pantallas puntuales
+                // (dependen de un registro ya cargado en memoria) se dejan
+                // como están: no tiene sentido reconstruirlas a mitad de una
+                // edición. Al guardar o cancelar, el usuario vuelve a
+                // Consultar Registros, que sí se recarga.
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "La base de datos cambió, pero no se pudo actualizar automáticamente esta pantalla:\n" + ex.Message,
+                    "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void ModoDescanso_Click(object sender, RoutedEventArgs e)

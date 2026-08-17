@@ -333,13 +333,18 @@ namespace PoderJudicial.ViewModels
                     .OrderByDescending(a => a.Id)
     .ToList();
 
-                Audiencias = new ObservableCollection<Audiencia>(
-                    _listaCompleta.Take(10)
-                );
-                TotalRegistros = $"{_listaCompleta.Count} registro(s) en total";
+                // Los totales por Ejecución/Copias se recalculan con datos
+                // frescos (ver CalcularTotalDiscos) en vez de arrastrar
+                // valores de antes de este (re)cargue.
+                _cacheEjecuciones = null;
+                _cacheCopias = null;
 
-                TotalDiscosBusqueda =
-                    $"Total discos audiencia: {CalcularTotalDiscos(_listaCompleta)}";
+                // Reaplica lo que ya esté escrito en la búsqueda rápida y/o
+                // los filtros avanzados (vacíos en la primera carga, por lo
+                // que el resultado es el mismo que antes: primeros 10 y
+                // totales generales). Así CargarDatos() y RecargarDatos()
+                // comparten una sola lógica de carga+filtrado.
+                Filtrar();
 
                 CargarSugerencias();
             }
@@ -348,6 +353,16 @@ namespace PoderJudicial.ViewModels
                 MessageBox.Show("Error al cargar datos: " + ex.Message);
             }
         }
+
+        /// <summary>
+        /// Vuelve a consultar la base de datos (misma lógica que la carga
+        /// inicial, ver CargarDatos) y reaplica los filtros que el usuario
+        /// tenga activos en este momento. Se usa al regresar a esta pantalla
+        /// después de editar un registro, para reflejar el cambio de
+        /// inmediato sin perder la búsqueda/filtros en curso, y también
+        /// cuando la base de datos activa cambia desde Configuración.
+        /// </summary>
+        public void RecargarDatos() => CargarDatos();
 
         /// <summary>
         /// Suma el total de discos del conjunto de registros que se está

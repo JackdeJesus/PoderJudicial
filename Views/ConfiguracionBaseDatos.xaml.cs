@@ -42,6 +42,13 @@ namespace PoderJudicial.Views
             BtnCancelar.Visibility = permiteCancelar ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void TxtRuta_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            // El usuario está escribiendo/pegando manualmente: el resultado
+            // de una prueba anterior ya no aplica a este texto.
+            TxtEstado.Text = "";
+        }
+
         private void BtnBuscar_Click(object sender, RoutedEventArgs e)
         {
             var dialogo = new OpenFileDialog
@@ -96,6 +103,11 @@ namespace PoderJudicial.Views
             // datos de la base de datos anterior.
             Conexion.InvalidarConfiguracion();
             TableDetector.InvalidarCache();
+
+            // Avisa a quien esté suscrito (hoy: Dashboard) para que
+            // refresque el Sidebar y la sección actualmente abierta —
+            // así no hace falta reiniciar la aplicación.
+            EstadoBaseDatos.NotificarCambio();
 
             DialogResult = true;
             Close();

@@ -25,7 +25,6 @@
             <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="IsReadOnly" Value="True"/>
         </Style>
         <Style x:Key="BtnSecundario" TargetType="Button">
             <Setter Property="Height" Value="38"/>
@@ -81,7 +80,7 @@
                        FontSize="18" FontWeight="Bold"
                        Foreground="{DynamicResource PrimaryTextBrush}"/>
 
-            <TextBlock Grid.Row="1" Text="Selecciona el archivo de base de datos (.accdb) que usará el sistema."
+            <TextBlock Grid.Row="1" Text="Selecciona el archivo (.accdb) con &quot;Buscar...&quot;, o escribe/pega la ruta directamente (por ejemplo, una ruta de red)."
                        FontSize="12" Foreground="{DynamicResource SecondaryTextBrush}"
                        Margin="0,4,0,0" TextWrapping="Wrap"/>
 
@@ -102,7 +101,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBox x:Name="TxtRuta" Grid.Column="0" Style="{StaticResource InputStyle}"
-                             Tag="Ningún archivo seleccionado"/>
+                             Tag="Ningún archivo seleccionado"
+                             TextChanged="TxtRuta_TextChanged"/>
                     <Button x:Name="BtnBuscar" Grid.Column="2" Content="Buscar..."
                             Style="{StaticResource BtnSecundario}" Width="110"
                             Click="BtnBuscar_Click"/>
