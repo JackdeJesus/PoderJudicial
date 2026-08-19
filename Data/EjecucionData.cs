@@ -1,4 +1,6 @@
-﻿using PoderJudicial.Models;
+using PoderJudicial.Models;
+using System;
+using System.Collections.Generic;
 using System.Data.OleDb;
 
 namespace PoderJudicial.Data
@@ -7,8 +9,7 @@ namespace PoderJudicial.Data
     {
         public void Insertar(Ejecucion ejecucion)
         {
-            using (OleDbConnection conn =
-                Conexion.ObtenerConexion())
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
                 conn.Open();
 
@@ -27,62 +28,76 @@ INSERT INTO Ejecucion
     Delito,
     Victima,
     Sala,
-    Observaciones
+    Observaciones,
+    Juzgado
 )
 VALUES
 (
-    ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )";
 
-                using (OleDbCommand cmd =
-                    new OleDbCommand(query, conn))
+                using (OleDbCommand cmd = new OleDbCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue(
-                        "?", ejecucion.Id);
+                    cmd.Parameters.AddWithValue("?", ejecucion.Id);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.FechaAudiencia);
+                        "?",
+                        ejecucion.FechaAudiencia.HasValue
+                            ? (object)ejecucion.FechaAudiencia.Value
+                            : DBNull.Value);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.TotalDiscos);
+                        "?",
+                        ejecucion.TotalDiscos ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.Juez);
+                        "?",
+                        ejecucion.Juez ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.ExpedienteNumero);
+                        "?",
+                        ejecucion.ExpedienteNumero ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.Causa);
+                        "?",
+                        ejecucion.Causa ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.TipoAudiencia);
+                        "?",
+                        ejecucion.TipoAudiencia ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.HoraTermino);
+                        "?",
+                        ejecucion.HoraTermino ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.Imputado);
+                        "?",
+                        ejecucion.Imputado ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.Delito);
+                        "?",
+                        ejecucion.Delito ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.Victima);
+                        "?",
+                        ejecucion.Victima ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.Sala);
-
-
+                        "?",
+                        ejecucion.Sala ?? string.Empty);
 
                     cmd.Parameters.AddWithValue(
-                        "?", ejecucion.Observaciones);
+                        "?",
+                        ejecucion.Observaciones ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Juzgado ?? string.Empty);
 
                     cmd.ExecuteNonQuery();
                 }
             }
         }
-
 
         public void Actualizar(Ejecucion ejecucion)
         {
@@ -103,24 +118,69 @@ UPDATE Ejecucion SET
     Delito         = ?,
     Victima        = ?,
     Sala           = ?,
-    Observaciones  = ?
+    Observaciones  = ?,
+    Juzgado        = ?
 WHERE Id = ?";
 
                 using (OleDbCommand cmd = new OleDbCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("?", ejecucion.FechaAudiencia.HasValue ? (object)ejecucion.FechaAudiencia.Value : DBNull.Value);
-                    cmd.Parameters.AddWithValue("?", ejecucion.TotalDiscos ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.Juez ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.ExpedienteNumero ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.Causa ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.TipoAudiencia ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.HoraTermino ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.Imputado ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.Delito ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.Victima ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.Sala ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.Observaciones ?? string.Empty);
-                    cmd.Parameters.AddWithValue("?", ejecucion.Id);
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.FechaAudiencia.HasValue
+                            ? (object)ejecucion.FechaAudiencia.Value
+                            : DBNull.Value);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.TotalDiscos ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Juez ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.ExpedienteNumero ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Causa ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.TipoAudiencia ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.HoraTermino ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Imputado ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Delito ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Victima ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Sala ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Observaciones ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Juzgado ?? string.Empty);
+
+                    cmd.Parameters.AddWithValue(
+                        "?",
+                        ejecucion.Id);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -129,22 +189,17 @@ WHERE Id = ?";
 
         public int ObtenerSiguienteId()
         {
-            using (OleDbConnection conn =
-                Conexion.ObtenerConexion())
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
                 conn.Open();
 
-                string query =
-                    "SELECT MAX(Id) FROM Ejecucion";
+                string query = "SELECT MAX(Id) FROM Ejecucion";
 
-                using (OleDbCommand cmd =
-                    new OleDbCommand(query, conn))
+                using (OleDbCommand cmd = new OleDbCommand(query, conn))
                 {
-                    object resultado =
-                        cmd.ExecuteScalar();
+                    object resultado = cmd.ExecuteScalar();
 
-                    if (resultado == DBNull.Value ||
-                        resultado == null)
+                    if (resultado == DBNull.Value || resultado == null)
                     {
                         return 1;
                     }
@@ -154,25 +209,20 @@ WHERE Id = ?";
             }
         }
 
-
-
         public Ejecucion ObtenerEjecucionPorId(int id)
         {
-            using (OleDbConnection conn =
-                Conexion.ObtenerConexion())
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
                 conn.Open();
 
                 string query =
                     "SELECT * FROM Ejecucion WHERE Id = ?";
 
-                using (OleDbCommand cmd =
-                    new OleDbCommand(query, conn))
+                using (OleDbCommand cmd = new OleDbCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("?", id);
 
-                    using (OleDbDataReader reader =
-                        cmd.ExecuteReader())
+                    using (OleDbDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
@@ -181,20 +231,47 @@ WHERE Id = ?";
                                 Id = Convert.ToInt32(reader["Id"]),
 
                                 FechaAudiencia =
-                                    DateTime.TryParse(reader["FechaAudiencia"]?.ToString(), out DateTime fecha)
-                                        ? fecha : (DateTime?)null,
+                                    DateTime.TryParse(
+                                        reader["FechaAudiencia"]?.ToString(),
+                                        out DateTime fecha)
+                                            ? fecha
+                                            : (DateTime?)null,
 
-                                TotalDiscos = reader["TotalDiscos"]?.ToString(),
-                                Juez = reader["Juez"]?.ToString(),
-                                ExpedienteNumero = reader["Expediente"]?.ToString(),
-                                Causa = reader["Causa"]?.ToString(),
-                                TipoAudiencia = reader["TipoAudiencia"]?.ToString(),
-                                HoraTermino = reader["HoraTermino"]?.ToString(),
-                                Imputado = reader["Imputado"]?.ToString(),
-                                Delito = reader["Delito"]?.ToString(),
-                                Victima = reader["Victima"]?.ToString(),
-                                Sala = reader["Sala"]?.ToString(),
-                                Observaciones = reader["Observaciones"]?.ToString()
+                                TotalDiscos =
+                                    reader["TotalDiscos"]?.ToString(),
+
+                                Juez =
+                                    reader["Juez"]?.ToString(),
+
+                                ExpedienteNumero =
+                                    reader["Expediente"]?.ToString(),
+
+                                Causa =
+                                    reader["Causa"]?.ToString(),
+
+                                TipoAudiencia =
+                                    reader["TipoAudiencia"]?.ToString(),
+
+                                HoraTermino =
+                                    reader["HoraTermino"]?.ToString(),
+
+                                Imputado =
+                                    reader["Imputado"]?.ToString(),
+
+                                Delito =
+                                    reader["Delito"]?.ToString(),
+
+                                Victima =
+                                    reader["Victima"]?.ToString(),
+
+                                Sala =
+                                    reader["Sala"]?.ToString(),
+
+                                Observaciones =
+                                    reader["Observaciones"]?.ToString(),
+
+                                Juzgado =
+                                    reader["Juzgado"]?.ToString()
                             };
                         }
                     }
@@ -207,7 +284,7 @@ WHERE Id = ?";
         /// <summary>
         /// Listado completo (con Id y TotalDiscos incluidos) usado por los
         /// indicadores "Total de registros" / "Total Discos Audiencia" en
-        /// Consultar Registros. No confundir con <see cref="ObtenerEjecuciones"/>,
+        /// Consultar Registros. No confundir con ObtenerEjecuciones(),
         /// que solo trae Delito/TipoAudiencia para el autocompletado de
         /// Nuevo Registro y no debe tocarse.
         /// </summary>
@@ -219,17 +296,25 @@ WHERE Id = ?";
             {
                 conn.Open();
 
-                string query = "SELECT Id, TotalDiscos FROM Ejecucion";
+                string query =
+                    "SELECT Id, TotalDiscos FROM Ejecucion";
 
-                using (OleDbCommand cmd = new OleDbCommand(query, conn))
-                using (OleDbDataReader reader = cmd.ExecuteReader())
+                using (OleDbCommand cmd =
+                       new OleDbCommand(query, conn))
+                using (OleDbDataReader reader =
+                       cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         lista.Add(new Ejecucion
                         {
-                            Id = reader["Id"] != DBNull.Value ? Convert.ToInt32(reader["Id"]) : 0,
-                            TotalDiscos = reader["TotalDiscos"]?.ToString()
+                            Id =
+                                reader["Id"] != DBNull.Value
+                                    ? Convert.ToInt32(reader["Id"])
+                                    : 0,
+
+                            TotalDiscos =
+                                reader["TotalDiscos"]?.ToString()
                         });
                     }
                 }
@@ -242,8 +327,7 @@ WHERE Id = ?";
         {
             List<Ejecucion> lista = new();
 
-            using (OleDbConnection conn =
-                Conexion.ObtenerConexion())
+            using (OleDbConnection conn = Conexion.ObtenerConexion())
             {
                 conn.Open();
 
@@ -251,29 +335,25 @@ WHERE Id = ?";
                     "SELECT * FROM Ejecucion";
 
                 using (OleDbCommand cmd =
-                    new OleDbCommand(query, conn))
+                       new OleDbCommand(query, conn))
+                using (OleDbDataReader reader =
+                       cmd.ExecuteReader())
                 {
-                    using (OleDbDataReader reader =
-                        cmd.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        lista.Add(new Ejecucion
                         {
-                            lista.Add(new Ejecucion
-                            {
-                                Delito =
-                                    reader["Delito"]?.ToString(),
+                            Delito =
+                                reader["Delito"]?.ToString(),
 
-                                TipoAudiencia =
-                                    reader["TipoAudiencia"]?.ToString()
-                            });
-                        }
+                            TipoAudiencia =
+                                reader["TipoAudiencia"]?.ToString()
+                        });
                     }
                 }
             }
 
             return lista;
         }
-
-
     }
 }

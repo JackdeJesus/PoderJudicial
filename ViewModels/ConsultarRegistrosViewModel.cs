@@ -647,19 +647,20 @@ namespace PoderJudicial.ViewModels
 
             VerDetalleEjecucion ventana = new VerDetalleEjecucion();
             ventana.CargarDatos(
-                id: detalle.Id.ToString(),
-                expediente: detalle.ExpedienteNumero,
-                causa: detalle.Causa,
-                fechaAudiencia: detalle.FechaAudiencia?.ToString("dd/MM/yyyy") ?? "",
-                tipoAudiencia: detalle.TipoAudiencia,
-                horaTermino: detalle.HoraTermino,
-                juez: detalle.Juez,
-                sala: detalle.Sala,
-                imputado: detalle.Imputado,
-                delito: detalle.Delito,
-                victima: detalle.Victima,
-                totalDiscos: detalle.TotalDiscos,
-                observaciones: detalle.Observaciones
+            id: detalle.Id.ToString(),
+            expediente: detalle.ExpedienteNumero,
+            causa: detalle.Causa,
+            fechaAudiencia: detalle.FechaAudiencia?.ToString("dd/MM/yyyy") ?? "",
+            tipoAudiencia: detalle.TipoAudiencia,
+             horaTermino: detalle.HoraTermino,
+            juez: detalle.Juez,
+             juzgado: detalle.Juzgado,   
+             sala: detalle.Sala,
+             imputado: detalle.Imputado,
+             delito: detalle.Delito,
+             victima: detalle.Victima,
+             totalDiscos: detalle.TotalDiscos,
+             observaciones: detalle.Observaciones
             );
             ventana.ShowDialog();
         }

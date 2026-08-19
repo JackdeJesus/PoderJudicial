@@ -10,10 +10,12 @@ using A = DocumentFormat.OpenXml.Drawing;
 
 namespace PoderJudicial.Helpers
 {
-    public static class EtiquetaPowerPointService
+    public static class EtiquetaEjecucionPowerPointService
     {
+        private const string NombrePlantilla = "EtiquetaEjecucion.pptx";
+
         public static string GenerarArchivoTemporal(
-            EtiquetaRegistroData datos,
+            EtiquetaEjecucionData datos,
             int cantidadConjuntos)
         {
             if (datos == null)
@@ -22,29 +24,34 @@ namespace PoderJudicial.Helpers
             if (cantidadConjuntos < 1)
                 cantidadConjuntos = 1;
 
-            string nombrePlantilla = ObtenerNombrePlantilla(datos.TipoCausa);
-
             string rutaPlantilla = Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
                 "Resources",
                 "Plantillas",
-                nombrePlantilla);
+                NombrePlantilla);
 
             if (!File.Exists(rutaPlantilla))
             {
                 throw new FileNotFoundException(
-                    $"No se encontró la plantilla {nombrePlantilla}.\n\n" +
-                    "Verifica que el archivo esté en Resources\\Plantillas y que " +
-                    "Copy to Output Directory esté configurado como Copy if newer.",
+                    $"No se encontró la plantilla {NombrePlantilla}.\n\n" +
+                    "Verifica que esté en Resources\\Plantillas y que tenga:\n" +
+                    "Build Action = Content\n" +
+                    "Copy to Output Directory = Copy if newer.",
                     rutaPlantilla);
             }
 
             string carpetaTemporal = ObtenerCarpetaTemporal();
             Directory.CreateDirectory(carpetaTemporal);
 
-            string rutaSalida = ObtenerRutaTemporalDisponible(
-                carpetaTemporal,
-                datos.NoCausa);
+            string identificador =
+                !string.IsNullOrWhiteSpace(datos.Expediente)
+                    ? datos.Expediente
+                    : datos.Causa;
+
+            string rutaSalida =
+                ObtenerRutaTemporalDisponible(
+                    carpetaTemporal,
+                    identificador);
 
             File.Copy(rutaPlantilla, rutaSalida, true);
 
@@ -59,7 +66,7 @@ namespace PoderJudicial.Helpers
                 SlideIdList slideIdList =
                     presentationPart.Presentation.SlideIdList
                     ?? throw new InvalidOperationException(
-                        "La plantilla no contiene una lista de diapositivas.");
+                        "La plantilla no contiene diapositivas.");
 
                 SlideId slideIdBase =
                     slideIdList.Elements<SlideId>().FirstOrDefault()
@@ -73,41 +80,26 @@ namespace PoderJudicial.Helpers
                 Dictionary<string, string> reemplazos =
                     CrearReemplazos(datos);
 
-                // La plantilla ya contiene una diapositiva con las dos etiquetas.
                 ReemplazarMarcadores(slideBase, reemplazos);
 
-                // Cada conjunto adicional equivale a otra diapositiva idéntica.
+                // Cada conjunto adicional = otra diapositiva con las 2 etiquetas.
                 for (int i = 1; i < cantidadConjuntos; i++)
                 {
-                    ClonarSlideDentroDePresentacion(
-                        presentationPart,
-                        slideBase,
-                        slideIdList);
+                    SlidePart nuevaSlide =
+                        ClonarSlideDentroDePresentacion(
+                            presentationPart,
+                            slideBase,
+                            slideIdList);
+
+                    // La diapositiva clonada ya lleva los valores sustituidos,
+                    // porque se clona después de reemplazar la diapositiva base.
+                    nuevaSlide.Slide.Save();
                 }
 
                 presentationPart.Presentation.Save();
             }
 
             return rutaSalida;
-        }
-
-        private static string ObtenerNombrePlantilla(string tipoCausa)
-        {
-            string tipo = (tipoCausa ?? string.Empty).Trim().ToUpperInvariant();
-
-            switch (tipo)
-            {
-                case "JO":
-                    return "EtiquetaJO.pptx";
-                case "CP":
-                    return "EtiquetaCP.pptx";
-                case "C":
-                    return "EtiquetaC.pptx";
-                default:
-                    if (TipoCausaHelper.MuestraNoCausaJuicio(tipoCausa))
-                        return "EtiquetaJO.pptx";
-                    return "EtiquetaC.pptx";
-            }
         }
 
         public static void AbrirArchivo(string rutaArchivo)
@@ -147,8 +139,11 @@ namespace PoderJudicial.Helpers
                     rutaPowerPointDestino);
             }
 
-            string origenCompleto = Path.GetFullPath(rutaEtiquetaNueva);
-            string destinoCompleto = Path.GetFullPath(rutaPowerPointDestino);
+            string origenCompleto =
+                Path.GetFullPath(rutaEtiquetaNueva);
+
+            string destinoCompleto =
+                Path.GetFullPath(rutaPowerPointDestino);
 
             if (string.Equals(
                     origenCompleto,
@@ -156,7 +151,7 @@ namespace PoderJudicial.Helpers
                     StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(
-                    "El archivo de etiqueta y el PowerPoint destino no pueden ser el mismo archivo.");
+                    "El archivo generado y el PowerPoint destino no pueden ser el mismo archivo.");
             }
 
             VerificarArchivoNoBloqueado(destinoCompleto);
@@ -170,7 +165,7 @@ namespace PoderJudicial.Helpers
             PresentationPart origenPresentation =
                 origen.PresentationPart
                 ?? throw new InvalidOperationException(
-                    "El archivo de etiqueta no contiene una presentación válida.");
+                    "El archivo generado no contiene una presentación válida.");
 
             PresentationPart destinoPresentation =
                 destino.PresentationPart
@@ -180,7 +175,7 @@ namespace PoderJudicial.Helpers
             SlideIdList origenSlideIds =
                 origenPresentation.Presentation.SlideIdList
                 ?? throw new InvalidOperationException(
-                    "El archivo de etiqueta no contiene diapositivas.");
+                    "El archivo generado no contiene diapositivas.");
 
             SlideIdList destinoSlideIds =
                 destinoPresentation.Presentation.SlideIdList
@@ -201,32 +196,52 @@ namespace PoderJudicial.Helpers
             destinoPresentation.Presentation.Save();
         }
 
-        public static DateTime ObtenerUltimaModificacion(string rutaArchivo)
+        public static void LimpiarEtiquetasTemporalesAnteriores()
         {
-            if (string.IsNullOrWhiteSpace(rutaArchivo) ||
-                !File.Exists(rutaArchivo))
-            {
-                return DateTime.MinValue;
-            }
+            string carpetaTemporal = ObtenerCarpetaTemporal();
 
-            return File.GetLastWriteTime(rutaArchivo);
+            if (!Directory.Exists(carpetaTemporal))
+                return;
+
+            DateTime hoy = DateTime.Today;
+
+            foreach (string archivo in
+                     Directory.GetFiles(
+                         carpetaTemporal,
+                         "EtiquetaEjecucion_*.pptx"))
+            {
+                try
+                {
+                    DateTime fecha = File.GetCreationTime(archivo);
+
+                    if (fecha.Date < hoy)
+                        File.Delete(archivo);
+                }
+                catch
+                {
+                    // Si está abierto, bloqueado o no puede eliminarse,
+                    // se conserva y se intentará en otra ocasión.
+                }
+            }
         }
 
         private static Dictionary<string, string> CrearReemplazos(
-            EtiquetaRegistroData datos)
+            EtiquetaEjecucionData datos)
         {
+            // Los marcadores de tu plantilla usan una mezcla de mayúsculas
+            // y minúsculas. El reemplazo se hace sin distinguir mayúsculas.
             return new Dictionary<string, string>
             {
-                ["{{Imputado}}"] = datos.Imputado ?? string.Empty,
-                ["{{Delito}}"] = datos.Delito ?? string.Empty,
-                ["{{Agraviado}}"] = datos.Agraviado ?? string.Empty,
-                ["{{TipoAudiencia}}"] = datos.TipoAudiencia ?? string.Empty,
-                ["{{NoCausa}}"] = datos.NoCausa ?? string.Empty,
-                ["{{NoCausaJuicio}}"] = datos.NoCausaJuicio ?? string.Empty,
-                ["{{NUC}}"] = datos.NUC ?? string.Empty,
-                ["{{FeAudiencia}}"] = datos.FechaAudiencia ?? string.Empty,
-                ["{{Hora conclusión}}"] = datos.HoraConclusion ?? string.Empty,
-                ["{{Juez}}"] = datos.Juez ?? string.Empty
+                ["{{imputado}}"] = datos.Imputado ?? string.Empty,
+                ["{{delito}}"] = datos.Delito ?? string.Empty,
+                ["{{victima}}"] = datos.Victima ?? string.Empty,
+                ["{{tipoAudiencia}}"] = datos.TipoAudiencia ?? string.Empty,
+                ["{{expediente}}"] = datos.Expediente ?? string.Empty,
+                ["{{causa}}"] = datos.Causa ?? string.Empty,
+                ["{{Juzgado}}"] = datos.Juzgado ?? string.Empty,
+                ["{{fechaAudiencia}}"] = datos.FechaAudiencia ?? string.Empty,
+                ["{{horaTermino}}"] = datos.HoraTermino ?? string.Empty,
+                ["{{juez}}"] = datos.Juez ?? string.Empty
             };
         }
 
@@ -241,14 +256,14 @@ namespace PoderJudicial.Helpers
 
         private static string ObtenerRutaTemporalDisponible(
             string carpeta,
-            string noCausa)
+            string identificador)
         {
-            string causaLimpia = LimpiarNombreArchivo(noCausa);
+            string limpio = LimpiarNombreArchivo(identificador);
 
             for (int i = 1; i <= 9999; i++)
             {
                 string nombre =
-                    $"Etiqueta_{causaLimpia}_{i:000}.pptx";
+                    $"EtiquetaEjecucion_{limpio}_{i:000}.pptx";
 
                 string ruta = Path.Combine(carpeta, nombre);
 
@@ -263,7 +278,7 @@ namespace PoderJudicial.Helpers
         private static string LimpiarNombreArchivo(string texto)
         {
             if (string.IsNullOrWhiteSpace(texto))
-                return "SinCausa";
+                return "SinExpediente";
 
             string resultado = texto.Trim();
 
@@ -282,20 +297,19 @@ namespace PoderJudicial.Helpers
             foreach (A.Paragraph paragraph in
                      slidePart.Slide.Descendants<A.Paragraph>())
             {
-                foreach (KeyValuePair<string, string> reemplazo in reemplazos)
+                foreach (KeyValuePair<string, string> item in reemplazos)
                 {
                     ReemplazarEnParrafo(
                         paragraph,
-                        reemplazo.Key,
-                        reemplazo.Value);
+                        item.Key,
+                        item.Value);
                 }
             }
 
             slidePart.Slide.Save();
         }
 
-        // PowerPoint puede dividir un marcador en varios runs.
-        // Este método reemplaza el texto aunque {{Imputado}} esté fragmentado.
+        // PowerPoint puede dividir {{marcador}} en varios runs.
         private static void ReemplazarEnParrafo(
             A.Paragraph paragraph,
             string marcador,
@@ -309,63 +323,63 @@ namespace PoderJudicial.Helpers
                 if (textos.Count == 0)
                     return;
 
-                string textoCompleto =
-                    string.Concat(textos.Select(x => x.Text ?? string.Empty));
+                string completo =
+                    string.Concat(
+                        textos.Select(x => x.Text ?? string.Empty));
 
-                int indice =
-                    textoCompleto.IndexOf(
-                        marcador,
-                        StringComparison.Ordinal);
+                int inicio = completo.IndexOf(
+                    marcador,
+                    StringComparison.OrdinalIgnoreCase);
 
-                if (indice < 0)
+                if (inicio < 0)
                     return;
 
-                int finMarcador = indice + marcador.Length;
+                int fin = inicio + marcador.Length;
                 int posicion = 0;
-                bool valorInsertado = false;
+                bool insertado = false;
 
                 foreach (A.Text texto in textos)
                 {
-                    string contenido = texto.Text ?? string.Empty;
-                    int inicioNodo = posicion;
-                    int finNodo = posicion + contenido.Length;
+                    string actual = texto.Text ?? string.Empty;
+                    int nodoInicio = posicion;
+                    int nodoFin = posicion + actual.Length;
 
-                    if (finNodo <= indice || inicioNodo >= finMarcador)
+                    if (nodoFin <= inicio || nodoInicio >= fin)
                     {
-                        posicion = finNodo;
+                        posicion = nodoFin;
                         continue;
                     }
 
-                    int corteInicial =
-                        Math.Max(0, indice - inicioNodo);
+                    int corteInicio =
+                        Math.Max(0, inicio - nodoInicio);
 
-                    int corteFinal =
+                    int corteFin =
                         Math.Min(
-                            contenido.Length,
-                            finMarcador - inicioNodo);
+                            actual.Length,
+                            fin - nodoInicio);
 
                     string antes =
-                        contenido.Substring(0, corteInicial);
+                        actual.Substring(0, corteInicio);
 
                     string despues =
-                        contenido.Substring(corteFinal);
+                        actual.Substring(corteFin);
 
-                    if (!valorInsertado)
+                    if (!insertado)
                     {
                         texto.Text = antes + valor + despues;
-                        valorInsertado = true;
+                        insertado = true;
                     }
                     else
                     {
                         texto.Text = antes + despues;
                     }
 
-                    posicion = finNodo;
+                    posicion = nodoFin;
                 }
             }
         }
 
-        private static void ClonarSlideDentroDePresentacion(
+        private static SlidePart ClonarSlideDentroDePresentacion(
             PresentationPart presentationPart,
             SlidePart slideOrigen,
             SlideIdList slideIdList)
@@ -375,14 +389,14 @@ namespace PoderJudicial.Helpers
 
             CopiarContenidoSlide(slideOrigen, nuevaSlide);
 
-            uint nuevoId = ObtenerSiguienteSlideId(slideIdList);
-
             slideIdList.Append(new SlideId
             {
-                Id = nuevoId,
+                Id = ObtenerSiguienteSlideId(slideIdList),
                 RelationshipId =
                     presentationPart.GetIdOfPart(nuevaSlide)
             });
+
+            return nuevaSlide;
         }
 
         private static void ImportarSlide(
@@ -395,12 +409,9 @@ namespace PoderJudicial.Helpers
 
             CopiarContenidoSlide(slideOrigen, nuevaSlide);
 
-            uint nuevoId =
-                ObtenerSiguienteSlideId(slideIdListDestino);
-
             slideIdListDestino.Append(new SlideId
             {
-                Id = nuevoId,
+                Id = ObtenerSiguienteSlideId(slideIdListDestino),
                 RelationshipId =
                     presentationPartDestino.GetIdOfPart(nuevaSlide)
             });
@@ -411,14 +422,17 @@ namespace PoderJudicial.Helpers
             SlidePart slideDestino)
         {
             using (Stream origen =
-                   slideOrigen.GetStream(FileMode.Open, FileAccess.Read))
+                   slideOrigen.GetStream(
+                       FileMode.Open,
+                       FileAccess.Read))
             using (Stream destino =
-                   slideDestino.GetStream(FileMode.Create, FileAccess.Write))
+                   slideDestino.GetStream(
+                       FileMode.Create,
+                       FileAccess.Write))
             {
                 origen.CopyTo(destino);
             }
 
-            // Importa layout, imágenes, logos y demás partes relacionadas.
             foreach (IdPartPair parte in slideOrigen.Parts)
             {
                 slideDestino.AddPart(
@@ -466,7 +480,8 @@ namespace PoderJudicial.Helpers
             return lista;
         }
 
-        private static void VerificarArchivoNoBloqueado(string rutaArchivo)
+        private static void VerificarArchivoNoBloqueado(
+            string rutaArchivo)
         {
             try
             {
@@ -483,37 +498,5 @@ namespace PoderJudicial.Helpers
                     "Ciérralo en PowerPoint y vuelve a intentar la consolidación.");
             }
         }
-		
-	public static void LimpiarEtiquetasTemporalesAnteriores()
-{
-    string carpetaTemporal = ObtenerCarpetaTemporal();
-
-    if (!Directory.Exists(carpetaTemporal))
-        return;
-
-    DateTime hoy = DateTime.Today;
-
-    foreach (string archivo in Directory.GetFiles(carpetaTemporal, "*.pptx"))
-    {
-        try
-        {
-            DateTime fechaArchivo = File.GetCreationTime(archivo);
-
-            if (fechaArchivo.Date < hoy)
-                File.Delete(archivo);
-        }
-        catch
-        {
-            // Si está abierto o bloqueado, se conserva.
-        }
-    }
-}
-
-
-
-
-
-
-
     }
 }

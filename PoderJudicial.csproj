@@ -15,6 +15,8 @@
     <None Remove="Resources\eyeClose.png" />
     <None Remove="Resources\logo1.png" />
     <None Remove="Resources\logo2.png" />
+    <None Remove="Resources\Plantillas\EtiquetaCP.pptx" />
+    <None Remove="Resources\Plantillas\EtiquetaEjecucion.pptx" />
     <None Remove="Resources\supremaCorte.jpg" />
   </ItemGroup>
 
@@ -26,6 +28,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\logo2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Plantillas\EtiquetaCP.pptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Plantillas\EtiquetaEjecucion.pptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

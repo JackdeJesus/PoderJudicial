@@ -32,5 +32,7 @@ namespace PoderJudicial.Models
         public string Sala { get; set; }        
 
         public string Observaciones { get; set; }
+
+        public string Juzgado { get; set; }
     }
 }

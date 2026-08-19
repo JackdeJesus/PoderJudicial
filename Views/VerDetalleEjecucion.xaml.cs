@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using PoderJudicial.Models;
+using System.Windows;
 using System.Windows.Input;
 
 namespace PoderJudicial.Views
@@ -11,9 +12,19 @@ namespace PoderJudicial.Views
         }
 
         public void CargarDatos(
-            string id, string expediente, string causa, string fechaAudiencia,
-            string tipoAudiencia, string horaTermino, string juez, string sala,
-            string imputado, string delito, string victima, string totalDiscos,
+            string id,
+            string expediente,
+            string causa,
+            string fechaAudiencia,
+            string tipoAudiencia,
+            string horaTermino,
+            string juez,
+            string juzgado,
+            string sala,
+            string imputado,
+            string delito,
+            string victima,
+            string totalDiscos,
             string observaciones)
         {
             TxtID.Text = id;
@@ -23,6 +34,7 @@ namespace PoderJudicial.Views
             TxtTipoAudiencia.Text = tipoAudiencia;
             TxtHoraTermino.Text = horaTermino;
             TxtJuez.Text = juez;
+            TxtJuzgado.Text = juzgado;
             TxtSala.Text = sala;
             TxtImputado.Text = imputado;
             TxtDelito.Text = delito;
@@ -31,16 +43,49 @@ namespace PoderJudicial.Views
             TxtObservaciones.Text = observaciones;
         }
 
-        // Permite arrastrar la ventana desde cualquier parte
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        private void BtnEtiquetas_Click(
+            object sender,
+            RoutedEventArgs e)
         {
-            base.OnMouseLeftButtonDown(e);
-            this.DragMove();
+            var datos = new EtiquetaEjecucionData
+            {
+                Expediente = TxtExpediente.Text,
+                Causa = TxtCausa.Text,
+                FechaAudiencia = TxtFechaAudiencia.Text,
+                TipoAudiencia = TxtTipoAudiencia.Text,
+                HoraTermino = TxtHoraTermino.Text,
+                Juez = TxtJuez.Text,
+                Juzgado = TxtJuzgado.Text,
+                Imputado = TxtImputado.Text,
+                Delito = TxtDelito.Text,
+                Victima = TxtVictima.Text
+            };
+
+            var ventana =
+                new EtiquetasEjecucion(datos)
+                {
+                    Owner = this
+                };
+
+            ventana.ShowDialog();
         }
 
-        private void BtnCerrar_Click(object sender, RoutedEventArgs e)
+        protected override void OnMouseLeftButtonDown(
+            MouseButtonEventArgs e)
         {
-            this.Close();
+            base.OnMouseLeftButtonDown(e);
+
+            if (e.ButtonState == MouseButtonState.Pressed)
+            {
+                DragMove();
+            }
+        }
+
+        private void BtnCerrar_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }
