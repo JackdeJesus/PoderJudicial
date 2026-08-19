@@ -1,18 +1,7 @@
-﻿using PoderJudicial.Helpers;
+using PoderJudicial.Helpers;
 using PoderJudicial.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PoderJudicial.Views
 {
@@ -24,14 +13,28 @@ namespace PoderJudicial.Views
         }
 
         public void CargarDatos(
-            string Id, string noCausa, string nuc, string fechaAudiencia,
-            string fechaRecibo, string horaConclusion, string tipoAudiencia,
-            string tipoCausa, string juzgado, string juez, string sala,
-            string totalDiscos, string tipoDisco, string totalDiscoAudiencia,
-            string imputado, string delito, string agraviado,
-            string noCausaJuicio, string diferida, string quienRealiza)
+            string Id,
+            string noCausa,
+            string nuc,
+            string fechaAudiencia,
+            string fechaRecibo,
+            string horaConclusion,
+            string tipoAudiencia,
+            string tipoCausa,
+            string juzgado,
+            string juez,
+            string sala,
+            string totalDiscos,
+            string tipoDisco,
+            string totalDiscoAudiencia,
+            string imputado,
+            string delito,
+            string agraviado,
+            string noCausaJuicio,
+            string diferida,
+            string quienRealiza)
         {
-            TxtID.Text = Id.ToString();
+            TxtID.Text = Id;
             TxtNoCausa.Text = noCausa;
             TxtNUC.Text = nuc;
             TxtFechaAudiencia.Text = fechaAudiencia;
@@ -50,8 +53,6 @@ namespace PoderJudicial.Views
             TxtAgraviado.Text = agraviado;
             TxtNoCausaJuicio.Text = noCausaJuicio;
 
-            // Misma regla que usa Nuevo Registro (ver TipoCausaHelper): No.
-            // Causa Juicio solo corresponde al tipo de causa JO.
             PanelNoCausaJuicioDetalle.Visibility =
                 TipoCausaHelper.MuestraNoCausaJuicio(tipoCausa)
                     ? Visibility.Visible
@@ -60,22 +61,47 @@ namespace PoderJudicial.Views
             TxtQuienRealiza.Text = quienRealiza;
         }
 
+        private void BtnEtiquetas_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            var datos = new EtiquetaRegistroData
+            {
+                TipoCausa = TxtTipoCausa.Text,
+                NoCausa = TxtNoCausa.Text,
+                NoCausaJuicio = TxtNoCausaJuicio.Text,
+                NUC = TxtNUC.Text,
+                Imputado = TxtImputado.Text,
+                Delito = TxtDelito.Text,
+                Agraviado = TxtAgraviado.Text,
+                TipoAudiencia = TxtTipoAudiencia.Text,
+                FechaAudiencia = TxtFechaAudiencia.Text,
+                HoraConclusion = TxtHoraConclusion.Text,
+                Juez = TxtJuez.Text
+            };
 
-        // Permite arrastrar la ventana desde cualquier parte
+            var ventana = new Etiquetas(datos)
+            {
+                Owner = this
+            };
+
+            ventana.ShowDialog();
+        }
+
+        private void BtnCerrar_Click(
+            object sender,
+            RoutedEventArgs e)
+        {
+            Close();
+        }
+
         protected override void OnMouseLeftButtonDown(
-            System.Windows.Input.MouseButtonEventArgs e)
+            MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
-            this.DragMove();
-        }
 
-        private void BtnCerrar_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-
+            if (e.ButtonState == MouseButtonState.Pressed)
+                DragMove();
         }
     }
-
-
-
 }
