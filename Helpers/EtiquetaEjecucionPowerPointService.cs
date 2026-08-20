@@ -151,49 +151,112 @@ namespace PoderJudicial.Helpers
                     StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(
-                    "El archivo generado y el PowerPoint destino no pueden ser el mismo archivo.");
+                    "El archivo de etiqueta y el PowerPoint destino no pueden ser el mismo archivo.");
             }
 
             VerificarArchivoNoBloqueado(destinoCompleto);
 
-            using PresentationDocument origen =
-                PresentationDocument.Open(origenCompleto, false);
+            object? appObject = null;
+            object? destinoObject = null;
 
-            using PresentationDocument destino =
-                PresentationDocument.Open(destinoCompleto, true);
-
-            PresentationPart origenPresentation =
-                origen.PresentationPart
-                ?? throw new InvalidOperationException(
-                    "El archivo generado no contiene una presentación válida.");
-
-            PresentationPart destinoPresentation =
-                destino.PresentationPart
-                ?? throw new InvalidOperationException(
-                    "El PowerPoint destino no contiene una presentación válida.");
-
-            SlideIdList origenSlideIds =
-                origenPresentation.Presentation.SlideIdList
-                ?? throw new InvalidOperationException(
-                    "El archivo generado no contiene diapositivas.");
-
-            SlideIdList destinoSlideIds =
-                destinoPresentation.Presentation.SlideIdList
-                ?? CrearSlideIdList(destinoPresentation);
-
-            foreach (SlideId slideId in origenSlideIds.Elements<SlideId>())
+            try
             {
-                SlidePart slideOrigen =
-                    (SlidePart)origenPresentation.GetPartById(
-                        slideId.RelationshipId!);
+                Type? tipoPowerPoint =
+                    Type.GetTypeFromProgID("PowerPoint.Application");
 
-                ImportarSlide(
-                    destinoPresentation,
-                    slideOrigen,
-                    destinoSlideIds);
+                if (tipoPowerPoint == null)
+                {
+                    throw new InvalidOperationException(
+                        "Microsoft PowerPoint no está instalado o no está registrado correctamente en Windows.");
+                }
+
+                appObject = Activator.CreateInstance(tipoPowerPoint);
+
+                if (appObject == null)
+                {
+                    throw new InvalidOperationException(
+                        "No fue posible iniciar Microsoft PowerPoint.");
+                }
+
+                dynamic app = appObject;
+
+                // Los tres valores 0 equivalen a msoFalse:
+                // ReadOnly = false, Untitled = false, WithWindow = false.
+                destinoObject = app.Presentations.Open(
+                    destinoCompleto,
+                    0,
+                    0,
+                    0);
+
+                if (destinoObject == null)
+                {
+                    throw new InvalidOperationException(
+                        "No fue posible abrir el PowerPoint destino.");
+                }
+
+                dynamic destino = destinoObject;
+
+                int insertarDespuesDe =
+                    (int)destino.Slides.Count;
+
+                destino.Slides.InsertFromFile(
+                    origenCompleto,
+                    insertarDespuesDe);
+
+                destino.Save();
             }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                    "No fue posible consolidar la etiqueta en el PowerPoint seleccionado.\n\n" +
+                    "Verifica que Microsoft PowerPoint esté instalado, que el archivo destino esté cerrado " +
+                    "y que ambos archivos sean presentaciones válidas.\n\n" +
+                    "Detalle: " + ex.Message,
+                    ex);
+            }
+            finally
+            {
+                if (destinoObject != null)
+                {
+                    try
+                    {
+                        ((dynamic)destinoObject).Close();
+                    }
+                    catch
+                    {
+                    }
 
-            destinoPresentation.Presentation.Save();
+                    if (System.Runtime.InteropServices.Marshal.IsComObject(destinoObject))
+                    {
+                        System.Runtime.InteropServices.Marshal.FinalReleaseComObject(
+                            destinoObject);
+                    }
+
+                    destinoObject = null;
+                }
+
+                if (appObject != null)
+                {
+                    try
+                    {
+                        ((dynamic)appObject).Quit();
+                    }
+                    catch
+                    {
+                    }
+
+                    if (System.Runtime.InteropServices.Marshal.IsComObject(appObject))
+                    {
+                        System.Runtime.InteropServices.Marshal.FinalReleaseComObject(
+                            appObject);
+                    }
+
+                    appObject = null;
+                }
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
         }
 
         public static void LimpiarEtiquetasTemporalesAnteriores()

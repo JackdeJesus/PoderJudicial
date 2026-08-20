@@ -22,19 +22,21 @@ namespace PoderJudicial.Views
         {
             InitializeComponent();
 
-     _datos = datos ?? throw new ArgumentNullException(nameof(datos));
+            _datos = datos
+                ?? throw new ArgumentNullException(nameof(datos));
 
-    // Elimina temporales de días anteriores.
-    EtiquetaPowerPointService.LimpiarEtiquetasTemporalesAnteriores();
+            EtiquetaPowerPointService
+                .LimpiarEtiquetasTemporalesAnteriores();
 
-    TxtTitulo.Text =
-        $"Etiquetas - Causa {_datos.NoCausa}";
+            TxtTitulo.Text =
+                $"Etiquetas - Causa {_datos.NoCausa}";
 
+            _timerGuardado = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(2)
+            };
 
-
-
-
-
+            _timerGuardado.Tick += TimerGuardado_Tick;
         }
 
         private void BtnGenerarEtiqueta_Click(
@@ -94,7 +96,6 @@ namespace PoderJudicial.Views
             DateTime modificacionActual =
                 File.GetLastWriteTimeUtc(_archivoGenerado);
 
-            // Margen pequeño para evitar diferencias mínimas del sistema de archivos.
             if (modificacionActual >
                 _fechaBaseModificacionUtc.AddMilliseconds(500))
             {
@@ -205,7 +206,7 @@ namespace PoderJudicial.Views
 
         protected override void OnClosed(EventArgs e)
         {
-            _timerGuardado.Stop();
+            _timerGuardado?.Stop();
             base.OnClosed(e);
         }
 

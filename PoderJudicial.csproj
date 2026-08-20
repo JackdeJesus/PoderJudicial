@@ -17,6 +17,7 @@
     <None Remove="Resources\logo2.png" />
     <None Remove="Resources\Plantillas\EtiquetaCP.pptx" />
     <None Remove="Resources\Plantillas\EtiquetaEjecucion.pptx" />
+    <None Remove="Resources\Plantillas\EtiquetaJO.pptx" />
     <None Remove="Resources\supremaCorte.jpg" />
   </ItemGroup>
 
@@ -36,6 +37,9 @@
     <Content Include="Resources\Plantillas\EtiquetaEjecucion.pptx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Plantillas\EtiquetaJO.pptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +51,7 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Office.Interop.PowerPoint" Version="15.0.4420.1018" />
     <PackageReference Include="System.Data.OleDb" Version="10.0.8" />
   </ItemGroup>
 
@@ -54,6 +59,12 @@
     <Resource Include="Resources\supremaCorte.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\Plantillas\EtiquetaC.pptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

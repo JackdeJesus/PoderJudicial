@@ -212,7 +212,7 @@ namespace PoderJudicial.Views
 
         protected override void OnClosed(EventArgs e)
         {
-            _timerGuardado.Stop();
+            _timerGuardado?.Stop();
             base.OnClosed(e);
         }
 
