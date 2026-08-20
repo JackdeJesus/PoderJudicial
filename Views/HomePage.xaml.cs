@@ -69,36 +69,61 @@ namespace PoderJudicial.Views
             ActualizarFechaHora();
         }
 
-        private void CargarDashboard()
+        // Antes, todas las consultas del Home (totales del mes, audiencias
+        // de hoy, actividad reciente — varias de ellas recorren TODAS las
+        // tablas de Audiencias) se ejecutaban de forma síncrona en el
+        // constructor de la página, en el hilo de UI. Como Home es la
+        // pantalla más visitada (se vuelve a crear cada vez que se navega
+        // a ella, incluida la recarga automática tras un cambio de base de
+        // datos), eso significaba congelar la interfaz en cada visita
+        // mientras Access respondía. Se movió el trabajo de BD a un hilo de
+        // fondo con Task.Run; el "await" retoma en el hilo de UI
+        // automáticamente (SynchronizationContext de WPF), así que asignar
+        // las propiedades del ViewModel abajo sigue siendo seguro sin
+        // Dispatcher.Invoke manual.
+        private async void CargarDashboard()
         {
-            DashboardData dashboard =
-                new DashboardData();
+            try
+            {
+                var datos = await Task.Run(() =>
+                {
+                    DashboardData dashboard = new DashboardData();
 
-            vm.TotalAudienciasMes =
-                dashboard.ObtenerTotalAudienciasMes();
+                    return new
+                    {
+                        TotalAudiencias = dashboard.ObtenerTotalAudienciasMes(),
+                        TotalEjecuciones = dashboard.ObtenerTotalEjecucionesMes(),
+                        TotalCopias = dashboard.ObtenerTotalCopiasMes(),
+                        AudienciasHoy = dashboard.ObtenerAudienciasHoy(),
+                        Version = dashboard.ObtenerVersionSistema(),
+                        NombreBD = dashboard.ObtenerNombreBaseDatos(),
+                        Estado = dashboard.ObtenerEstadoSistema(),
+                        Actividades = dashboard.ObtenerActividadesRecientes()
+                    };
+                });
 
-            vm.TotalEjecucionesMes =
-                dashboard.ObtenerTotalEjecucionesMes();
+                vm.TotalAudienciasMes = datos.TotalAudiencias;
+                vm.TotalEjecucionesMes = datos.TotalEjecuciones;
+                vm.TotalCopiasMes = datos.TotalCopias;
+                vm.AudienciasHoy = datos.AudienciasHoy;
+                vm.VersionSistema = datos.Version;
+                vm.NombreBaseDatos = datos.NombreBD;
+                vm.EstadoSistema = datos.Estado;
 
+                // Temporal mientras no exista la lógica de respaldos
+                vm.UltimaCopiaSeguridad = "No disponible";
 
-            vm.TotalCopiasMes =
-    dashboard.ObtenerTotalCopiasMes();
-
-
-            vm.AudienciasHoy = dashboard.ObtenerAudienciasHoy();
-
-
-            vm.VersionSistema = dashboard.ObtenerVersionSistema();
-            vm.NombreBaseDatos = dashboard.ObtenerNombreBaseDatos();
-            vm.EstadoSistema = dashboard.ObtenerEstadoSistema();
-
-
-            // Temporal mientras no exista la lógica de respaldos
-            vm.UltimaCopiaSeguridad = "No disponible";
-
-            vm.Actividades = new ObservableCollection<ActividadReciente>(
-            dashboard.ObtenerActividadesRecientes());
-
+                vm.Actividades = new ObservableCollection<ActividadReciente>(datos.Actividades);
+            }
+            catch (Exception ex)
+            {
+                // Mismo criterio que el resto de la app: avisar sin tirar
+                // la pantalla completa. Home sigue mostrando reloj y
+                // navegación aunque el panel de indicadores no cargue.
+                MessageBox.Show(
+                    "No se pudo cargar la información del panel principal:\n" + ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
 

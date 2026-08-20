@@ -546,7 +546,8 @@
                                 <MenuItem Header="🗄 Base de Datos..."
           Click="BaseDatos_Click"/>
 
-
+                                <MenuItem Header="🗂 Crear tabla..."
+          Click="CrearTabla_Click"/>
 
                             </ContextMenu>
                         </Button.ContextMenu>

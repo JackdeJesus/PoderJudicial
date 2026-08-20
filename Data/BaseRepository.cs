@@ -104,14 +104,14 @@ namespace PoderJudicial.Data
                 {
                     try
                     {
-                        // Verificar si la tabla tiene registros antes de consultarla
-                        string sqlCount = $"SELECT COUNT(*) FROM [{tabla}]";
-                        using (OleDbCommand cmdCount = new OleDbCommand(sqlCount, conn))
-                        {
-                            int total = (int)cmdCount.ExecuteScalar();
-                            if (total == 0) continue; // Tabla vacía — se omite sin error
-                        }
-
+                        // Antes se hacía un SELECT COUNT(*) previo para
+                        // saltar tablas vacías, duplicando el roundtrip a
+                        // Access por cada tabla histórica. El SELECT de
+                        // abajo ya distingue "tabla vacía" de "tabla con
+                        // datos" con el propio reader (si no hay filas, el
+                        // while simplemente no itera), así que el COUNT
+                        // previo era innecesario — se quita para reducir a
+                        // la mitad las consultas de este método.
                         string sql =
                             $"SELECT [{columna}] FROM [{tabla}] " +
                             $"WHERE [{columna}] IS NOT NULL AND [{columna}] <> ''";

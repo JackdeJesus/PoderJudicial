@@ -470,6 +470,22 @@ namespace PoderJudicial.Views
             ventana.ShowDialog();
         }
 
+        // Crear una nueva tabla de Audiencias desde una plantilla (ver
+        // CrearTablaViewModel/CreadorTablasRepository). Reutiliza el mismo
+        // mecanismo de refresco que el cambio de base de datos
+        // (TableDetector.InvalidarCache() ya se llamó dentro del
+        // repositorio; aquí solo falta avisar para que el Sidebar y la
+        // sección actual se reconstruyan) — así no hace falta reiniciar la
+        // aplicación para ver ni usar la tabla nueva.
+        private void CrearTabla_Click(object sender, RoutedEventArgs e)
+        {
+            var ventana = new CrearTabla();
+            bool? creada = ventana.ShowDialog();
+
+            if (creada == true)
+                RecargarTrasCambioBD();
+        }
+
         // ══════════════════════════════════════════════
         //  CAMBIO DE BASE DE DATOS: refrescar todo lo que
         //  dependa de ella, sin reiniciar la aplicación.
