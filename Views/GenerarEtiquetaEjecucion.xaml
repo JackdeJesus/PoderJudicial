@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Generar etiqueta de ejecución"
-        Height="600"
+        Height="650"
         Width="470"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
@@ -101,7 +101,6 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="0" Text="Expediente:" Style="{StaticResource DatoLabel}"/>
@@ -110,31 +109,45 @@
                             <TextBlock Grid.Row="1" Text="No. causa:" Style="{StaticResource DatoLabel}"/>
                             <TextBlock Grid.Row="1" Grid.Column="1" x:Name="TxtCausa" Style="{StaticResource DatoValor}"/>
 
-                            <TextBlock Grid.Row="2" Text="Juzgado:" Style="{StaticResource DatoLabel}"/>
-                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtJuzgado" Style="{StaticResource DatoValor}"/>
+                            <TextBlock Grid.Row="2" Text="Sentenciado:" Style="{StaticResource DatoLabel}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtImputado" Style="{StaticResource DatoValor}"/>
 
-                            <TextBlock Grid.Row="3" Text="Sentenciado:" Style="{StaticResource DatoLabel}"/>
-                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="TxtImputado" Style="{StaticResource DatoValor}"/>
+                            <TextBlock Grid.Row="2" Text="Delito:" Style="{StaticResource DatoLabel}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtDelito" Style="{StaticResource DatoValor}"/>
 
-                            <TextBlock Grid.Row="4" Text="Delito:" Style="{StaticResource DatoLabel}"/>
-                            <TextBlock Grid.Row="4" Grid.Column="1" x:Name="TxtDelito" Style="{StaticResource DatoValor}"/>
+                            <TextBlock Grid.Row="2" Text="Víctima / Ofendido:" Style="{StaticResource DatoLabel}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtVictima" Style="{StaticResource DatoValor}"/>
 
-                            <TextBlock Grid.Row="5" Text="Víctima / Ofendido:" Style="{StaticResource DatoLabel}"/>
-                            <TextBlock Grid.Row="5" Grid.Column="1" x:Name="TxtVictima" Style="{StaticResource DatoValor}"/>
+                            <TextBlock Grid.Row="2" Text="Tipo audiencia:" Style="{StaticResource DatoLabel}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtTipoAudiencia" Style="{StaticResource DatoValor}"/>
 
-                            <TextBlock Grid.Row="6" Text="Tipo audiencia:" Style="{StaticResource DatoLabel}"/>
-                            <TextBlock Grid.Row="6" Grid.Column="1" x:Name="TxtTipoAudiencia" Style="{StaticResource DatoValor}"/>
+                            <TextBlock Grid.Row="2" Text="Fecha audiencia:" Style="{StaticResource DatoLabel}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtFechaAudiencia" Style="{StaticResource DatoValor}"/>
 
-                            <TextBlock Grid.Row="7" Text="Fecha audiencia:" Style="{StaticResource DatoLabel}"/>
-                            <TextBlock Grid.Row="7" Grid.Column="1" x:Name="TxtFechaAudiencia" Style="{StaticResource DatoValor}"/>
+                            <TextBlock Grid.Row="2" Text="Hora término:" Style="{StaticResource DatoLabel}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtHoraTermino" Style="{StaticResource DatoValor}"/>
 
-                            <TextBlock Grid.Row="8" Text="Hora término:" Style="{StaticResource DatoLabel}"/>
-                            <TextBlock Grid.Row="8" Grid.Column="1" x:Name="TxtHoraTermino" Style="{StaticResource DatoValor}"/>
-
-                            <TextBlock Grid.Row="9" Text="Juez:" Style="{StaticResource DatoLabel}"/>
-                            <TextBlock Grid.Row="9" Grid.Column="1" x:Name="TxtJuez" Style="{StaticResource DatoValor}"/>
+                            <TextBlock Grid.Row="2" Text="Juez:" Style="{StaticResource DatoLabel}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtJuez" Style="{StaticResource DatoValor}"/>
                         </Grid>
                     </Border>
+
+                    <TextBlock Text="Información que no está en la BD"
+                               FontFamily="Segoe UI Semibold"
+                               FontSize="13.5"
+                               Foreground="#2463C5"
+                               Margin="0,16,0,8"/>
+
+                    <TextBlock Text="Juzgado *"
+                               FontFamily="Segoe UI Semibold"
+                               FontSize="12.5"
+                               Margin="0,0,0,6"/>
+
+                    <TextBox x:Name="TxtJuzgadoManual"
+                             Height="36"
+                             Padding="8,0"
+                             VerticalContentAlignment="Center"
+                             Margin="0,0,0,14"/>
 
                     <TextBlock Text="Cantidad de conjuntos a generar"
                                FontFamily="Segoe UI Semibold"

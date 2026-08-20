@@ -28,12 +28,11 @@ INSERT INTO Ejecucion
     Delito,
     Victima,
     Sala,
-    Observaciones,
-    Juzgado
+    Observaciones
 )
 VALUES
 (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )";
 
                 using (OleDbCommand cmd = new OleDbCommand(query, conn))
@@ -89,12 +88,7 @@ VALUES
                     cmd.Parameters.AddWithValue(
                         "?",
                         ejecucion.Observaciones ?? string.Empty);
-
-                    cmd.Parameters.AddWithValue(
-                        "?",
-                        ejecucion.Juzgado ?? string.Empty);
-
-                    cmd.ExecuteNonQuery();
+cmd.ExecuteNonQuery();
                 }
             }
         }
@@ -118,8 +112,7 @@ UPDATE Ejecucion SET
     Delito         = ?,
     Victima        = ?,
     Sala           = ?,
-    Observaciones  = ?,
-    Juzgado        = ?
+    Observaciones  = ?
 WHERE Id = ?";
 
                 using (OleDbCommand cmd = new OleDbCommand(query, conn))
@@ -173,12 +166,7 @@ WHERE Id = ?";
                     cmd.Parameters.AddWithValue(
                         "?",
                         ejecucion.Observaciones ?? string.Empty);
-
-                    cmd.Parameters.AddWithValue(
-                        "?",
-                        ejecucion.Juzgado ?? string.Empty);
-
-                    cmd.Parameters.AddWithValue(
+cmd.Parameters.AddWithValue(
                         "?",
                         ejecucion.Id);
 
@@ -268,10 +256,7 @@ WHERE Id = ?";
                                     reader["Sala"]?.ToString(),
 
                                 Observaciones =
-                                    reader["Observaciones"]?.ToString(),
-
-                                Juzgado =
-                                    reader["Juzgado"]?.ToString()
+                                    reader["Observaciones"]?.ToString()
                             };
                         }
                     }

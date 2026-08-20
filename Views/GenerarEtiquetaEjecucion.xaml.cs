@@ -33,7 +33,6 @@ namespace PoderJudicial.Views
 
             TxtExpediente.Text = _datos.Expediente;
             TxtCausa.Text = _datos.Causa;
-            TxtJuzgado.Text = _datos.Juzgado;
             TxtImputado.Text = _datos.Imputado;
             TxtDelito.Text = _datos.Delito;
             TxtVictima.Text = _datos.Victima;
@@ -62,6 +61,23 @@ namespace PoderJudicial.Views
         {
             try
             {
+                string juzgado =
+                    TxtJuzgadoManual.Text?.Trim() ?? string.Empty;
+
+                if (string.IsNullOrWhiteSpace(juzgado))
+                {
+                    MessageBox.Show(
+                        "Captura el Juzgado antes de generar la etiqueta.",
+                        "Dato requerido",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+
+                    TxtJuzgadoManual.Focus();
+                    return;
+                }
+
+                _datos.Juzgado = juzgado;
+
                 int cantidad = ObtenerCantidad();
 
                 string ruta =

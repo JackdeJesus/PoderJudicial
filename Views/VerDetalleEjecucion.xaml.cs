@@ -19,7 +19,6 @@ namespace PoderJudicial.Views
             string tipoAudiencia,
             string horaTermino,
             string juez,
-            string juzgado,
             string sala,
             string imputado,
             string delito,
@@ -34,7 +33,6 @@ namespace PoderJudicial.Views
             TxtTipoAudiencia.Text = tipoAudiencia;
             TxtHoraTermino.Text = horaTermino;
             TxtJuez.Text = juez;
-            TxtJuzgado.Text = juzgado;
             TxtSala.Text = sala;
             TxtImputado.Text = imputado;
             TxtDelito.Text = delito;
@@ -55,7 +53,6 @@ namespace PoderJudicial.Views
                 TipoAudiencia = TxtTipoAudiencia.Text,
                 HoraTermino = TxtHoraTermino.Text,
                 Juez = TxtJuez.Text,
-                Juzgado = TxtJuzgado.Text,
                 Imputado = TxtImputado.Text,
                 Delito = TxtDelito.Text,
                 Victima = TxtVictima.Text

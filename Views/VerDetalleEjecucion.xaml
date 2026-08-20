@@ -121,8 +121,6 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="16"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
-                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- ID / EXPEDIENTE -->
@@ -173,36 +171,24 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- JUZGADO / JUEZ -->
+                    <!-- JUEZ / SALA -->
                     <Grid Grid.Row="6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="JUZGADO" Style="{StaticResource LabelStyle}"/>
-                            <TextBlock x:Name="TxtJuzgado" Text="-" Style="{StaticResource ValorStyle}" TextWrapping="Wrap"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
                             <TextBlock Text="JUEZ" Style="{StaticResource LabelStyle}"/>
                             <TextBlock x:Name="TxtJuez" Text="-" Style="{StaticResource ValorStyle}" TextWrapping="Wrap"/>
                         </StackPanel>
-                    </Grid>
-
-                    <!-- SALA -->
-                    <Grid Grid.Row="8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
+                        <StackPanel Grid.Column="1">
                             <TextBlock Text="SALA" Style="{StaticResource LabelStyle}"/>
                             <TextBlock x:Name="TxtSala" Text="-" Style="{StaticResource ValorStyle}"/>
                         </StackPanel>
                     </Grid>
 
                     <!-- IMPUTADO / DELITO -->
-                    <Grid Grid.Row="10">
+                    <Grid Grid.Row="8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -218,7 +204,7 @@
                     </Grid>
 
                     <!-- VÍCTIMA / TOTAL DISCOS -->
-                    <Grid Grid.Row="12">
+                    <Grid Grid.Row="10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -234,7 +220,7 @@
                     </Grid>
 
                     <!-- OBSERVACIONES (Quien realiza / videoconferencia / concentrada) -->
-                    <Grid Grid.Row="14">
+                    <Grid Grid.Row="12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
