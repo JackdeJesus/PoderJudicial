@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -14,19 +14,21 @@ namespace PoderJudicial.Views
         public Login()
         {
             InitializeComponent();
-
-
         }
 
-        private void btnIngresar_Click(object sender, RoutedEventArgs e)
+        private async void btnIngresar_Click(object sender, RoutedEventArgs e)
         {
             string usuario = txtUsuario.Text.Trim();
             string password = mostrando ? passVisible.Text : passOculta.Password;
 
-            if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(usuario) ||
+                string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Ingresa usuario y contraseña.", "Aviso",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Ingresa usuario y contraseña.",
+                    "Aviso",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
@@ -38,12 +40,14 @@ namespace PoderJudicial.Views
                 SesionActual.Usuario = usuario;
 
                 // El login usa SQLite (UserRepository), no depende de Access.
-                // Este es el primer punto donde la app está a punto de tocar
-                // la base de datos configurable (Dashboard la usa en su
-                // constructor) — se valida aquí, antes de abrirlo, para
-                // mostrar un mensaje claro en vez de un crash sin control.
+                // Antes de abrir Dashboard se valida la BD configurable.
                 if (!GarantizarBaseDeDatosConfigurada())
                     return;
+
+                // El respaldo se ejecuta de forma asíncrona y con manejo
+                // interno de errores. Si la red, permisos o Access impiden
+                // respaldar, la aplicación continúa normalmente.
+                await RespaldoBaseDatosService.VerificarYCrearRespaldoAsync();
 
                 Dashboard dashboard = new Dashboard(usuario);
                 dashboard.Show();
@@ -51,34 +55,37 @@ namespace PoderJudicial.Views
             }
             else
             {
-                MessageBox.Show("Usuario o contraseña incorrectos.", "Acceso denegado",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Usuario o contraseña incorrectos.",
+                    "Acceso denegado",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
-        /// <summary>
-        /// Devuelve true si hay una base de datos configurada y accesible
-        /// (mostrando la ventana de configuración si hace falta, ya sea
-        /// porque es la primera vez o porque la ruta guardada dejó de
-        /// responder). Devuelve false si el usuario cierra esa ventana sin
-        /// completar la configuración — en ese caso, Login simplemente no
-        /// avanza a Dashboard.
-        /// </summary>
         private bool GarantizarBaseDeDatosConfigurada()
         {
             if (!Conexion.EstaConfigurada)
             {
-                var ventana = new ConfiguracionBaseDatos(permiteCancelar: false);
+                var ventana =
+                    new ConfiguracionBaseDatos(
+                        permiteCancelar: false);
+
                 return ventana.ShowDialog() == true;
             }
 
-            string error = Conexion.ProbarConexion(Conexion.RutaBD);
-            if (error == null) return true;
+            string error =
+                Conexion.ProbarConexion(Conexion.RutaBD);
 
-            var ventanaError = new ConfiguracionBaseDatos(
-                mensajeError:
-                    $"No se pudo conectar a la base de datos configurada:\n{Conexion.RutaBD}\n\n{error}",
-                permiteCancelar: false);
+            if (error == null)
+                return true;
+
+            var ventanaError =
+                new ConfiguracionBaseDatos(
+                    mensajeError:
+                        $"No se pudo conectar a la base de datos configurada:\n" +
+                        $"{Conexion.RutaBD}\n\n{error}",
+                    permiteCancelar: false);
 
             return ventanaError.ShowDialog() == true;
         }
@@ -91,7 +98,8 @@ namespace PoderJudicial.Views
                 passVisible.Visibility = Visibility.Visible;
                 passOculta.Visibility = Visibility.Collapsed;
                 imgOjo.Source = new BitmapImage(
-                    new Uri("pack://application:,,,/Resources/eye.png"));
+                    new Uri(
+                        "pack://application:,,,/Resources/eye.png"));
                 mostrando = true;
             }
             else
@@ -100,50 +108,57 @@ namespace PoderJudicial.Views
                 passVisible.Visibility = Visibility.Collapsed;
                 passOculta.Visibility = Visibility.Visible;
                 imgOjo.Source = new BitmapImage(
-                    new Uri("pack://application:,,,/Resources/eyeClose.png"));
+                    new Uri(
+                        "pack://application:,,,/Resources/eyeClose.png"));
                 mostrando = false;
             }
+
             ActualizarPlaceholderPassword();
         }
 
-        private void txtUsuario_TextChanged(object sender, TextChangedEventArgs e)
+        private void txtUsuario_TextChanged(
+            object sender,
+            TextChangedEventArgs e)
         {
             txtPlaceholderUsuario.Visibility =
                 string.IsNullOrWhiteSpace(txtUsuario.Text)
-                ? Visibility.Visible
-                : Visibility.Hidden;
+                    ? Visibility.Visible
+                    : Visibility.Hidden;
         }
 
-        private void passVisible_TextChanged(object sender, TextChangedEventArgs e)
+        private void passVisible_TextChanged(
+            object sender,
+            TextChangedEventArgs e)
         {
             ActualizarPlaceholderPassword();
         }
 
-        private void passOculta_PasswordChanged(object sender, RoutedEventArgs e)
+        private void passOculta_PasswordChanged(
+            object sender,
+            RoutedEventArgs e)
         {
             ActualizarPlaceholderPassword();
         }
 
         private void ActualizarPlaceholderPassword()
         {
-            string textoPassword = mostrando
-                ? passVisible.Text
-                : passOculta.Password;
+            string textoPassword =
+                mostrando
+                    ? passVisible.Text
+                    : passOculta.Password;
+
             txtPlaceholderPassword.Visibility =
                 string.IsNullOrWhiteSpace(textoPassword)
-                ? Visibility.Visible
-                : Visibility.Hidden;
+                    ? Visibility.Visible
+                    : Visibility.Hidden;
         }
 
-
-        private void txtRegistrate_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void txtRegistrate_MouseLeftButtonDown(
+            object sender,
+            System.Windows.Input.MouseButtonEventArgs e)
         {
             var ventana = new CrearUsuario();
             ventana.ShowDialog();
         }
-
-
-        // activa cursor de campo usuario
-
     }
 }
